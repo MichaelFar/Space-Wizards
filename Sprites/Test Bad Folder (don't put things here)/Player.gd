@@ -1,8 +1,7 @@
 extends CharacterBody2D
 
 
-func _ready():#Called when node loads into the scene, children ready functions run first
-	velocity = Vector2.ZERO
+
 	
 
 var input_vector = Vector2.ZERO
@@ -10,6 +9,12 @@ var input_vector = Vector2.ZERO
 const acceleration = 700 #Multiplied by delta
 const friction = 250 #Multiplied by delta
 const max_speed = 150 # NOT multiplied by delta
+
+var animationPlayer = null
+
+func _ready():#Called when node loads into the scene, children ready functions run first
+	velocity = Vector2.ZERO
+	animationPlayer = $PlayerAnimations
 
 func _physics_process(_delta):#Runs per frame (delta is the difference in time between the current frame and the last frame)
 	
@@ -20,11 +25,20 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	
 	if input_vector != Vector2.ZERO:
 		
+		if(input_vector.x > 0):
+			animationPlayer.play("move_right")
+		elif(input_vector.x < 0):
+			animationPlayer.play("move_left")
+		elif(input_vector.y > 0):
+			animationPlayer.play("move_down")
+		elif(input_vector.y < 0):
+			animationPlayer.play("move_up")
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
 		print(velocity)
 		
 	elif(velocity != Vector2.ZERO):
-		
+	
+		animationPlayer.play("idle_right")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 		
 	print("Current velocity vector", velocity)	

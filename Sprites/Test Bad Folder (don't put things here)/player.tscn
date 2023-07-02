@@ -1,0 +1,191 @@
+[gd_scene load_steps=14 format=3 uid="uid://duuyynepqg4x2"]
+
+[ext_resource type="Texture2D" uid="uid://2d0fxwa2o2fd" path="res://Sprites/lilGuy/lil_guy_walk-Sheet.png" id="1_505vv"]
+[ext_resource type="Script" path="res://Sprites/Test Bad Folder (don't put things here)/player.gd" id="1_hvj8i"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
+radius = 3.0
+height = 11.9903
+
+[sub_resource type="Animation" id="Animation_avnbh"]
+resource_name = "move_right"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 1, 0]
+}
+
+[sub_resource type="Animation" id="Animation_5cogu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_sfeti"]
+resource_name = "move_up"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [12, 13, 14, 15, 12]
+}
+
+[sub_resource type="Animation" id="Animation_n516u"]
+resource_name = "move_down"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [4, 5, 6, 7, 4]
+}
+
+[sub_resource type="Animation" id="Animation_ta7fb"]
+resource_name = "move_left"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [8, 9, 10, 11, 8]
+}
+
+[sub_resource type="Animation" id="Animation_rqu4k"]
+resource_name = "idle_right"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_15pkh"]
+resource_name = "idle_down"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+
+[sub_resource type="Animation" id="Animation_tuumv"]
+resource_name = "idle_left"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+[sub_resource type="Animation" id="Animation_n16xm"]
+resource_name = "idle_up"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LilGuyWalk-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [12]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_101kq"]
+_data = {
+"RESET": SubResource("Animation_5cogu"),
+"idle_down": SubResource("Animation_15pkh"),
+"idle_left": SubResource("Animation_tuumv"),
+"idle_right": SubResource("Animation_rqu4k"),
+"idle_up": SubResource("Animation_n16xm"),
+"move_down": SubResource("Animation_n516u"),
+"move_left": SubResource("Animation_ta7fb"),
+"move_right": SubResource("Animation_avnbh"),
+"move_up": SubResource("Animation_sfeti")
+}
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_hvj8i")
+metadata/_edit_group_ = true
+
+[node name="LilGuyWalk-sheet" type="Sprite2D" parent="."]
+texture = ExtResource("1_505vv")
+hframes = 16
+frame = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 10)
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_hslqc")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_101kq")
+}

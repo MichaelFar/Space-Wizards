@@ -1,9 +1,6 @@
 extends CharacterBody2D
 
 
-
-	
-
 var input_vector = Vector2.ZERO
 
 const acceleration = 700 #Multiplied by delta
@@ -11,10 +8,17 @@ const friction = 250 #Multiplied by delta
 const max_speed = 150 # NOT multiplied by delta
 
 var animationPlayer = null
+var animationTree = null
+var animationState = null
 
 func _ready():#Called when node loads into the scene, children ready functions run first
 	velocity = Vector2.ZERO
 	animationPlayer = $PlayerAnimations
+	animationTree = $AnimationTree
+	post_initialize(animationTree)
+
+func post_initialize(animation_tree):#Bug in godot where i needed to wrap this in a function to get it to run
+	animationState = animation_tree.get("parameters/playback")
 
 func _physics_process(_delta):#Runs per frame (delta is the difference in time between the current frame and the last frame)
 	
@@ -23,22 +27,17 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	input_vector = input_vector.normalized()
 	
+	
 	if input_vector != Vector2.ZERO:
-		
-		if(input_vector.x > 0):
-			animationPlayer.play("move_right")
-		elif(input_vector.x < 0):
-			animationPlayer.play("move_left")
-		elif(input_vector.y > 0):
-			animationPlayer.play("move_down")
-		elif(input_vector.y < 0):
-			animationPlayer.play("move_up")
+		animationTree.set("parameters/IdleBlend/blend_position", input_vector)
+		animationTree.set("parameters/MoveBlend/blend_position", input_vector)
+		animationState.travel("MoveBlend")
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
 		print(velocity)
 		
 	elif(velocity != Vector2.ZERO):
 	
-		animationPlayer.play("idle_right")
+		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 		
 	print("Current velocity vector", velocity)	

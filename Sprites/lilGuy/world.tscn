@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqpsi0j5a867"]
+
+[ext_resource type="PackedScene" uid="uid://yqrelumgumkm" path="res://Tiles/64x64plane.tscn" id="1_yiaa6"]
+[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Sprites/lilGuy/player.tscn" id="2_cxsm1"]
+
+[node name="World" type="Node2D"]
+y_sort_enabled = true
+
+[node name="LevelTiles" parent="." instance=ExtResource("1_yiaa6")]
+y_sort_enabled = true
+position = Vector2(6, 61)
+
+[node name="Player" parent="." instance=ExtResource("2_cxsm1")]
+y_sort_enabled = true
+position = Vector2(99, 150)

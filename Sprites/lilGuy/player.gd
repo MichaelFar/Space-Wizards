@@ -29,17 +29,20 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	
 	
 	if input_vector != Vector2.ZERO:
+		
 		animationTree.set("parameters/IdleBlend/blend_position", input_vector)
 		animationTree.set("parameters/MoveBlend/blend_position", input_vector)
 		animationState.travel("MoveBlend")
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
-		print(velocity)
 		
+		print("Moving towards " + " " + str(velocity))
 	elif(velocity != Vector2.ZERO):
 	
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
-		
+	else:
+		animationState.travel("IdleBlend")
+			
 	print("Current velocity vector", velocity)	
 	#move_and_collide(velocity * _delta)
 	move_and_slide()

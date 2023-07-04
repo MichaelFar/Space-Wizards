@@ -242,10 +242,10 @@ metadata/_edit_group_ = true
 [node name="LilGuyWalk-sheet" type="Sprite2D" parent="."]
 texture = ExtResource("1_505vv")
 hframes = 16
-frame = 8
+frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 10)
+position = Vector2(1, 8)
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
 

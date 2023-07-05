@@ -78,6 +78,7 @@ physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_w1i60")
 
 [node name="Level1Tiles" type="Node2D"]
+y_sort_enabled = true
 metadata/_edit_group_ = true
 
 [node name="TileMap" type="TileMap" parent="."]

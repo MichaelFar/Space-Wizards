@@ -6,9 +6,8 @@
 [node name="World" type="Node2D"]
 
 [node name="LevelTiles" parent="." instance=ExtResource("1_yiaa6")]
-y_sort_enabled = true
-position = Vector2(6, 61)
+position = Vector2(60, 51)
 
 [node name="Player" parent="." instance=ExtResource("2_cxsm1")]
 y_sort_enabled = true
-position = Vector2(101, 126)
+position = Vector2(157, 119)

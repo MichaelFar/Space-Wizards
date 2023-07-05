@@ -7,7 +7,7 @@
 y_sort_enabled = true
 
 [node name="LevelTiles" parent="." instance=ExtResource("1_yiaa6")]
-position = Vector2(60, 51)
+position = Vector2(53, 33)
 
 [node name="Player" parent="." instance=ExtResource("2_cxsm1")]
 z_index = 1

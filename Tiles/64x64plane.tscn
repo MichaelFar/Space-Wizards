@@ -13,7 +13,6 @@ format = 2
 layer_0/name = "clutter"
 layer_0/y_sort_enabled = true
 layer_0/z_index = 1
-layer_0/tile_data = PackedInt32Array(524289, 589826, 0, 589825, 589826, 0, 655362, 589826, 0, 720898, 589826, 0, 720899, 655362, 0, 655364, 655362, 0, 589828, 655362, 0, 524293, 655362, 0, 458757, 655362, 0, -196605, 524290, 0)
 layer_1/name = "Floor"
 layer_1/enabled = true
 layer_1/modulate = Color(1, 1, 1, 1)

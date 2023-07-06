@@ -1,11 +1,11 @@
-[gd_scene load_steps=29 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=28 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Texture2D" uid="uid://2d0fxwa2o2fd" path="res://Sprites/lilGuy/lil_guy_walk-Sheet.png" id="1_505vv"]
 [ext_resource type="Script" path="res://Sprites/lilGuy/player.gd" id="1_v6a8a"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
 radius = 3.0
-height = 11.9903
+height = 16.0
 
 [sub_resource type="Animation" id="Animation_5cogu"]
 length = 0.001
@@ -233,19 +233,20 @@ states/MoveBlend/position = Vector2(526, 70)
 states/Start/position = Vector2(127, 70)
 transitions = ["Start", "IdleBlend", SubResource("AnimationNodeStateMachineTransition_lc8tc"), "IdleBlend", "MoveBlend", SubResource("AnimationNodeStateMachineTransition_lnjiw"), "MoveBlend", "IdleBlend", SubResource("AnimationNodeStateMachineTransition_6p3fx")]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_trjpd"]
-
 [node name="Player" type="CharacterBody2D"]
+position = Vector2(0, 3)
 script = ExtResource("1_v6a8a")
 metadata/_edit_group_ = true
 
 [node name="LilGuyWalk-sheet" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(0, -13)
 texture = ExtResource("1_505vv")
 hframes = 16
-frame = 1
+frame = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(1, 8)
+position = Vector2(0, -3)
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
 
@@ -258,6 +259,5 @@ libraries = {
 tree_root = SubResource("AnimationNodeStateMachine_eiten")
 anim_player = NodePath("../PlayerAnimations")
 active = true
-parameters/playback = SubResource("AnimationNodeStateMachinePlayback_trjpd")
 parameters/IdleBlend/blend_position = Vector2(0, 0)
 parameters/MoveBlend/blend_position = Vector2(0, 0)

@@ -5,6 +5,7 @@
 
 [node name="World" type="Node2D"]
 y_sort_enabled = true
+rotation = -0.00190693
 
 [node name="LevelTiles" parent="." instance=ExtResource("1_yiaa6")]
 position = Vector2(53, 33)

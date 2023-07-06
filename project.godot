@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Space Wizards"
 run/main_scene="res://Sprites/lilGuy/world.tscn"
-config/features=PackedStringArray("4.0", "Forward Plus")
+config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]

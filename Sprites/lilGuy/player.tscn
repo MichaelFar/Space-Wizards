@@ -1,7 +1,9 @@
-[gd_scene load_steps=28 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=33 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Texture2D" uid="uid://2d0fxwa2o2fd" path="res://Sprites/lilGuy/lil_guy_walk-Sheet.png" id="1_505vv"]
 [ext_resource type="Script" path="res://Sprites/lilGuy/player.gd" id="1_v6a8a"]
+[ext_resource type="Texture2D" uid="uid://bxbxv45lap4o" path="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png" id="3_cuwdv"]
+[ext_resource type="Script" path="res://Sprites/lilGuy/attackRotation.gd" id="3_h20xr"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
 radius = 3.0
@@ -233,7 +235,46 @@ states/MoveBlend/position = Vector2(526, 70)
 states/Start/position = Vector2(127, 70)
 transitions = ["Start", "IdleBlend", SubResource("AnimationNodeStateMachineTransition_lc8tc"), "IdleBlend", "MoveBlend", SubResource("AnimationNodeStateMachineTransition_lnjiw"), "MoveBlend", "IdleBlend", SubResource("AnimationNodeStateMachineTransition_6p3fx")]
 
+[sub_resource type="Animation" id="Animation_wm3dy"]
+resource_name = "melee_attack"
+length = 0.28
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Smear01Vertical01:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [5, 0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_hj3a2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Smear01Vertical01:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4uim7"]
+_data = {
+"RESET": SubResource("Animation_hj3a2"),
+"melee_attack": SubResource("Animation_wm3dy")
+}
+
 [node name="Player" type="CharacterBody2D"]
+y_sort_enabled = true
 script = ExtResource("1_v6a8a")
 
 [node name="LilGuyWalk-sheet" type="Sprite2D" parent="."]
@@ -241,21 +282,36 @@ z_index = -1
 position = Vector2(0, -13)
 texture = ExtResource("1_505vv")
 hframes = 16
-frame = 1
+frame = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -3)
+position = Vector2(0, -4)
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
 
-[node name="PlayerAnimations" type="AnimationPlayer" parent="."]
+[node name="PlayerSpriteAnimPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_101kq")
 }
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="PlayerSpriteAnimTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_eiten")
-anim_player = NodePath("../PlayerAnimations")
+anim_player = NodePath("../PlayerSpriteAnimPlayer")
 active = true
 parameters/IdleBlend/blend_position = Vector2(0, 0)
 parameters/MoveBlend/blend_position = Vector2(0, 0)
+
+[node name="AttackSpritePlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4uim7")
+}
+
+[node name="attackContainer" type="CharacterBody2D" parent="."]
+position = Vector2(0, -4)
+script = ExtResource("3_h20xr")
+
+[node name="Smear01Vertical01" type="Sprite2D" parent="attackContainer"]
+position = Vector2(5, 0)
+texture = ExtResource("3_cuwdv")
+hframes = 6
+frame = 5

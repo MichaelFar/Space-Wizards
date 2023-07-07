@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="TileSet" id="TileSet_nnoe8"]
+tile_shape = 1
+tile_layout = 5
+tile_size = Vector2i(32, 16)
+
+[node name="64x64plane" type="TileMap"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+light_mask = 0
+visibility_layer = 0
+z_as_relative = false
+texture_filter = 1
+texture_repeat = 1
+scale = Vector2(0, 0)
+tile_set = SubResource("TileSet_nnoe8")
+format = 2
+layer_0/y_sort_enabled = true

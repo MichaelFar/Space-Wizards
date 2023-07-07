@@ -9,7 +9,6 @@ rotation = -0.00190693
 
 [node name="Player" parent="." instance=ExtResource("2_cxsm1")]
 z_index = 1
-y_sort_enabled = true
 position = Vector2(234.715, 149.448)
 
 [node name="LevelTiles" parent="." instance=ExtResource("1_yiaa6")]

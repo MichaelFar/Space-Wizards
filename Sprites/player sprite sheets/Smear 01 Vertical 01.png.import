@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1a17jthh7b6o"
-path="res://.godot/imported/naked_wizard_01.png-9de247d75dc0c90e1a67744848a409b9.ctex"
+uid="uid://bxbxv45lap4o"
+path="res://.godot/imported/Smear 01 Vertical 01.png-9837255537c26324d1da92a08d87a0cd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/player tile sheets/naked_wizard_01.png"
-dest_files=["res://.godot/imported/naked_wizard_01.png-9de247d75dc0c90e1a67744848a409b9.ctex"]
+source_file="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png"
+dest_files=["res://.godot/imported/Smear 01 Vertical 01.png-9837255537c26324d1da92a08d87a0cd.ctex"]
 
 [params]
 

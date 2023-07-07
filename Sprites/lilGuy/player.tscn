@@ -235,6 +235,21 @@ states/MoveBlend/position = Vector2(526, 70)
 states/Start/position = Vector2(127, 70)
 transitions = ["Start", "IdleBlend", SubResource("AnimationNodeStateMachineTransition_lc8tc"), "IdleBlend", "MoveBlend", SubResource("AnimationNodeStateMachineTransition_lnjiw"), "MoveBlend", "IdleBlend", SubResource("AnimationNodeStateMachineTransition_6p3fx")]
 
+[sub_resource type="Animation" id="Animation_hj3a2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Smear01Vertical01:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
 [sub_resource type="Animation" id="Animation_wm3dy"]
 resource_name = "melee_attack"
 length = 0.28
@@ -252,21 +267,6 @@ tracks/0/keys = {
 "values": [5, 0, 1, 2, 3, 4, 5]
 }
 
-[sub_resource type="Animation" id="Animation_hj3a2"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("attackContainer/Smear01Vertical01:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [5]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4uim7"]
 _data = {
 "RESET": SubResource("Animation_hj3a2"),
@@ -282,7 +282,7 @@ z_index = -1
 position = Vector2(0, -13)
 texture = ExtResource("1_505vv")
 hframes = 16
-frame = 8
+frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)

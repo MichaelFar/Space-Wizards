@@ -35,6 +35,8 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	print('Player is located at ' + str(playerPosition))
 	playerSpriteTree.set("parameters/IdleBlend/blend_position", get_local_mouse_position())
 	animationState.travel("IdleBlend")
+	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	
 	
 	if (Input.is_action_just_pressed("click")):
 		

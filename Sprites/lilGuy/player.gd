@@ -27,7 +27,7 @@ func post_initialize(animation_tree):#Bug in godot where i needed to wrap this i
 func _physics_process(_delta):#Runs per frame (delta is the difference in time between the current frame and the last frame)
 	
 	input_vector.x = Input.get_action_strength("right") - Input.get_action_strength("left")
-	#input_vector.x = Input.get_axis("ui_left" , "ui_right")
+	
 	input_vector.y = Input.get_action_strength("down") - Input.get_action_strength("up")
 	input_vector = input_vector.normalized()
 	
@@ -41,6 +41,7 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	if (Input.is_action_just_pressed("click")):
 		
 		attackSpritePlayer.play("melee_attack")
+	
 	if input_vector != Vector2.ZERO:
 		
 		playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
@@ -49,11 +50,14 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
 		
 		print("Moving towards " + " " + str(velocity))
+	
 	elif(velocity != Vector2.ZERO):
 	
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
+	
 	else:
+		
 		animationState.travel("IdleBlend")
 		
 			

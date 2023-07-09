@@ -12,6 +12,14 @@ var playerSpriteTree = null
 var animationState = null
 var attackSpritePlayer = null
 var playerPosition = Vector2.ZERO
+var frameRecovery = 0
+
+enum {
+	MOVE,
+	DRIFT,
+	ATTACK
+}
+
 
 func _ready():#Called when node loads into the scene, children ready functions run first
 	
@@ -26,6 +34,20 @@ func post_initialize(animation_tree):#Bug in godot where i needed to wrap this i
 
 func _physics_process(_delta):#Runs per frame (delta is the difference in time between the current frame and the last frame)
 	
+	match state:
+		
+		MOVE:
+			move_state(_delta)
+			
+		DRIFT:
+			pass
+			
+		ATTACK:
+			attack_state(_delta)
+	
+
+func move_state(_delta):
+	
 	input_vector.x = Input.get_action_strength("right") - Input.get_action_strength("left")
 	
 	input_vector.y = Input.get_action_strength("down") - Input.get_action_strength("up")
@@ -38,9 +60,11 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	
 	
-	if (Input.is_action_just_pressed("click")):
+#	if (Input.is_action_just_pressed("click")):
+#
+#		attackSpritePlayer.play("melee_attack")
+#
 		
-		attackSpritePlayer.play("melee_attack")
 	
 	if input_vector != Vector2.ZERO:
 		
@@ -59,8 +83,11 @@ func _physics_process(_delta):#Runs per frame (delta is the difference in time b
 	else:
 		
 		animationState.travel("IdleBlend")
-		
 			
+				
 	print("Current velocity vector", velocity)	
 	#move_and_collide(velocity * _delta)
 	move_and_slide()
+
+func attack_state(_delta):
+	pass

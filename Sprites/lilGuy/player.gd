@@ -14,6 +14,7 @@ var attackSpritePlayer = null
 var playerPosition = Vector2.ZERO
 var frameRecovery = 0
 
+var previousBlend = 0
 var state = MOVE
 
 enum {
@@ -58,34 +59,32 @@ func move_state(_delta):
 	
 	playerPosition = self.position
 	print('Player is located at ' + str(playerPosition))
-	playerSpriteTree.set("parameters/IdleBlend/blend_position", get_local_mouse_position())
-	animationState.travel("IdleBlend")
-	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	#playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
+	#animationState.travel("IdleBlend")
 	
-	
-#	if (Input.is_action_just_pressed("click")):
-#
-#		attackSpritePlayer.play("melee_attack")
-#
-		
+	if (Input.is_action_just_pressed("click")):
+
+		state = ATTACK
+
+
 	
 	if input_vector != Vector2.ZERO:
 		
 		playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
-		playerSpriteTree.set("parameters/MoveBlend/blend_position", get_local_mouse_position())
+		playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
 		animationState.travel("MoveBlend")
+		previousBlend = input_vector
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
 		
 		print("Moving towards " + " " + str(velocity))
 	
 	elif(velocity != Vector2.ZERO):
-	
+		
+		playerSpriteTree.set("parameters/IdleBlend/blend_position", previousBlend)
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 	
-	else:
-		
-		animationState.travel("IdleBlend")
+	
 			
 				
 	print("Current velocity vector", velocity)	

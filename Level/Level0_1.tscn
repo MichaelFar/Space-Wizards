@@ -11,7 +11,7 @@ script = ExtResource("1_d754f")
 
 [node name="Player" parent="." instance=ExtResource("2_htdtm")]
 z_index = 1
-position = Vector2(89.7119, 151.171)
+position = Vector2(420.591, 214.802)
 
 [node name="LevelTiles" parent="." instance=ExtResource("3_haltp")]
 position = Vector2(2.98664, 7.00571)

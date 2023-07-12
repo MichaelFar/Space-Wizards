@@ -1,6 +1,6 @@
 [gd_scene load_steps=49 format=3 uid="uid://duuyynepqg4x2"]
 
-[ext_resource type="Texture2D" uid="uid://2d0fxwa2o2fd" path="res://Sprites/lilGuy/lil_guy_walk-Sheet.png" id="1_505vv"]
+[ext_resource type="Texture2D" uid="uid://8pcohqsps2p" path="res://Sprites/lilGuy/lil_guy_walk-Sheet.png" id="1_505vv"]
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Texture2D" uid="uid://bxbxv45lap4o" path="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png" id="3_cuwdv"]
 [ext_resource type="Script" path="res://Scripts/attackRotation.gd" id="3_esf8s"]

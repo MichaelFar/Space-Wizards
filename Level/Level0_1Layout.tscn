@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://yqrelumgumkm"]
 
-[ext_resource type="TileSet" uid="uid://jquepsuy03b" path="res://Tiles/64x64plane.tres" id="1_8p4tt"]
+[ext_resource type="TileSet" path="res://Tiles/64x64plane.tres" id="1_8p4tt"]
 
 [node name="Level1Tiles" type="Node2D"]
 y_sort_enabled = true

@@ -15,3 +15,4 @@ position = Vector2(434.595, 212.829)
 
 [node name="Level1Tiles" parent="." instance=ExtResource("1_yiaa6")]
 position = Vector2(0.98665, 7.00189)
+scale = Vector2(1e-05, 1e-05)

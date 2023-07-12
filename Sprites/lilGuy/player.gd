@@ -13,7 +13,7 @@ var animationState = null
 var attackSpritePlayer = null
 var playerPosition = Vector2.ZERO
 var frameRecovery = 0
-
+var state = MOVE
 enum {
 	MOVE,
 	DRIFT,
@@ -33,7 +33,7 @@ func post_initialize(animation_tree):#Bug in godot where i needed to wrap this i
 	animationState = animation_tree.get("parameters/playback")
 
 func _physics_process(_delta):#Runs per frame (delta is the difference in time between the current frame and the last frame)
-	
+	state = MOVE
 	match state:
 		
 		MOVE:

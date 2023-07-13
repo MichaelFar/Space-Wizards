@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://kji2r37la1ae"]
+
+[ext_resource type="PackedScene" uid="uid://yqrelumgumkm" path="res://Level/Level0_1Layout.tscn" id="1_rotwy"]
+[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_rau2v"]
+
+[node name="testDevGitThing" type="Node2D"]
+
+[node name="Level1Tiles2" parent="." instance=ExtResource("1_rotwy")]
+position = Vector2(294, 205)
+
+[node name="Player" parent="." instance=ExtResource("2_rau2v")]
+position = Vector2(357, 236)

@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://dusbiv02x5l05"]
+
+[ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
+[ext_resource type="Texture2D" uid="uid://cpdogri3qlybh" path="res://Sprites/test_goblin_enemy/goblin_idle.png" id="1_v1ppd"]
+[ext_resource type="Texture2D" uid="uid://bpule573kmfum" path="res://Sprites/test_goblin_enemy/goblin_run.png" id="3_jf4rh"]
+
+[node name="Enemy_Test" type="CharacterBody2D"]
+script = ExtResource("1_qhvur")
+
+[node name="SpriteContainer" type="Node2D" parent="."]
+
+[node name="GoblinIdle" type="Sprite2D" parent="SpriteContainer"]
+position = Vector2(0, -1)
+texture = ExtResource("1_v1ppd")
+offset = Vector2(0, -17)
+hframes = 4
+
+[node name="GoblinRun" type="Sprite2D" parent="SpriteContainer"]
+texture = ExtResource("3_jf4rh")
+offset = Vector2(0, -18)
+hframes = 8

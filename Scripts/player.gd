@@ -6,9 +6,9 @@ var input_vector = Vector2.ZERO
 const acceleration = 700 #Multiplied by delta
 const friction = 250 #Multiplied by delta
 const max_speed = 150 # NOT multiplied by delta
-const attack_movement = 50 #Multiplied by delta
-
-
+const attack_movement = 400 #Multiplied by delta
+#WHILE ATTACK FRICTION GO DOWN (needs implement)
+#
 var playerSpritePlayer = null
 var playerSpriteTree = null
 var animationState = null
@@ -49,6 +49,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			pass
 			
 		ATTACK:
+			
 			attack_state(_delta)
 		
 func move_state(_delta):
@@ -63,11 +64,8 @@ func move_state(_delta):
 	#playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
 	#animationState.travel("IdleBlend")
 	
-	if (Input.is_action_just_pressed("click")):
-
-		state = ATTACK
-		mouse_coordinates = get_local_mouse_position()
-		velocity = Vector2.ZERO
+	
+		#velocity = Vector2.ZERO
 	if input_vector != Vector2.ZERO:
 		
 		playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
@@ -78,11 +76,15 @@ func move_state(_delta):
 		
 		print("Moving towards " + str(velocity))
 	
-	elif(velocity != Vector2.ZERO && state != ATTACK):
+	elif(velocity != Vector2.ZERO):
 		
 		playerSpriteTree.set("parameters/IdleBlend/blend_position", previousBlend)
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
+	if (Input.is_action_just_pressed("click")):
+
+		state = ATTACK
+		
 	
 	print("Mouse coordinates in move state " + str(mouse_coordinates))
 	print("Current velocity vector", velocity)	
@@ -90,6 +92,8 @@ func move_state(_delta):
 	move_and_slide()
 
 func attack_state(_delta):#State machine for attack combos will go here
+	
+	mouse_coordinates = get_local_mouse_position()
 	
 	if(attackSpritePlayer.current_animation_position == 0):
 		attackSpritePlayer.play("melee_attack")

@@ -1,9 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://kji2r37la1ae"]
+[gd_scene load_steps=6 format=3 uid="uid://kji2r37la1ae"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_rau2v"]
 [ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="4_jeds5"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_6uwhw"]
+vertices = PackedVector2Array(448, 256, 592, 320, 64, 320, 224, 256, 592, 32, 448, 104, 64, 32, 224, 104)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 1, 0, 5), PackedInt32Array(6, 4, 5, 7), PackedInt32Array(2, 6, 7, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(64, 32, 64, 320, 592, 320, 592, 32), PackedVector2Array(224, 104, 224, 256, 448, 256, 448, 104)])
 
 [node name="testDevGitThing" type="Node2D"]
 y_sort_enabled = true
@@ -16,4 +21,13 @@ position = Vector2(357, 236)
 position = Vector2(10, -1)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(168, 212)
+position = Vector2(128, 276)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+position = Vector2(0, -8)
+navigation_polygon = SubResource("NavigationPolygon_6uwhw")
+avoidance_layers = 2
+
+[node name="ExclusionZone" type="Polygon2D" parent="."]
+color = Color(1, 1, 1, 0)
+polygon = PackedVector2Array(335, 99, 222, 163, 224, 179, 336, 244, 448, 179, 449, 164)

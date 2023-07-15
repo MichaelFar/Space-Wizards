@@ -490,9 +490,8 @@ hframes = 6
 frame = 5
 
 [node name="NakedWizard02" type="Sprite2D" parent="."]
-z_index = -1
-position = Vector2(0, -9)
 texture = ExtResource("5_qw86e")
+offset = Vector2(0, -10)
 hframes = 16
 frame = 2
 

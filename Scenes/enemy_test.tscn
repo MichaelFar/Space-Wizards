@@ -1,21 +1,103 @@
-[gd_scene load_steps=4 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=9 format=3 uid="uid://dusbiv02x5l05"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
 [ext_resource type="Texture2D" uid="uid://cpdogri3qlybh" path="res://Sprites/test_goblin_enemy/goblin_idle.png" id="1_v1ppd"]
 [ext_resource type="Texture2D" uid="uid://bpule573kmfum" path="res://Sprites/test_goblin_enemy/goblin_run.png" id="3_jf4rh"]
 
+[sub_resource type="Animation" id="Animation_5wgrx"]
+resource_name = "enemy_walk"
+length = 0.7
+loop_mode = 1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GoblinRun:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6]
+}
+
+[sub_resource type="Animation" id="Animation_467ej"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GoblinRun:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GoblinIdle:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_dp4kl"]
+resource_name = "enemy_idle"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GoblinIdle:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gnggo"]
+_data = {
+"RESET": SubResource("Animation_467ej"),
+"enemy_idle": SubResource("Animation_dp4kl"),
+"enemy_walk": SubResource("Animation_5wgrx")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
+radius = 4.0
+
 [node name="Enemy_Test" type="CharacterBody2D"]
 script = ExtResource("1_qhvur")
 
-[node name="SpriteContainer" type="Node2D" parent="."]
+[node name="GoblinRun" type="Sprite2D" parent="."]
+texture = ExtResource("3_jf4rh")
+offset = Vector2(0, -18)
+hframes = 8
 
-[node name="GoblinIdle" type="Sprite2D" parent="SpriteContainer"]
-position = Vector2(0, -1)
+[node name="GoblinIdle" type="Sprite2D" parent="."]
 texture = ExtResource("1_v1ppd")
 offset = Vector2(0, -17)
 hframes = 4
 
-[node name="GoblinRun" type="Sprite2D" parent="SpriteContainer"]
-texture = ExtResource("3_jf4rh")
-offset = Vector2(0, -18)
-hframes = 8
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_gnggo")
+}
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+target_desired_distance = 20.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_1aek4")

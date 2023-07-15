@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://kji2r37la1ae"]
+[gd_scene load_steps=7 format=3 uid="uid://kji2r37la1ae"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_rau2v"]
 [ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="4_jeds5"]
+[ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="5_dsw61"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_acix7"]
 vertices = PackedVector2Array(600, 24, 600, 320, 448, 184, 336, 120, 56, 24, 232, 184, 56, 320, 336, 248)
@@ -28,10 +29,7 @@ position = Vector2(0, -8)
 navigation_polygon = SubResource("NavigationPolygon_acix7")
 avoidance_layers = 2
 
-[node name="ExclusionZone" type="Polygon2D" parent="."]
-color = Color(1, 1, 1, 0)
-polygon = PackedVector2Array(336, 96, 224, 160, 224, 184, 336, 248, 448, 184, 448, 160)
-polygons = [PackedInt32Array(), null, null]
+[node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("4_jeds5")]
 position = Vector2(256, 280)

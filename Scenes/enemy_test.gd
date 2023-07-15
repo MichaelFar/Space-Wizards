@@ -73,10 +73,14 @@ func choose_path(_nav):
 func wander_state(_delta):
 	
 	nav.target_position = chosenPoint
-	if frame % 10 == 0:
-		direction = nav.get_next_path_position() - global_position
-		
+	
+	direction = nav.get_next_path_position() - global_position
+	
+	if(position.distance_to(direction) < position.distance_to(chosenPoint) && direction.x > position.x):
 		change_sprite(get_node('GoblinRun'), direction)
+	else:
+		change_sprite(get_node('GoblinRun'), chosenPoint)
+	
 	if(frame % 20 == 0):
 		previousPosition = position
 	

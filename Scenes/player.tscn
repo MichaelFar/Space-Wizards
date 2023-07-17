@@ -1,8 +1,9 @@
-[gd_scene load_steps=48 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=50 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Texture2D" uid="uid://bxbxv45lap4o" path="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png" id="3_cuwdv"]
 [ext_resource type="Script" path="res://Scripts/attackRotation.gd" id="3_esf8s"]
+[ext_resource type="PackedScene" uid="uid://0aa1ygtgydm4" path="res://Scenes/hitbox.tscn" id="4_nryts"]
 [ext_resource type="Texture2D" uid="uid://swc4t8u2jlia" path="res://Sprites/player sprite sheets/naked_wizard_02.png" id="5_qw86e"]
 
 [sub_resource type="Animation" id="Animation_5cogu"]
@@ -429,6 +430,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [5]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Smear01Vertical01/AttackHitBox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_wm3dy"]
 resource_name = "melee_attack"
@@ -446,12 +459,27 @@ tracks/0/keys = {
 "update": 1,
 "values": [5, 0, 1, 2, 3, 4, 5]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Smear01Vertical01/AttackHitBox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.08, 0.15),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4uim7"]
 _data = {
 "RESET": SubResource("Animation_hj3a2"),
 "melee_attack": SubResource("Animation_wm3dy")
 }
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x5gnt"]
+radius = 8.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
 radius = 3.0
@@ -460,7 +488,6 @@ height = 20.0
 [node name="Player" type="CharacterBody2D"]
 y_sort_enabled = true
 script = ExtResource("1_cdtsu")
-metadata/_edit_group_ = true
 
 [node name="PlayerSpriteAnimPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -489,6 +516,14 @@ texture = ExtResource("3_cuwdv")
 hframes = 6
 frame = 5
 
+[node name="AttackHitBox" parent="attackContainer/Smear01Vertical01" instance=ExtResource("4_nryts")]
+
+[node name="CollisionShape2D" parent="attackContainer/Smear01Vertical01/AttackHitBox" index="0"]
+position = Vector2(2, 0)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_x5gnt")
+disabled = true
+
 [node name="NakedWizard02" type="Sprite2D" parent="."]
 texture = ExtResource("5_qw86e")
 offset = Vector2(0, -10)
@@ -498,3 +533,7 @@ frame = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
+
+[connection signal="area_entered" from="attackContainer/Smear01Vertical01/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]
+
+[editable path="attackContainer/Smear01Vertical01/AttackHitBox"]

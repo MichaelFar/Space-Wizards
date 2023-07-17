@@ -32,16 +32,16 @@ avoidance_layers = 2
 [node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(256, 280)
+position = Vector2(144, 176)
 
 [node name="Enemy_Test3" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(120, 120)
+position = Vector2(256, 256)
 
 [node name="Enemy_Test4" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(480, 64)
+position = Vector2(520, 64)
 
 [node name="Enemy_Test5" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(536, 168)
+position = Vector2(496, 248)
 
 [node name="Enemy_Test6" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(296, 56)
+position = Vector2(216, 72)

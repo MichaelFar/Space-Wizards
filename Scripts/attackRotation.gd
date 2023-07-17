@@ -14,10 +14,11 @@ func _ready():
 
 func _physics_process(delta):
 	
-	if(attackPlayer.current_animation_position == 0 && attackPlayer.current_animation_length != 0):
-		self.look_at(get_global_mouse_position())
-		playerSpriteTree.set("parameters/IdleBlend/blend_position", playerNode.get_local_mouse_position())
-		animationState.travel("IdleBlend")
+	if(attackPlayer.current_animation != ''):
+		if(attackPlayer.current_animation_position == 0 && attackPlayer.current_animation_length != 0):
+			self.look_at(get_global_mouse_position())
+			playerSpriteTree.set("parameters/IdleBlend/blend_position", playerNode.get_local_mouse_position())
+			animationState.travel("IdleBlend")
 		
 	
 	

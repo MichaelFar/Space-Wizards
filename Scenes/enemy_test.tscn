@@ -1,17 +1,18 @@
-[gd_scene load_steps=13 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=14 format=3 uid="uid://dusbiv02x5l05"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
 [ext_resource type="Texture2D" uid="uid://cpdogri3qlybh" path="res://Sprites/test_goblin_enemy/goblin_idle.png" id="1_v1ppd"]
 [ext_resource type="Texture2D" uid="uid://bpule573kmfum" path="res://Sprites/test_goblin_enemy/goblin_run.png" id="3_jf4rh"]
 [ext_resource type="PackedScene" uid="uid://r8kroxten5qy" path="res://Scenes/hurtbox.tscn" id="4_cgwb5"]
 [ext_resource type="Texture2D" uid="uid://bn6te2kw2uev2" path="res://Sprites/test_goblin_enemy/Take Hit.png" id="5_aq4gy"]
+[ext_resource type="PackedScene" uid="uid://1n1ogpj3d1ai" path="res://Scenes/emote_container.tscn" id="6_cavpu"]
 
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("GoblinRun:frame")
+tracks/0/path = NodePath("enemy_walk:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -23,7 +24,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("GoblinIdle:frame")
+tracks/1/path = NodePath("enemy_idle:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -35,7 +36,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("TakeHit:frame")
+tracks/2/path = NodePath("take_hit:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -52,7 +53,7 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("GoblinIdle:frame")
+tracks/0/path = NodePath("enemy_idle:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -70,7 +71,7 @@ step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("GoblinRun:frame")
+tracks/0/path = NodePath("enemy_walk:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -87,7 +88,7 @@ step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("TakeHit:frame")
+tracks/0/path = NodePath("take_hit:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -115,12 +116,12 @@ size = Vector2(42, 39)
 [node name="Enemy_Test" type="CharacterBody2D"]
 script = ExtResource("1_qhvur")
 
-[node name="GoblinRun" type="Sprite2D" parent="."]
+[node name="enemy_walk" type="Sprite2D" parent="."]
 texture = ExtResource("3_jf4rh")
 offset = Vector2(0, -18)
 hframes = 8
 
-[node name="GoblinIdle" type="Sprite2D" parent="."]
+[node name="enemy_idle" type="Sprite2D" parent="."]
 texture = ExtResource("1_v1ppd")
 offset = Vector2(0, -17)
 hframes = 4
@@ -144,10 +145,13 @@ shape = SubResource("CapsuleShape2D_1aek4")
 position = Vector2(0, -9.5)
 shape = SubResource("RectangleShape2D_4lt5l")
 
-[node name="TakeHit" type="Sprite2D" parent="."]
+[node name="take_hit" type="Sprite2D" parent="."]
 texture = ExtResource("5_aq4gy")
 offset = Vector2(0, -17)
 hframes = 4
+
+[node name="EmoteContainer" parent="." instance=ExtResource("6_cavpu")]
+position = Vector2(0, -29)
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

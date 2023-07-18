@@ -23,7 +23,7 @@ var state = MOVE
 
 enum {
 	MOVE,
-	DRIFT,
+	DODGE,
 	ATTACK
 }
 
@@ -35,7 +35,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	attackSpritePlayer = $AttackSpritePlayer
 	post_initialize(playerSpriteTree)
 
-func post_initialize(animation_tree):#Bug in godot where i needed to wrap this in a function to get it to run
+func post_initialize(animation_tree):
 	animationState = animation_tree.get("parameters/playback")
 
 func _physics_process(_delta):#Runs per frame, contains starting player state machine
@@ -45,7 +45,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 		MOVE:
 			move_state(_delta)
 			
-		DRIFT:
+		DODGE:
 			pass
 			
 		ATTACK:
@@ -57,17 +57,18 @@ func move_state(_delta):
 	input_vector.x = Input.get_action_strength("right") - Input.get_action_strength("left")
 	
 	input_vector.y = Input.get_action_strength("down") - Input.get_action_strength("up")
-	input_vector = input_vector.normalized()
 	
 	playerPosition = self.position
 	
-	#playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
-	#animationState.travel("IdleBlend")
-	
-	
-		#velocity = Vector2.ZERO
 	if input_vector != Vector2.ZERO:#Movement
 		
+		if(input_vector.x != 0 && input_vector.y != 0):
+			if(input_vector.y > 0):
+				input_vector.y -= .40
+			else:
+				input_vector.y += .40
+				
+		input_vector = input_vector.normalized()
 		playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
 		playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
 		animationState.travel("MoveBlend")
@@ -83,14 +84,10 @@ func move_state(_delta):
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 	
 	if (Input.is_action_just_pressed("click")):#Attack state
-
 		state = ATTACK
 	else:
 		knockBackDirection = 1
 	
-	print("Mouse coordinates in move state " + str(mouse_coordinates))
-	print("Current velocity vector", velocity)	
-	#move_and_collide(velocity * _delta)
 	move_and_slide()
 
 func _on_hurtbox_area_entered(area):
@@ -116,9 +113,6 @@ func attack_state(_delta):#State machine for attack combos will go here
 		#velocity = Vector2.ZERO
 	move_and_slide()
 	
-	
-
-
 func _on_attack_hit_box_area_entered(area):
 	if (area.name == "Hurtbox"):
 		knockBackDirection = -1

@@ -6,10 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="4_jeds5"]
 [ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="5_dsw61"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_acix7"]
-vertices = PackedVector2Array(600, 24, 600, 320, 448, 184, 336, 120, 56, 24, 232, 184, 56, 320, 336, 248)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3), PackedInt32Array(4, 0, 3), PackedInt32Array(4, 3, 5), PackedInt32Array(6, 4, 5), PackedInt32Array(7, 2, 1), PackedInt32Array(7, 1, 6), PackedInt32Array(6, 5, 7)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(56, 24, 600, 24, 600, 320, 56, 320), PackedVector2Array(336, 120, 232, 184, 336, 248, 448, 184)])
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_gku85"]
+vertices = PackedVector2Array(480, 264, 600, 320, 56, 320, 192, 264, 600, 24, 480, 96, 56, 24, 192, 96)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 1, 0, 5), PackedInt32Array(6, 4, 5, 7), PackedInt32Array(2, 6, 7, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(56, 24, 56, 320, 600, 320, 600, 24), PackedVector2Array(192, 96, 192, 264, 480, 264, 480, 96)])
 
 [node name="testDevGitThing" type="Node2D"]
 y_sort_enabled = true
@@ -26,10 +26,11 @@ position = Vector2(128, 276)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 position = Vector2(0, -8)
-navigation_polygon = SubResource("NavigationPolygon_acix7")
+navigation_polygon = SubResource("NavigationPolygon_gku85")
 avoidance_layers = 2
 
 [node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
+polygon = PackedVector2Array(480, 88, 192, 88, 192, 256, 480, 256, 480, 168)
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("4_jeds5")]
 position = Vector2(144, 176)

@@ -21,21 +21,13 @@ position = Vector2(413, 276)
 [node name="Level1Tiles" parent="." instance=ExtResource("2_38p6r")]
 position = Vector2(66, 39)
 
+[node name="Enemy_Test" parent="." instance=ExtResource("4_jeds5")]
+position = Vector2(184, 316)
+
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_hugf2")
 avoidance_layers = 2
 
 [node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
-polygon = PackedVector2Array(528, 128, 256, 128, 256, 288, 528, 288, 528, 208)
-
-[node name="Enemy_Test" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(184, 264)
-
-[node name="Enemy_Test2" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(208, 320)
-
-[node name="Enemy_Test3" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(192, 192)
-
-[node name="Enemy_Test4" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(296, 112)
+position = Vector2(64, 39)
+polygon = PackedVector2Array(464, 88, 192, 88, 192, 248, 464, 248, 464, 168)

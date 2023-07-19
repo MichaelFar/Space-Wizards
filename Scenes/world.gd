@@ -1,5 +1,11 @@
 extends Node2D
 
+#Root container node script
+#Navigation Area and the Exclusion zone MUST be located at (0,0) or the points will not be correct and the ai will choose erroneous coordinates
+#Calculates a list of valid points once as well as player position and delivers to the ai
+#Also contains debug commands like escaping
+#
+#
 
 @onready var navigationRegion = $NavigationRegion2D
 @onready var exclusion_zone = $ExclusionZone#Get sibling
@@ -36,6 +42,7 @@ func get_valid_points(_min, _max):
 		for j in range(_max.y):
 			if(!geometry.is_point_in_polygon(Vector2(i, j), polygon) && i > _min.x && j > _min.y):
 				validPoints.append(Vector2(i,j))
+				
 			
 
 	return validPoints

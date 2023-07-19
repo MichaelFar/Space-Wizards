@@ -4,6 +4,7 @@
 
 [node name="Level1Tiles" type="Node2D"]
 y_sort_enabled = true
+position = Vector2(0, 3)
 metadata/_edit_group_ = true
 
 [node name="TileMap" type="TileMap" parent="."]

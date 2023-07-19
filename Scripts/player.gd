@@ -1,14 +1,16 @@
 extends CharacterBody2D
-
-
+#Player code
+#Has no depencies on parent nodes
+#Can move and attack
+#8 directional movement
+#All directions can be attacked
 var input_vector = Vector2.ZERO
 
 const acceleration = 700 #Multiplied by delta
 const friction = 250 #Multiplied by delta
 const max_speed = 150 # NOT multiplied by delta
 const attack_movement = 400 #Multiplied by delta
-#WHILE ATTACK FRICTION GO DOWN (needs implement)
-#
+
 var playerSpritePlayer = null
 var playerSpriteTree = null
 var animationState = null
@@ -75,7 +77,7 @@ func move_state(_delta):
 		previousBlend = input_vector
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
 		
-		print("Moving towards " + str(velocity))
+		
 	
 	elif(velocity != Vector2.ZERO):#Friction
 		
@@ -90,8 +92,6 @@ func move_state(_delta):
 	
 	move_and_slide()
 
-func _on_hurtbox_area_entered(area):
-	print("Player attacked enemy")
 
 func attack_state(_delta):#State machine for attack combos will go here
 	

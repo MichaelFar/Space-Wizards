@@ -20,6 +20,8 @@ const noticeDist = 200
 const pursueDist = 80
 const attackDist = 40
 
+var attackPosition = Vector2.ZERO
+
 var previousPosition = Vector2.ZERO
 var direction = Vector2.ZERO
 var stuckFrames = 0
@@ -35,6 +37,8 @@ var animationPlayer = null
 @onready var target_distance = nav.get("target_desired_distance")
 @onready var playerNode = get_node("../Player")
 @onready var emoteContainer = $EmoteContainer
+@onready var smearContainer = $enemy_attack_container
+
 enum {
 	WANDER,
 	ATTACK,
@@ -56,7 +60,8 @@ func _ready():
 	emoteContainer.play_emote('')
 
 func _physics_process(_delta):#State machine runs per frame
-	
+	attackPosition = playerNode.position
+	print('Attack position is ' + str(attackPosition))
 	match state:
 		
 		CHOOSEPOINT:#CHOOSEPOINT is used to get a valid point to travel to, then state transitions to WANDER
@@ -85,7 +90,7 @@ func _physics_process(_delta):#State machine runs per frame
 	&& state != ATTACK):
 	#Other states must be interrupted so that the player may be noticed
 	#However certain states should not be interrupted, hence the state exclusion in the condition
-	#Creates a '?' above the head of an alerted enemy
+	#Creates a '?' above the head of an enemy that noticed the player
 		change_sprite(get_node('enemy_idle'), chosenPoint)
 		animationPlayer.stop()
 		animationPlayer.play('enemy_idle')
@@ -130,23 +135,24 @@ func wander_state(target_point, _delta):
 		stuckFrames = 0
 		emoteContainer.play_emote('')
 	
-	print("Attacking player from wander function")
+	
 	if(self.position.distance_to(target_point) <= attackDist 
 	&& state == PURSUE 
 	&& playerNode.position.distance_to(target_point) <= 20):
 		state = ATTACK
 		idle_frames = 0
-		change_sprite(get_node('enemy_attack'), target_point)
-		animationPlayer.stop()
-		animationPlayer.play('enemy_attack')
 		stuckFrames = 0
 		emoteContainer.play_emote('')
 		velocity = Vector2.ZERO
 		
+		animationPlayer.stop()
+		change_sprite(get_node('enemy_attack'), get_parent().playerPosition)
+		animationPlayer.play('enemy_attack')
+		
 	move_and_slide()
 
 func attack_state(_delta):
-	
+	smearContainer.supplied_player_position = get_parent().get_node('Player').position
 	print(self.name + " is in attack state")
 	if(self.position.distance_to(playerNode.position) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
@@ -156,13 +162,20 @@ func attack_state(_delta):
 			animationPlayer.play('enemy_walk')
 			state = PURSUE
 			idle_frames = 0
-			playerPreviousPosition = get_parent().playerPosition
+			attackPosition = get_parent().get_node('Player').position
 			emoteContainer.play_emote('startled')
 	else:
+		
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			animationPlayer.stop()
 			change_sprite(get_node('enemy_attack'), get_parent().playerPosition)
 			animationPlayer.play('enemy_attack')
+		elif(animationPlayer.current_animation != 'enemy_attack'):
+			animationPlayer.stop()
+			change_sprite(get_node('enemy_attack'), get_parent().playerPosition)
+			animationPlayer.play('enemy_attack')
+		
+			
 		
 func idle_state(_delta):
 
@@ -206,7 +219,6 @@ func change_sprite(spriteName, chosen_point):
 			i.hide()
 		else:
 			i.show()
-			
 
 func _on_hurtbox_area_entered(area):
 	#Sets the appropriate values and sets the state to TAKEHIT
@@ -281,9 +293,6 @@ func pursue_state(_delta):
 	if(position.distance_to(get_parent().playerPosition) <= noticeDist):
 		playerPreviousPosition = get_parent().playerPosition
 	wander_state(playerPreviousPosition, _delta)
-		
-	
-
 
 func _on_enemy_attack_hitbox_area_entered(area):
 	if(area.name == 'player_hurtbox'):

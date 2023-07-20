@@ -32,10 +32,10 @@ polygon = PackedVector2Array(528, 128, 256, 128, 256, 288, 528, 288, 528, 208)
 position = Vector2(184, 264)
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(208, 320)
+position = Vector2(200, 176)
 
 [node name="Enemy_Test3" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(192, 192)
+position = Vector2(272, 344)
 
 [node name="Enemy_Test4" parent="." instance=ExtResource("4_jeds5")]
-position = Vector2(296, 112)
+position = Vector2(144, 320)

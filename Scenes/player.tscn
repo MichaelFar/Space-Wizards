@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=52 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Texture2D" uid="uid://bxbxv45lap4o" path="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png" id="3_cuwdv"]
@@ -292,6 +292,10 @@ tracks/0/keys = {
 "values": [10, 11]
 }
 
+[sub_resource type="Animation" id="Animation_7g3fa"]
+resource_name = "take_hit"
+length = 0.4
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_101kq"]
 _data = {
 "RESET": SubResource("Animation_5cogu"),
@@ -310,7 +314,8 @@ _data = {
 "move_right": SubResource("Animation_avnbh"),
 "move_tl": SubResource("Animation_5x2i8"),
 "move_tr": SubResource("Animation_lp7dm"),
-"move_up": SubResource("Animation_sfeti")
+"move_up": SubResource("Animation_sfeti"),
+"take_hit": SubResource("Animation_7g3fa")
 }
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_efl5p"]
@@ -543,5 +548,6 @@ position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_5wr3i")
 
 [connection signal="area_entered" from="attackContainer/Smear01Vertical01/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]
+[connection signal="area_entered" from="player_hurtbox" to="." method="_on_player_hurtbox_area_entered"]
 
 [editable path="attackContainer/Smear01Vertical01/AttackHitBox"]

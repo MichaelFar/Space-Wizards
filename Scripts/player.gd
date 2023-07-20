@@ -20,13 +20,15 @@ var frameRecovery = 0
 var mouse_coordinates = Vector2.ZERO
 var previousBlend = Vector2.ZERO
 var knockBackDirection = 1
+var assailantPosition = Vector2.ZERO
 
 var state = MOVE
 
 enum {
 	MOVE,
 	DODGE,
-	ATTACK
+	ATTACK,
+	TAKEHIT
 }
 
 func _ready():#Called when node loads into the scene, children ready functions run first
@@ -53,6 +55,8 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 		ATTACK:
 			
 			attack_state(_delta)
+		TAKEHIT:
+			take_hit_state(_delta)
 		
 func move_state(_delta):
 	
@@ -77,8 +81,6 @@ func move_state(_delta):
 		previousBlend = input_vector
 		velocity = velocity.move_toward(input_vector * max_speed, acceleration * _delta)
 		
-		
-	
 	elif(velocity != Vector2.ZERO):#Friction
 		
 		playerSpriteTree.set("parameters/IdleBlend/blend_position", previousBlend)
@@ -112,9 +114,38 @@ func attack_state(_delta):#State machine for attack combos will go here
 		state = MOVE
 		#velocity = Vector2.ZERO
 	move_and_slide()
-	
+
+func take_hit_state(_delta):
+
+	var pushBackStrength = 150
+
+	var pushBackDirection = position - assailantPosition
+
+	pushBackDirection = pushBackDirection.normalized()
+
+	if(playerSpritePlayer.current_animation_position == 0):
+
+		playerSpritePlayer.play('take_hit')
+
+	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
+
+		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackStrength)
+
+	elif(playerSpritePlayer.current_animation_position == playerSpritePlayer.current_animation_length):
+
+		playerSpritePlayer.stop()
+		state = MOVE
+	move_and_slide()
+
 func _on_attack_hit_box_area_entered(area):
 	if (area.name == "Hurtbox"):
 		knockBackDirection = -1
 		velocity = Vector2.ZERO
-	
+
+func _on_player_hurtbox_area_entered(area):
+	if(area.name == 'enemy_attack_hitbox'):
+		state = TAKEHIT
+		assailantPosition = area.get_parent().get_parent().global_position
+		velocity = Vector2.ZERO
+
+

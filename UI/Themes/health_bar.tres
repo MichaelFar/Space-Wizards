@@ -1,0 +1,17 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://ydhmuqqweu5h"]
+
+[sub_resource type="SystemFont" id="SystemFont_g8ris"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxxb0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ak00"]
+bg_color = Color(0, 0.623529, 0.282353, 1)
+
+[resource]
+default_font = SubResource("SystemFont_g8ris")
+default_font_size = 6
+ProgressBar/colors/font_color = Color(1, 0, 0, 0)
+ProgressBar/font_sizes/font_size = 2
+ProgressBar/fonts/font = SubResource("SystemFont_g8ris")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_fxxb0")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_1ak00")

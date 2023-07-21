@@ -9,6 +9,11 @@ extends CharacterBody2D
 var acceleration = 200
 var max_speed = 80
 var speed = 150
+var max_health = 1000.0
+var current_health = max_health
+var damage_taken = 0.0
+var pushBackStrength = 250
+
 var frame = 0
 var state = CHOOSEPOINT
 var inclusion_area = Vector2.ZERO
@@ -38,6 +43,7 @@ var animationPlayer = null
 @onready var playerNode = get_node("../Player")
 @onready var emoteContainer = $EmoteContainer
 @onready var smearContainer = $enemy_attack_container
+@onready var healthbar = $Healthbar
 
 enum {
 	WANDER,
@@ -46,7 +52,8 @@ enum {
 	IDLE,
 	CHOOSEPOINT,
 	TAKEHIT,
-	NOTICEPLAYER
+	NOTICEPLAYER,
+	DEAD
 }
 
 func _ready():
@@ -56,7 +63,7 @@ func _ready():
 		if i is Sprite2D:
 			children.append(i)
 	
-		
+	healthbar.value = 100
 	emoteContainer.play_emote('')
 
 func _physics_process(_delta):#State machine runs per frame
@@ -82,12 +89,15 @@ func _physics_process(_delta):#State machine runs per frame
 			idle_state(_delta)
 		TAKEHIT:#Determines what happens when hit
 			take_hit_state(_delta)
+		DEAD:
+			dead_state(_delta)
 			
 	if(get_parent().playerPosition.distance_to(position) <= noticeDist 
 	&& state != NOTICEPLAYER 
 	&& state != PURSUE 
 	&& state != TAKEHIT
-	&& state != ATTACK):
+	&& state != ATTACK
+	&& state != DEAD):
 	#Other states must be interrupted so that the player may be noticed
 	#However certain states should not be interrupted, hence the state exclusion in the condition
 	#Creates a '?' above the head of an enemy that noticed the player
@@ -152,7 +162,9 @@ func wander_state(target_point, _delta):
 	move_and_slide()
 
 func attack_state(_delta):
+	
 	smearContainer.supplied_player_position = get_parent().get_node('Player').position
+	
 	print(self.name + " is in attack state")
 	if(self.position.distance_to(playerNode.position) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
@@ -232,12 +244,10 @@ func _on_hurtbox_area_entered(area):
 		playerPreviousPosition = get_parent().playerNode.position
 		change_sprite(get_node("take_hit"), playerPreviousPosition)
 		animationPlayer.play("take_hit")
+		update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
 		
 		
 func take_hit_state(_delta):
-	
-	var pushBackStrength = 250
-	
 	var pushBackDirection = position - playerPreviousPosition
 	
 	pushBackDirection = pushBackDirection.normalized()
@@ -245,6 +255,7 @@ func take_hit_state(_delta):
 	if(animationPlayer.current_animation_position == 0):
 		
 		animationPlayer.play('take_hit')
+		
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
@@ -260,6 +271,8 @@ func take_hit_state(_delta):
 		playerPreviousPosition = get_parent().playerPosition
 		emoteContainer.play_emote('exclaim')
 	
+	if(current_health <= 0):
+		state = DEAD
 	move_and_slide()
 	
 func notice_player_state(_delta):
@@ -285,7 +298,6 @@ func notice_player_state(_delta):
 		state = CHOOSEPOINT
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
-		
 		emoteContainer.play_emote('')
 	
 func pursue_state(_delta):
@@ -294,7 +306,13 @@ func pursue_state(_delta):
 		playerPreviousPosition = get_parent().playerPosition
 	wander_state(playerPreviousPosition, _delta)
 
-func _on_enemy_attack_hitbox_area_entered(area):
-	if(area.name == 'player_hurtbox'):
-		pass
-	# Replace with function body.
+func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
+	
+	current_health -= health_change
+	healthbar.value = (current_health / max_health) * 100
+	print("Health bar value is " + str(healthbar.value))
+	pushBackStrength = knock_back_strength
+
+func dead_state(_delta):
+	pass
+	

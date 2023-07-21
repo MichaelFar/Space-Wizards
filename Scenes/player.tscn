@@ -1,10 +1,12 @@
-[gd_scene load_steps=52 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=54 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Texture2D" uid="uid://bxbxv45lap4o" path="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png" id="3_cuwdv"]
 [ext_resource type="Script" path="res://Scripts/attackRotation.gd" id="3_esf8s"]
+[ext_resource type="Script" path="res://Scripts/broom_specs.gd" id="4_itnfa"]
 [ext_resource type="PackedScene" uid="uid://0aa1ygtgydm4" path="res://Scenes/hitbox.tscn" id="4_nryts"]
 [ext_resource type="Texture2D" uid="uid://swc4t8u2jlia" path="res://Sprites/player sprite sheets/naked_wizard_02.png" id="5_qw86e"]
+[ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="7_6wihs"]
 
 [sub_resource type="Animation" id="Animation_5cogu"]
 length = 0.001
@@ -508,14 +510,18 @@ active = true
 parameters/IdleBlend/blend_position = Vector2(-0.5568, 0.423581)
 parameters/MoveBlend/blend_position = Vector2(0, 0)
 
-[node name="AttackSpritePlayer" type="AnimationPlayer" parent="."]
+[node name="attackContainer" type="CharacterBody2D" parent="."]
+position = Vector2(0, -4)
+script = ExtResource("3_esf8s")
+
+[node name="AttackSpritePlayer" type="AnimationPlayer" parent="attackContainer"]
+root_node = NodePath("../..")
 libraries = {
 "": SubResource("AnimationLibrary_4uim7")
 }
 
-[node name="attackContainer" type="CharacterBody2D" parent="."]
-position = Vector2(0, -4)
-script = ExtResource("3_esf8s")
+[node name="broom_attack_specs" type="Node" parent="attackContainer"]
+script = ExtResource("4_itnfa")
 
 [node name="Smear01Vertical01" type="Sprite2D" parent="attackContainer"]
 position = Vector2(5, 0)
@@ -546,6 +552,12 @@ shape = SubResource("CapsuleShape2D_hslqc")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_hurtbox"]
 position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_5wr3i")
+
+[node name="healthbar" parent="." instance=ExtResource("7_6wihs")]
+offset_left = -16.0
+offset_top = 8.0
+offset_right = 16.0
+offset_bottom = 13.0
 
 [connection signal="area_entered" from="attackContainer/Smear01Vertical01/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]
 [connection signal="area_entered" from="player_hurtbox" to="." method="_on_player_hurtbox_area_entered"]

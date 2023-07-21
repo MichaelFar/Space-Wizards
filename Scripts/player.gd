@@ -11,6 +11,10 @@ const friction = 250 #Multiplied by delta
 const max_speed = 150 # NOT multiplied by delta
 const attack_movement = 400 #Multiplied by delta
 
+var max_health = 1000
+var current_health = max_health
+var pushBackStrength = 0
+
 var playerSpritePlayer = null
 var playerSpriteTree = null
 var animationState = null
@@ -21,14 +25,15 @@ var mouse_coordinates = Vector2.ZERO
 var previousBlend = Vector2.ZERO
 var knockBackDirection = 1
 var assailantPosition = Vector2.ZERO
-
+@onready var healthbar = $healthbar
 var state = MOVE
 
 enum {
 	MOVE,
 	DODGE,
 	ATTACK,
-	TAKEHIT
+	TAKEHIT,
+	DEAD
 }
 
 func _ready():#Called when node loads into the scene, children ready functions run first
@@ -36,7 +41,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	velocity = Vector2.ZERO
 	playerSpritePlayer = $PlayerSpriteAnimPlayer
 	playerSpriteTree = $PlayerSpriteAnimTree
-	attackSpritePlayer = $AttackSpritePlayer
+	attackSpritePlayer = $attackContainer/AttackSpritePlayer
 	post_initialize(playerSpriteTree)
 
 func post_initialize(animation_tree):
@@ -57,6 +62,8 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			attack_state(_delta)
 		TAKEHIT:
 			take_hit_state(_delta)
+		DEAD:
+			dead_state(_delta)
 		
 func move_state(_delta):
 	
@@ -135,7 +142,12 @@ func take_hit_state(_delta):
 
 		playerSpritePlayer.stop()
 		state = MOVE
+	if(current_health <= 0):
+		state = DEAD
 	move_and_slide()
+
+func dead_state(_delta):
+	pass
 
 func _on_attack_hit_box_area_entered(area):
 	if (area.name == "Hurtbox"):
@@ -147,5 +159,10 @@ func _on_player_hurtbox_area_entered(area):
 		state = TAKEHIT
 		assailantPosition = area.get_parent().get_parent().global_position
 		velocity = Vector2.ZERO
-
-
+		update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
+func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
+	
+	current_health -= health_change
+	healthbar.value = (current_health / max_health) * 100
+	print("Health bar value is " + str(healthbar.value))
+	pushBackStrength = knock_back_strength

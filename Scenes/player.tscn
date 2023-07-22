@@ -1,6 +1,7 @@
-[gd_scene load_steps=54 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=56 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
+[ext_resource type="Texture2D" uid="uid://d3xbqmyqi6ngo" path="res://Sprites/Sprite Effects/pipo-btleffect208_192.png" id="3_c70fh"]
 [ext_resource type="Texture2D" uid="uid://bxbxv45lap4o" path="res://Sprites/player sprite sheets/Smear 01 Vertical 01.png" id="3_cuwdv"]
 [ext_resource type="Script" path="res://Scripts/attackRotation.gd" id="3_esf8s"]
 [ext_resource type="Script" path="res://Scripts/broom_specs.gd" id="4_itnfa"]
@@ -449,6 +450,30 @@ tracks/1/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attackContainer/Pipo-btleffect208192:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attackContainer/Pipo-btleffect208192:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_wm3dy"]
 resource_name = "melee_attack"
@@ -479,10 +504,40 @@ tracks/1/keys = {
 "values": [true, false, true]
 }
 
+[sub_resource type="Animation" id="Animation_htesc"]
+resource_name = "parry_shield"
+length = 0.22
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Pipo-btleffect208192:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Pipo-btleffect208192:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4uim7"]
 _data = {
 "RESET": SubResource("Animation_hj3a2"),
-"melee_attack": SubResource("Animation_wm3dy")
+"melee_attack": SubResource("Animation_wm3dy"),
+"parry_shield": SubResource("Animation_htesc")
 }
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x5gnt"]
@@ -495,7 +550,6 @@ height = 20.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5wr3i"]
 
 [node name="Player" type="CharacterBody2D"]
-y_sort_enabled = true
 script = ExtResource("1_cdtsu")
 
 [node name="PlayerSpriteAnimPlayer" type="AnimationPlayer" parent="."]
@@ -519,6 +573,17 @@ root_node = NodePath("../..")
 libraries = {
 "": SubResource("AnimationLibrary_4uim7")
 }
+
+[node name="Pipo-btleffect208192" type="Sprite2D" parent="attackContainer"]
+visible = false
+z_index = -6
+z_as_relative = false
+position = Vector2(5, 0)
+rotation = 3.14159
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_c70fh")
+hframes = 5
+vframes = 4
 
 [node name="broom_attack_specs" type="Node" parent="attackContainer"]
 script = ExtResource("4_itnfa")

@@ -338,6 +338,5 @@ offset_right = 16.0
 offset_bottom = 16.0
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
-[connection signal="area_entered" from="enemy_attack_container/Smear01Horizontal1/enemy_attack_hitbox" to="." method="_on_enemy_attack_hitbox_area_entered"]
 
 [editable path="Hurtbox"]

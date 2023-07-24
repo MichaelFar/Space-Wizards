@@ -26,6 +26,8 @@ var previousBlend = Vector2.ZERO
 var knockBackDirection = 1
 var assailantPosition = Vector2.ZERO
 @onready var healthbar = $healthbar
+@onready var shader = $NakedWizard02
+
 var state = MOVE
 
 enum {
@@ -44,6 +46,8 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	playerSpriteTree = $PlayerSpriteAnimTree
 	attackSpritePlayer = $attackContainer/AttackSpritePlayer
 	post_initialize(playerSpriteTree)
+	
+	shader = shader.get("material")
 
 func post_initialize(animation_tree):
 	animationState = animation_tree.get("parameters/playback")
@@ -147,8 +151,11 @@ func take_hit_state(_delta):
 
 		playerSpritePlayer.stop()
 		state = MOVE
+		
 	if(current_health <= 0):
+		
 		state = DEAD
+		
 	move_and_slide()
 
 func dead_state(_delta):
@@ -161,12 +168,13 @@ func parry_state(_delta):
 	if(attackSpritePlayer.current_animation_position == 0):
 		
 		attackSpritePlayer.play("parry_shield")
-		
+		shader.set_shader_parameter("applied", true)
 	elif(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
 		
 		attackSpritePlayer.stop()
 		state = MOVE
 		velocity = Vector2.ZERO
+		shader.set_shader_parameter("applied", false)
 	move_and_slide()
 
 
@@ -177,12 +185,18 @@ func _on_attack_hit_box_area_entered(area):
 
 func _on_player_hurtbox_area_entered(area):
 	
-	if(area.name == 'enemy_attack_hitbox'):
+	if(area.name == 'enemy_attack_hitbox' && state != PARRY):
 		state = TAKEHIT
 		assailantPosition = area.get_parent().get_parent().global_position
 		velocity = Vector2.ZERO
+		if(attackSpritePlayer.current_animation != ''):
+			attackSpritePlayer.stop()
+			shader.set_shader_parameter("applied", false)
 		update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
-		
+	elif(state == PARRY):
+		if(attackSpritePlayer.current_animation != ''):
+			attackSpritePlayer.stop()
+			shader.set_shader_parameter("applied", false)
 func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
 	
 	current_health -= health_change

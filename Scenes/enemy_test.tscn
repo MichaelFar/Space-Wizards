@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=30 format=3 uid="uid://dusbiv02x5l05"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
 [ext_resource type="Texture2D" uid="uid://cpdogri3qlybh" path="res://Sprites/test_goblin_enemy/goblin_idle.png" id="1_v1ppd"]
@@ -11,6 +11,12 @@
 [ext_resource type="Texture2D" uid="uid://b5cx8lym6ebu4" path="res://Sprites/test_goblin_enemy/Smear 01 Horizontal 1.png" id="8_3c8it"]
 [ext_resource type="Script" path="res://Scripts/enemy_attack_container.gd" id="8_ugmu3"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="10_t608j"]
+[ext_resource type="Texture2D" uid="uid://bam8tu7xrimw0" path="res://Sprites/pirate_greenalien/pirate_attack_greenalien-Sheet.png" id="12_hbw53"]
+[ext_resource type="Texture2D" uid="uid://boknlc3rhtw8a" path="res://Sprites/pirate_greenalien/pirate_damaged_greenalien-Sheet.png" id="13_oh5sx"]
+[ext_resource type="Texture2D" uid="uid://b1cby6o81v5hk" path="res://Sprites/pirate_greenalien/pirate_idle_greenalien-Sheet.png" id="14_cjng0"]
+[ext_resource type="Texture2D" uid="uid://t7w4gbk8rnax" path="res://Sprites/pirate_greenalien/pirate_parried_greenalien-Sheet.png" id="15_3lax8"]
+[ext_resource type="Texture2D" uid="uid://dfxdrabqu5jvk" path="res://Sprites/pirate_greenalien/pirate_running_greenalien-Sheet.png" id="16_q6dqe"]
+[ext_resource type="Texture2D" uid="uid://o4quko2rorow" path="res://Sprites/pirate_greenalien/pirate_slasheffect_greenalien-Sheet.png" id="17_67xqx"]
 
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
@@ -336,6 +342,34 @@ offset_left = -16.0
 offset_top = 12.0
 offset_right = 16.0
 offset_bottom = 16.0
+
+[node name="PirateAttackGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(181, 60)
+texture = ExtResource("12_hbw53")
+hframes = 5
+
+[node name="PirateDamagedGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(0, 130)
+texture = ExtResource("13_oh5sx")
+
+[node name="PirateIdleGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(188, 0)
+texture = ExtResource("14_cjng0")
+hframes = 6
+
+[node name="PirateParriedGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(74, -7)
+texture = ExtResource("15_3lax8")
+hframes = 2
+
+[node name="PirateRunningGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(73, 49)
+texture = ExtResource("16_q6dqe")
+hframes = 6
+
+[node name="PirateSlasheffectGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(126, 142)
+texture = ExtResource("17_67xqx")
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

@@ -21,8 +21,6 @@ void fragment()
 		vec4 text = texture(TEXTURE, grid_uv);
 		
 		COLOR = text;
-		
-	 	
 	 	COLOR.b = blue; //set blue channel to 1.0
 		COLOR.r = red;
 	}

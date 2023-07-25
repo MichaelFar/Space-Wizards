@@ -8,6 +8,7 @@ var attack_specs_objects = []
 var currentDamage = 0
 var currentKnockbackStrength = 0
 var currentStatNode = ''
+var smearChildren = []
 
 func _ready():
 	
@@ -17,6 +18,10 @@ func _ready():
 	animationState = playerSpriteTree.get("parameters/playback")
 	get_all_attack_specs()
 	set_new_attack_specs('broom')
+	for i in get_children():
+		if '_smear' in i.name:
+			print("Added " + i.name + " to smearChildren")
+			smearChildren.append(i)
 	
 func _physics_process(delta):
 	
@@ -43,3 +48,12 @@ func set_new_attack_specs(objectName = 'broom'):#Given an object (weapon name st
 			currentStatNode = i
 			break
 	
+func abort_animation():
+	attackPlayer.stop()
+	print("Number of smear children is " + str(smearChildren.size()))
+	for i in smearChildren:
+		i.visible = false
+		print("Current smear child is " + i.name)
+		for j in i.get_node("AttackHitBox").get_children():
+			print("Hitbox " + j.name + " disabled")
+			j.disabled = true

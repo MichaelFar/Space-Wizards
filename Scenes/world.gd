@@ -12,13 +12,17 @@ extends Node2D
 @onready var playerNode = $Player
 var playerPosition = Vector2.ZERO
 var validpoints = []
+var enemyChildren = []
 
 func _ready():
 	var inclusion_area = get_dimensions(navigationRegion.navigation_polygon.get_vertices())
 	var inclusion_area_min = inclusion_area[0]
 	var inclusion_area_max = inclusion_area[1]
 	validpoints = get_valid_points(inclusion_area_min, inclusion_area_max)
-
+	for i in get_children():
+		if 'Enemy_' in i.name:
+			enemyChildren.append(i)
+	
 func get_dimensions(vertices):
 	var xArray = []
 	var yArray = []

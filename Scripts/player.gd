@@ -14,7 +14,7 @@ const attack_movement = 400 #Multiplied by delta
 var max_health = 1000
 var current_health = max_health
 var pushBackStrength = 0
-
+var frame = 0
 var playerSpritePlayer = null
 var playerSpriteTree = null
 var animationState = null
@@ -26,9 +26,12 @@ var previousBlend = Vector2.ZERO
 var knockBackDirection = 1
 var assailantPosition = Vector2.ZERO
 @onready var healthbar = $healthbar
-@onready var shader = $NakedWizard02
+@onready var shader = self
+var listOfSprites = []
 
 var state = MOVE
+
+signal parried
 
 enum {
 	MOVE,
@@ -47,13 +50,20 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	attackSpritePlayer = $attackContainer/AttackSpritePlayer
 	post_initialize(playerSpriteTree)
 	
+	for i in get_children():
+		if i is Sprite2D:
+			listOfSprites.append(i)
+	
 	shader = shader.get("material")
+	change_sprite("NakedWizard_armed")
 
 func post_initialize(animation_tree):
 	animationState = animation_tree.get("parameters/playback")
+	
 
 func _physics_process(_delta):#Runs per frame, contains starting player state machine
 	
+	frame += 1
 	match state:
 		
 		MOVE:
@@ -71,7 +81,9 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			parry_state(_delta)
 		DEAD:
 			dead_state(_delta)
-		
+	
+			
+	
 func move_state(_delta):
 	
 	input_vector.x = Input.get_action_strength("right") - Input.get_action_strength("left")
@@ -119,6 +131,7 @@ func attack_state(_delta):#State machine for attack combos will go here
 	if(attackSpritePlayer.current_animation_position == 0):
 		
 		attackSpritePlayer.play("melee_attack")
+		change_sprite("NakedWizard_unequipped")
 		
 	elif(attackSpritePlayer.current_animation_position < attackSpritePlayer.current_animation_length):
 		
@@ -128,6 +141,7 @@ func attack_state(_delta):#State machine for attack combos will go here
 		
 		attackSpritePlayer.stop()
 		state = MOVE
+		change_sprite("NakedWizard_armed")
 		#velocity = Vector2.ZERO
 	move_and_slide()
 
@@ -141,7 +155,8 @@ func take_hit_state(_delta):
 
 	if(playerSpritePlayer.current_animation_position == 0):
 
-		playerSpritePlayer.play('take_hit')
+		change_sprite("NakedWizard_hurt_armed")
+		playerSpritePlayer.play("take_hit")
 
 	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
 
@@ -151,6 +166,7 @@ func take_hit_state(_delta):
 
 		playerSpritePlayer.stop()
 		state = MOVE
+		change_sprite("NakedWizard_armed")
 		
 	if(current_health <= 0):
 		
@@ -184,22 +200,34 @@ func _on_attack_hit_box_area_entered(area):
 		velocity = Vector2.ZERO
 
 func _on_player_hurtbox_area_entered(area):
-	
-	if(area.name == 'enemy_attack_hitbox' && state != PARRY):
-		state = TAKEHIT
-		assailantPosition = area.get_parent().get_parent().global_position
-		velocity = Vector2.ZERO
-		if(attackSpritePlayer.current_animation != ''):
-			attackSpritePlayer.stop()
-			shader.set_shader_parameter("applied", false)
-		update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
-	elif(state == PARRY):
-		if(attackSpritePlayer.current_animation != ''):
-			attackSpritePlayer.stop()
-			shader.set_shader_parameter("applied", false)
+	if(area.get_children()[0].disabled == false):
+		if(area.name == 'enemy_attack_hitbox' && state != PARRY):
+			state = TAKEHIT
+			assailantPosition = area.get_parent().get_parent().global_position
+			velocity = Vector2.ZERO
+			if(attackSpritePlayer.current_animation != ''):
+				
+				shader.set_shader_parameter("applied", false)
+				attackSpritePlayer.get_parent().abort_animation()
+			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
+		elif(state == PARRY):
+			parried.emit(state)
+			if(attackSpritePlayer.current_animation != ''):
+				attackSpritePlayer.stop()
+				shader.set_shader_parameter("applied", false)
 func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
 	
 	current_health -= health_change
 	healthbar.value = (current_health / max_health) * 100
 	print("Health bar value is " + str(healthbar.value))
 	pushBackStrength = knock_back_strength
+
+func change_sprite(spriteName):
+	
+	for i in listOfSprites:
+		if i.name != spriteName:
+			i.hide()
+		else:
+			i.show()
+			
+

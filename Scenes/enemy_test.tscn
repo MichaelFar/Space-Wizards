@@ -1,9 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=22 format=3 uid="uid://dusbiv02x5l05"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
 [ext_resource type="PackedScene" uid="uid://r8kroxten5qy" path="res://Scenes/hurtbox.tscn" id="4_cgwb5"]
 [ext_resource type="PackedScene" uid="uid://1n1ogpj3d1ai" path="res://Scenes/emote_container.tscn" id="6_cavpu"]
 [ext_resource type="Script" path="res://Scripts/attack_specs_pirate_1.gd" id="6_cmkj4"]
+[ext_resource type="Texture2D" uid="uid://drqwig1ei8phr" path="res://Sprites/pirate_greenalien/pirate_slasheffect02_greenalien-Sheet.png" id="7_b13cf"]
 [ext_resource type="Script" path="res://Scripts/enemy_attack_container.gd" id="8_ugmu3"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="10_t608j"]
 [ext_resource type="Texture2D" uid="uid://mfh80g8uxnjm" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet.png" id="12_wnmyr"]
@@ -35,7 +36,7 @@ tracks/0/path = NodePath("enemy_attack_container")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.25),
+"times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -49,10 +50,10 @@ tracks/1/path = NodePath("pirate_grunt_1:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [6, 7, 8, 9, 10]
+"values": [6, 7, 8, 9, 9, 10]
 }
 
 [sub_resource type="Animation" id="Animation_dp4kl"]
@@ -147,34 +148,70 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("enemy_attack_container/enemy_smear_1:frame")
+tracks/0/path = NodePath("enemy_attack_container/enemy_smear_1:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [2]
+"values": [false]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("enemy_attack_container/enemy_smear_1:visible")
+tracks/1/path = NodePath("enemy_attack_container/enemy_smear_2:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("enemy_attack_container/enemy_smear_1/enemy_attack_hitbox/CollisionShape2D:disabled")
+tracks/2/path = NodePath("enemy_attack_container/enemy_smear_2/enemy_attack_hitbox/CollisionShape2D:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("enemy_attack_container/enemy_smear_2/enemy_attack_hitbox/CollisionShape2D:shape:radius")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [12.9995]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("enemy_attack_container/enemy_smear_2/enemy_attack_hitbox/CollisionShape2D:shape:height")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [65.3234]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("enemy_attack_container/enemy_smear_2:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -183,43 +220,79 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_frauv"]
 resource_name = "enemy_attack_smear"
-length = 0.3
+length = 0.35
 step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("enemy_attack_container/enemy_smear_1:frame")
+tracks/0/path = NodePath("enemy_attack_container/enemy_smear_1:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.05, 0.1, 0.15, 0.2, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 1,
-"values": [2, 3, 3, 4, 1]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("enemy_attack_container/enemy_smear_1:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
 "times": PackedFloat32Array(0.05, 0.3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("enemy_attack_container/enemy_smear_2:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.05, 0.1, 0.15, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 4]
+}
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("enemy_attack_container/enemy_smear_1/enemy_attack_hitbox/CollisionShape2D:disabled")
+tracks/2/path = NodePath("enemy_attack_container/enemy_smear_2/enemy_attack_hitbox/CollisionShape2D:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2),
+"times": PackedFloat32Array(0.05, 0.15, 0.25),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [true, false, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("enemy_attack_container/enemy_smear_2/enemy_attack_hitbox/CollisionShape2D:shape:radius")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.15, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [12.9995, 27.0388]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("enemy_attack_container/enemy_smear_2/enemy_attack_hitbox/CollisionShape2D:shape:height")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.15, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [65.3234, 65.3234]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("enemy_attack_container/enemy_smear_2:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_a123k"]
@@ -229,8 +302,8 @@ _data = {
 }
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ja028"]
-radius = 29.0
-height = 82.0
+radius = 12.9995
+height = 65.3234
 
 [node name="Enemy_Test" type="CharacterBody2D"]
 script = ExtResource("1_qhvur")
@@ -265,7 +338,7 @@ shape = SubResource("RectangleShape2D_4lt5l")
 position = Vector2(0, -53)
 
 [node name="enemy_attack_container" type="CharacterBody2D" parent="."]
-position = Vector2(0, -13)
+position = Vector2(0, -16)
 rotation = -6.28319
 script = ExtResource("8_ugmu3")
 
@@ -278,20 +351,21 @@ libraries = {
 "": SubResource("AnimationLibrary_a123k")
 }
 
-[node name="enemy_smear_1" type="Sprite2D" parent="enemy_attack_container"]
+[node name="enemy_smear_2" type="Sprite2D" parent="enemy_attack_container"]
 visible = false
-position = Vector2(46.5001, -14.9998)
-scale = Vector2(0.825758, 1)
-texture = ExtResource("17_67xqx")
+position = Vector2(31, -8.99985)
+scale = Vector2(1, 1.40323)
+texture = ExtResource("7_b13cf")
 hframes = 5
-frame = 2
+metadata/_edit_group_ = true
 
-[node name="enemy_attack_hitbox" type="Area2D" parent="enemy_attack_container/enemy_smear_1"]
-position = Vector2(-58, 11)
+[node name="enemy_attack_hitbox" type="Area2D" parent="enemy_attack_container/enemy_smear_2"]
+position = Vector2(-45.3939, 7.00021)
+scale = Vector2(0.825758, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="enemy_attack_container/enemy_smear_1/enemy_attack_hitbox"]
-position = Vector2(44, 0.0004282)
-rotation = 1.5708
+[node name="CollisionShape2D" type="CollisionShape2D" parent="enemy_attack_container/enemy_smear_2/enemy_attack_hitbox"]
+position = Vector2(62.4812, 1.45283)
+rotation = -1.30551
 shape = SubResource("CapsuleShape2D_ja028")
 
 [node name="Healthbar" parent="." instance=ExtResource("10_t608j")]
@@ -299,6 +373,10 @@ offset_left = -16.0
 offset_top = 12.0
 offset_right = 16.0
 offset_bottom = 16.0
+
+[node name="PirateSlasheffectGreenalien-sheet" type="Sprite2D" parent="."]
+position = Vector2(134, -61)
+texture = ExtResource("17_67xqx")
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

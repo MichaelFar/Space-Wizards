@@ -55,4 +55,4 @@ func abort_animation():
 		
 		for j in i.get_node("enemy_attack_hitbox").get_children():
 			print("Hitbox " + j.name + " disabled")
-			#j.disabled = true
+			j.disabled = true

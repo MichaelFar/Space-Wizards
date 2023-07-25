@@ -25,6 +25,12 @@ func _physics_process(delta):
 	if(attackPlayer.current_animation != ''):
 		if(attackPlayer.current_animation_position == 0 && attackPlayer.current_animation_length != 0):
 			self.look_at(supplied_player_position)
+			if(supplied_player_position.x < position.x):
+				for i in smearChildren:
+					i.flip_v = true
+			else:
+				for i in smearChildren:
+					i.flip_v = false
 			
 func play_attack():
 	attackPlayer.play('enemy_attack_smear')

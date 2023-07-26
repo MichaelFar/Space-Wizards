@@ -1,0 +1,3 @@
+Character sprite attack animation might need to have a longer wind-up
+
+Smear effect might need active frames adjusted

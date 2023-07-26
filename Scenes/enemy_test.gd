@@ -22,7 +22,7 @@ var chosenPoint = Vector2.ZERO
 var children = []
 var playerPreviousPosition = Vector2.ZERO
 const noticeDist = 200
-const pursueDist = 80
+const pursueDist = 130
 const attackDist = 40
 
 var attackPosition = Vector2.ZERO
@@ -183,6 +183,7 @@ func attack_state(_delta):
 			idle_frames = 0
 			attackPosition = get_parent().get_node('Player').position
 			emoteContainer.play_emote('startled')
+			animationPlayer.set("speed_scale", 1.0)
 	else:
 		
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
@@ -194,6 +195,7 @@ func attack_state(_delta):
 			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
 			animationPlayer.play('enemy_attack')
 		
+			animationPlayer.set("speed_scale", 1.0)
 			
 		
 func idle_state(_delta):
@@ -243,7 +245,7 @@ func _on_hurtbox_area_entered(area):
 	#Sets the appropriate values and sets the state to TAKEHIT
 	#Enemies can be hit during any state
 	if(area.get_children()[0].disabled == false):
-		if(area.name == 'AttackHitBox' && state != TAKEHIT):
+		if(area.name == 'AttackHitBox' && state != TAKEHIT && state != ATTACK):
 			
 			state = TAKEHIT
 			velocity = Vector2.ZERO
@@ -252,17 +254,23 @@ func _on_hurtbox_area_entered(area):
 			change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 			animationPlayer.play("take_hit")
 			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
-			
-		
+		elif(area.name == 'AttackHitBox' && state == ATTACK):
+			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)	
+			animationPlayer.set("speed_scale", 0.5)
+		if(current_health <= 0):
+			state = DEAD
 func take_hit_state(_delta):
 	var pushBackDirection = position - playerPreviousPosition
 	
 	pushBackDirection = pushBackDirection.normalized()
 	
+	animationPlayer.set("speed_scale", 1.0)
 	if(animationPlayer.current_animation_position == 0):
 		
-		animationPlayer.play('take_hit')
-		
+		if(state == TAKEHIT):
+			animationPlayer.play('take_hit')
+		elif(state == PARRIED):
+			animationPlayer.play('parried')
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
@@ -288,7 +296,7 @@ func notice_player_state(_delta):
 	change_sprite(get_node("pirate_grunt_1"), playerNode.position)
 	idle_frames += 1
 	
-	if(idle_frames / 60 == 3 
+	if(idle_frames / 60 == 2 
 	&& position.distance_to(get_parent().playerPosition) <= noticeDist 
 	|| position.distance_to(get_parent().playerPosition) < pursueDist):
 		
@@ -335,7 +343,7 @@ func get_parried(playerState):
 	animationPlayer.stop()
 	playerPreviousPosition = get_parent().playerNode.position
 	change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
-	animationPlayer.play("take_hit")
+	animationPlayer.play("parried")
 	smearContainer.abort_animation()
 	
 	

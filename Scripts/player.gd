@@ -25,6 +25,11 @@ var mouse_coordinates = Vector2.ZERO
 var previousBlend = Vector2.ZERO
 var knockBackDirection = 1
 var assailantPosition = Vector2.ZERO
+var parry_cool_down_frames = 0
+var parry_timer_on = false
+var attack_cool_down_frames = 0
+var attack_timer_on = false
+
 @onready var healthbar = $healthbar
 @onready var shader = self
 var listOfSprites = []
@@ -39,7 +44,8 @@ enum {
 	ATTACK,
 	TAKEHIT,
 	DEAD,
-	PARRY
+	PARRY,
+	COOLDOWN
 }
 
 func _ready():#Called when node loads into the scene, children ready functions run first
@@ -81,8 +87,19 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			parry_state(_delta)
 		DEAD:
 			dead_state(_delta)
+		COOLDOWN:
+			cool_down_state(_delta)
 	
+	if(parry_timer_on):
+		parry_cool_down_frames += 1
+		print("Parry cooldown frames is " + str(parry_cool_down_frames))
+		if(parry_cool_down_frames / 30 == 1):
 			
+			parry_cool_down_frames = 0
+			parry_timer_on = false
+	
+	
+	
 	
 func move_state(_delta):
 	
@@ -113,13 +130,18 @@ func move_state(_delta):
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 	
-	if (Input.is_action_just_pressed("click")):#Attack state
-		state = ATTACK
-	else:
-		knockBackDirection = 1
+	if(attack_cool_down_frames == 0):
+		
+		if(InputBuffer.is_action_press_buffered('click')):#Attack state
+			state = ATTACK
+		else:
+			knockBackDirection = 1
 	
-	if (Input.is_action_just_pressed("parry")):
-		state = PARRY
+	if(parry_cool_down_frames == 0):
+		if (InputBuffer.is_action_press_buffered('parry')):
+			state = PARRY
+			parry_timer_on = true
+		
 	move_and_slide()
 
 
@@ -140,7 +162,7 @@ func attack_state(_delta):#State machine for attack combos will go here
 	elif(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
 		
 		attackSpritePlayer.stop()
-		state = MOVE
+		state = COOLDOWN
 		change_sprite("NakedWizard_armed")
 		#velocity = Vector2.ZERO
 	move_and_slide()
@@ -198,23 +220,38 @@ func _on_attack_hit_box_area_entered(area):
 	if (area.name == "Hurtbox"):
 		knockBackDirection = -1
 		velocity = Vector2.ZERO
+		
+		attack_cool_down_frames = 0
+		attack_timer_on = false
+		#attackSpritePlayer.stop()
+		#attackSpritePlayer.advance(attackSpritePlayer.current_animation_length - attackSpritePlayer.current_animation_position)
+		state = MOVE
+		
+		
 
 func _on_player_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
 		if(area.name == 'enemy_attack_hitbox' && state != PARRY):
+			
 			state = TAKEHIT
 			assailantPosition = area.get_parent().get_parent().global_position
 			velocity = Vector2.ZERO
+			attack_cool_down_frames = 0
+			attack_timer_on = false
 			if(attackSpritePlayer.current_animation != ''):
 				
 				shader.set_shader_parameter("applied", false)
 				attackSpritePlayer.get_parent().abort_animation()
+				
 			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
 		elif(state == PARRY):
 			parried.emit(state)
+			parry_timer_on = false
+			parry_cool_down_frames = 0
 			if(attackSpritePlayer.current_animation != ''):
 				attackSpritePlayer.stop()
 				shader.set_shader_parameter("applied", false)
+				
 func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
 	
 	current_health -= health_change
@@ -231,3 +268,13 @@ func change_sprite(spriteName):
 			i.show()
 			
 
+func cool_down_state(_delta):
+	
+		attack_cool_down_frames += 1
+		if(attack_cool_down_frames / 15 == 1):
+			
+			attack_cool_down_frames = 0
+			attack_timer_on = false
+			state = MOVE
+			
+		move_and_slide()

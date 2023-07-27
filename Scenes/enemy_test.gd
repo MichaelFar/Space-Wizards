@@ -7,12 +7,13 @@ extends CharacterBody2D
 
 
 var acceleration = 200
-var max_speed = 80
+var max_speed = 200
 var speed = 150
 var max_health = 1000.0
 var current_health = max_health
 var damage_taken = 0.0
 var pushBackStrength = 250
+var pushBackAcceleration = 0
 
 var frame = 0
 var state = CHOOSEPOINT
@@ -139,7 +140,7 @@ func wander_state(target_point, _delta):
 	
 	direction = direction.normalized()
 	
-	velocity = velocity.move_toward(direction * acceleration, _delta * acceleration)
+	velocity = velocity.move_toward(direction * max_speed, _delta * acceleration)
 	
 	
 	if(self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
@@ -253,9 +254,11 @@ func _on_hurtbox_area_entered(area):
 			playerPreviousPosition = get_parent().playerNode.position
 			change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 			animationPlayer.play("take_hit")
-			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
+			update_healthbar(area.get_parent().get_parent().currentDamage)
+			set_player_knockback(area.get_parent().get_parent().currentKnockbackStrength)
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
-			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)	
+			update_healthbar(area.get_parent().get_parent().currentDamage)	
+			set_player_knockback(area.get_parent().get_parent().currentKnockbackStrength)
 			animationPlayer.set("speed_scale", 0.5)
 		if(current_health <= 0):
 			state = DEAD
@@ -263,7 +266,7 @@ func take_hit_state(_delta):
 	var pushBackDirection = position - playerPreviousPosition
 	
 	pushBackDirection = pushBackDirection.normalized()
-	
+	set_player_knockback(playerNode.get_node('attackContainer').currentKnockbackStrength)
 	animationPlayer.set("speed_scale", 1.0)
 	if(animationPlayer.current_animation_position == 0):
 		
@@ -274,7 +277,8 @@ func take_hit_state(_delta):
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
-		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, _delta * pushBackStrength)
+		print("Pushback acceleration is " + str(pushBackAcceleration))
+		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
@@ -322,12 +326,12 @@ func pursue_state(_delta):
 		playerPreviousPosition = get_parent().playerPosition
 	wander_state(playerPreviousPosition, _delta)
 
-func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
+func update_healthbar(health_change):#pass in negative values to increase health
 	
 	current_health -= health_change
 	healthbar.value = (current_health / max_health) * 100
 	print("Health bar value is " + str(healthbar.value))
-	pushBackStrength = knock_back_strength
+	
 
 func dead_state(_delta):
 	pass
@@ -335,15 +339,19 @@ func dead_state(_delta):
 func flip_h_in_animation():
 	get_node("pirate_grunt_1").flip_h = !get_node("pirate_grunt_1").flip_h
 
-func get_parried(playerState):
+func get_parried(enemy_id):
 	
-	player_state = playerState
-	state = PARRIED
-	velocity = Vector2.ZERO
-	animationPlayer.stop()
-	playerPreviousPosition = get_parent().playerNode.position
-	change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
-	animationPlayer.play("parried")
-	smearContainer.abort_animation()
+	print("Self is " + str(self) + " and enemy_id is " + str(enemy_id))
+	if(enemy_id == self):
+		state = PARRIED
+		velocity = Vector2.ZERO
+		animationPlayer.stop()
+		playerPreviousPosition = get_parent().playerNode.position
+		change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
+		animationPlayer.play("parried")
+		smearContainer.abort_animation()
 	
+func set_player_knockback(knock_back_strength):
+	pushBackStrength = knock_back_strength / 2
+	pushBackAcceleration = pushBackStrength 
 	

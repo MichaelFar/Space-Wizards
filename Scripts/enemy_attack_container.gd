@@ -8,6 +8,7 @@ var currentDamage = 0
 var currentKnockbackStrength = 0
 var currentStatNode = ''
 var smearChildren = []
+@onready var enemy_id = get_parent()
 
 func _ready():
 	

@@ -30,3 +30,9 @@ polygon = PackedVector2Array(528, 128, 256, 128, 256, 288, 528, 288, 528, 208)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("5_jvpvk")]
 position = Vector2(195, 244)
+
+[node name="Enemy_Test2" parent="." instance=ExtResource("5_jvpvk")]
+position = Vector2(202, 304)
+
+[node name="Enemy_Test3" parent="." instance=ExtResource("5_jvpvk")]
+position = Vector2(220, 185)

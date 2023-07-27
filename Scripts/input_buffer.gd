@@ -5,7 +5,7 @@ extends Node
 
 # How many milliseconds ahead of time the player can make an input and have it still be recognized.
 # I chose the value 150 because it imitates the 9-frame buffer window in the Super Smash Bros. Ultimate game.
-const BUFFER_WINDOW: int = 350
+const BUFFER_WINDOW: int = 450
 # The godot default deadzone is 0.2 so I chose to have it the same
 const JOY_DEADZONE: float = 0.2
 
@@ -54,6 +54,7 @@ func is_action_press_buffered(action: String) -> bool:
 	for event in InputMap.action_get_events(action):
 		
 		if event is InputEventKey || InputEventMouseButton && !(event is InputEventMouseMotion):
+			
 			if(event is InputEventKey):
 				scancode = event.keycode
 			else:
@@ -90,9 +91,13 @@ func is_action_press_buffered(action: String) -> bool:
 # Records unreasonable timestamps for all the inputs in an action. Called when IsActionPressBuffered returns true, as
 # otherwise it would continue returning true every frame for the rest of the buffer window.
 func _invalidate_action(action: String) -> void:
+	var scancode: int = 0
 	for event in InputMap.action_get_events(action):
-		if event is InputEventKey:
-			var scancode: int = event.keycode
+		if event is InputEventKey || InputEventMouseButton && !(event is InputEventMouseMotion):
+			if(event is InputEventKey):
+				scancode = event.keycode
+			else:
+				scancode = event.button_index
 			if keyboard_timestamps.has(scancode):
 				keyboard_timestamps[scancode] = 0
 		elif event is InputEventJoypadButton:

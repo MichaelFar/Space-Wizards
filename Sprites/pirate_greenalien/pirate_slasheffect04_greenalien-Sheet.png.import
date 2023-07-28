@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b13ydspxd8yli"
-path="res://.godot/imported/broom_smear_01.png-a1a525a42430785e41ab1aca29a25c22.ctex"
+uid="uid://d0dqdiv0tff5q"
+path="res://.godot/imported/pirate_slasheffect04_greenalien-Sheet.png-15693a90de322afb4a757886022798f4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/player sprite sheets/broom_smear_01.png"
-dest_files=["res://.godot/imported/broom_smear_01.png-a1a525a42430785e41ab1aca29a25c22.ctex"]
+source_file="res://Sprites/pirate_greenalien/pirate_slasheffect04_greenalien-Sheet.png"
+dest_files=["res://.godot/imported/pirate_slasheffect04_greenalien-Sheet.png-15693a90de322afb4a757886022798f4.ctex"]
 
 [params]
 

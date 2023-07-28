@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b13ydspxd8yli"
-path="res://.godot/imported/broom_smear_01.png-a1a525a42430785e41ab1aca29a25c22.ctex"
+uid="uid://cshty2waq1eof"
+path="res://.godot/imported/parry_smear_01.png-a4168a1a7bb352e1e9097c679622d545.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/player sprite sheets/broom_smear_01.png"
-dest_files=["res://.godot/imported/broom_smear_01.png-a1a525a42430785e41ab1aca29a25c22.ctex"]
+source_file="res://Sprites/player sprite sheets/parry_smear_01.png"
+dest_files=["res://.godot/imported/parry_smear_01.png-a4168a1a7bb352e1e9097c679622d545.ctex"]
 
 [params]
 

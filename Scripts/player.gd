@@ -7,7 +7,7 @@ extends CharacterBody2D
 var input_vector = Vector2.ZERO
 
 const acceleration = 450 #Multiplied by delta
-const friction = 250 #Multiplied by delta
+var friction = 250 #Multiplied by delta
 const max_speed = 150 # NOT multiplied by delta
 const attack_movement = 400 #Multiplied by delta
 
@@ -31,8 +31,15 @@ var attack_cool_down_frames = 0
 var attack_timer_on = false
 var hit_enemy = false
 
+var dodge_frames = 0
+var dodge_timer = 0
+var dodge_timer_on = false
+
+var final_input = Vector2.ZERO
+
 @onready var healthbar = $healthbar
 @onready var shader = self
+@onready var hit_box = $player_hurtbox/CollisionShape2D
 var listOfSprites = []
 
 var state = MOVE
@@ -77,8 +84,9 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			move_state(_delta)
 			
 		DODGE:
-			pass
-			
+			dodge_state(input_vector, final_input,_delta)
+			if(state == MOVE):#Jank I know
+				move_state(_delta)
 		ATTACK:
 			
 			attack_state(_delta)
@@ -90,6 +98,12 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			dead_state(_delta)
 		COOLDOWN:
 			cool_down_state(_delta)
+	
+	if(dodge_timer_on):
+		dodge_timer += 1
+		if(dodge_timer / 15 == 1):
+			dodge_timer_on = false
+			dodge_timer = 0
 	
 	if(parry_timer_on):
 		parry_cool_down_frames += 1
@@ -103,6 +117,8 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 	
 	
 func move_state(_delta):
+	mouse_coordinates = get_local_mouse_position()
+	mouse_coordinates = mouse_coordinates.normalized()
 	
 	input_vector.x = Input.get_action_strength("right") - Input.get_action_strength("left")
 	
@@ -145,7 +161,13 @@ func move_state(_delta):
 			parry_timer_on = true
 			attack_cool_down_frames = 0
 			attack_timer_on = false
+	if(!dodge_timer_on):
+		if(InputBuffer.is_action_press_buffered("ui_select")):
+			print("Dodge state entered")
+			state = DODGE
+			final_input = input_vector * max_speed
 		
+	
 	move_and_slide()
 
 
@@ -252,7 +274,7 @@ func _on_player_hurtbox_area_entered(area):
 				attackSpritePlayer.get_parent().abort_animation()
 				
 			update_healthbar(area.get_parent().get_parent().currentDamage, area.get_parent().get_parent().currentKnockbackStrength)
-		elif(state == PARRY):
+		elif(area.name == 'enemy_attack_hitbox' && state == PARRY):
 			parried.emit(area.get_parent().get_parent().enemy_id)
 			parry_timer_on = false
 			parry_cool_down_frames = 0
@@ -278,27 +300,54 @@ func change_sprite(spriteName):
 
 func cool_down_state(_delta):
 		
-		var cool_down_target = 20
-		attack_cool_down_frames += 1
-		
-		if(hit_enemy):
-			cool_down_target = 15
-		
-			move_state(_delta)	
-		if(parry_cool_down_frames == 0):
-			if (InputBuffer.is_action_press_buffered('parry')):
-				state = PARRY
-				parry_timer_on = true
-				attack_cool_down_frames = 0
-				attack_timer_on = false
-		
-		velocity = velocity.move_toward(Vector2.ZERO, friction * 2 * _delta)
-		
-		
-		if(attack_cool_down_frames / cool_down_target == 1):
-			
+	var cool_down_target = 20
+	attack_cool_down_frames += 1
+	
+	if(hit_enemy):
+		cool_down_target = 15
+	
+		move_state(_delta)	
+	if(parry_cool_down_frames == 0):
+		if (InputBuffer.is_action_press_buffered('parry')):
+			state = PARRY
+			parry_timer_on = true
 			attack_cool_down_frames = 0
 			attack_timer_on = false
-			state = MOVE
-			
-		move_and_slide()
+	
+	velocity = velocity.move_toward(Vector2.ZERO, friction  * _delta)
+	
+	
+	if(attack_cool_down_frames / cool_down_target == 1):
+		
+		attack_cool_down_frames = 0
+		attack_timer_on = false
+		state = MOVE
+		
+	move_and_slide()
+
+func dodge_state(direction, finalInput, _delta):#Candidate for player sheet
+	
+	dodge_frames += 1
+	var dodge_max_speed = 800
+	var dodge_accel = dodge_max_speed * 2
+	attack_cool_down_frames = 0
+	attack_timer_on = false
+	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
+	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
+	animationState.travel("MoveBlend")
+	
+	velocity = velocity.move_toward(input_vector * dodge_max_speed, dodge_accel * _delta)
+	
+	if(dodge_frames / 15 == 1):
+		
+		dodge_frames = 0
+		state = MOVE
+		velocity = final_input
+		hit_box.disabled = false
+		dodge_timer_on = true
+		dodge_timer = 0
+	else:
+		
+		hit_box.disabled = true
+	
+	move_and_slide()

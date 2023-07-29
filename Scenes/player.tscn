@@ -541,7 +541,7 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [18]
+"values": [20]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -606,7 +606,7 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [16]
+"values": [18]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -683,7 +683,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [17]
+"values": [19]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -748,7 +748,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [19]
+"values": [21]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -801,7 +801,7 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [23]
+"values": [17]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -878,7 +878,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [20]
+"values": [22]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -943,7 +943,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [22]
+"values": [16]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -1008,7 +1008,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [21]
+"values": [23]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -1230,8 +1230,8 @@ tracks/4/keys = {
 
 [sub_resource type="Animation" id="Animation_wm3dy"]
 resource_name = "melee_attack"
-length = 0.2
-step = 0.04
+length = 0.15
+step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -1239,7 +1239,7 @@ tracks/0/path = NodePath("attackContainer/broom_smear_1/AttackHitBox/CollisionSh
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.04, 0.08, 0.12, 0.16),
+"times": PackedFloat32Array(0.01, 0.05, 0.09, 0.13),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [true, false, false, true]
@@ -1251,7 +1251,7 @@ tracks/1/path = NodePath("attackContainer/broom_smear_1:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.04, 0.08, 0.12, 0.16),
+"times": PackedFloat32Array(0.01, 0.05, 0.09, 0.13),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3]
@@ -1263,7 +1263,7 @@ tracks/2/path = NodePath("attackContainer/broom_smear_1:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.04),
+"times": PackedFloat32Array(0, 0.01),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -1337,7 +1337,7 @@ frame = 16
 
 [node name="NakedWizard_armed" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(0, -1)
+position = Vector2(0, 1)
 texture = ExtResource("2_mxy5m")
 offset = Vector2(0, -16)
 hframes = 8
@@ -1346,7 +1346,7 @@ frame = 1
 
 [node name="NakedWizard_hurt_armed" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(0, -1)
+position = Vector2(0, 1)
 texture = ExtResource("2_mxy5m")
 offset = Vector2(0, -16)
 hframes = 8
@@ -1417,6 +1417,7 @@ rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
 
 [node name="player_hurtbox" type="Area2D" parent="."]
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_hurtbox"]
 position = Vector2(0, -7)

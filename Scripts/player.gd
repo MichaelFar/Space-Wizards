@@ -15,10 +15,9 @@ var max_health = 1000
 var current_health = max_health
 var pushBackStrength = 0
 var frame = 0
-var playerSpritePlayer = null
-var playerSpriteTree = null
+
 var animationState = null
-var attackSpritePlayer = null
+
 var playerPosition = Vector2.ZERO
 var frameRecovery = 0
 var mouse_coordinates = Vector2.ZERO
@@ -29,17 +28,21 @@ var parry_cool_down_frames = 0
 var parry_timer_on = false
 var attack_cool_down_frames = 0
 var attack_timer_on = false
-var hit_enemy = false
+var hit_enemy = false #
 
 var dodge_frames = 0
 var dodge_timer = 0
 var dodge_timer_on = false
 
-var final_input = Vector2.ZERO
+var previous_velocity = Vector2.ZERO
 
 @onready var healthbar = $healthbar
 @onready var shader = self
 @onready var hit_box = $player_hurtbox/CollisionShape2D
+@onready var playerSpritePlayer = $PlayerSpriteAnimPlayer
+@onready var playerSpriteTree = $PlayerSpriteAnimTree
+@onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
+
 var listOfSprites = []
 
 var state = MOVE
@@ -82,13 +85,9 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 		
 		MOVE:
 			move_state(_delta)
-			
 		DODGE:
-			dodge_state(input_vector, final_input,_delta)
-			if(state == MOVE):#Jank I know
-				move_state(_delta)
+			dodge_state(input_vector, previous_velocity,_delta)
 		ATTACK:
-			
 			attack_state(_delta)
 		TAKEHIT:
 			take_hit_state(_delta)
@@ -152,7 +151,7 @@ func move_state(_delta):
 		if(InputBuffer.is_action_press_buffered('click')):#Attack state
 			state = ATTACK
 			attack_timer_on = true
-		else:
+		
 			knockBackDirection = 1
 	
 	if(parry_cool_down_frames == 0):
@@ -165,9 +164,7 @@ func move_state(_delta):
 		if(InputBuffer.is_action_press_buffered("ui_select")):
 			print("Dodge state entered")
 			state = DODGE
-			final_input = input_vector * max_speed
-		
-	
+			previous_velocity = input_vector * max_speed
 	move_and_slide()
 
 
@@ -300,7 +297,7 @@ func change_sprite(spriteName):
 
 func cool_down_state(_delta):
 		
-	var cool_down_target = 20
+	var cool_down_target = 15
 	attack_cool_down_frames += 1
 	
 	if(hit_enemy):
@@ -342,7 +339,7 @@ func dodge_state(direction, finalInput, _delta):#Candidate for player sheet
 		
 		dodge_frames = 0
 		state = MOVE
-		velocity = final_input
+		velocity = previous_velocity
 		hit_box.disabled = false
 		dodge_timer_on = true
 		dodge_timer = 0

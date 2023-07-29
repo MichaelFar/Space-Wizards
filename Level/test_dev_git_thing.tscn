@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_rau2v"]
 [ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="5_dsw61"]
-[ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="5_jvpvk"]
+[ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="5_l5hco"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_hugf2"]
 vertices = PackedVector2Array(528, 288, 656, 352, 112, 352, 256, 288, 656, 56, 528, 128, 112, 56, 256, 128)
@@ -28,11 +28,11 @@ avoidance_layers = 2
 [node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
 polygon = PackedVector2Array(528, 128, 256, 128, 256, 288, 528, 288, 528, 208)
 
-[node name="Enemy_Test" parent="." instance=ExtResource("5_jvpvk")]
-position = Vector2(186, 229)
+[node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
+position = Vector2(187, 206)
 
-[node name="Enemy_Test2" parent="." instance=ExtResource("5_jvpvk")]
-position = Vector2(174, 296)
+[node name="Enemy_Test2" parent="." instance=ExtResource("5_l5hco")]
+position = Vector2(195, 258)
 
-[node name="Enemy_Test3" parent="." instance=ExtResource("5_jvpvk")]
-position = Vector2(144, 239)
+[node name="Enemy_Test3" parent="." instance=ExtResource("5_l5hco")]
+position = Vector2(171, 304)

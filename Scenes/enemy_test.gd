@@ -74,7 +74,7 @@ func _ready():
 
 func _physics_process(_delta):#State machine runs per frame
 	attackPosition = playerNode.position
-	print('Attack position is ' + str(attackPosition))
+	
 	match state:
 		
 		CHOOSEPOINT:#CHOOSEPOINT is used to get a valid point to travel to, then state transitions to WANDER

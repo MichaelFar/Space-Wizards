@@ -164,7 +164,7 @@ func move_state(_delta):
 		if(InputBuffer.is_action_press_buffered('click')):#Attack state
 			state = ATTACK
 			attack_timer_on = true
-		
+		else:
 			knockBackDirection = 1
 	
 	if(parry_cool_down_frames == 0):
@@ -339,9 +339,9 @@ func cool_down_state(_delta):
 			parry_timer_on = true
 			attack_cool_down_frames = 0
 			attack_timer_on = false
+			attackSpritePlayer.play("parry_whiff")
 	
 	velocity = velocity.move_toward(Vector2.ZERO, friction  * _delta)
-	
 	
 	if(attack_cool_down_frames / cool_down_target == 1):
 		

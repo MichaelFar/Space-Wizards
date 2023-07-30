@@ -30,3 +30,6 @@ avoidance_layers = 2
 
 [node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
 polygon = PackedVector2Array(528, 128, 256, 128, 256, 288, 528, 288, 528, 208)
+
+[editable path="Enemy_Test"]
+[editable path="Enemy_Test/Hurtbox"]

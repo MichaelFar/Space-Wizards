@@ -46,7 +46,13 @@ var animationPlayer = null
 @onready var smearContainer = $enemy_attack_container
 @onready var healthbar = $Healthbar
 
+@onready var stat_sheet = $pirate_grunt_stat_sheet
+
+signal enemy_attack_stats
+var attacks_dict = {}
+
 var player_state = null
+var player_damage = 0
 
 enum {
 	WANDER,
@@ -70,7 +76,8 @@ func _ready():
 	healthbar.value = 100
 	emoteContainer.play_emote('')
 	playerNode.parried.connect(get_parried)
-	
+	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
+	attacks_dict = stat_sheet.attacks_dict
 
 func _physics_process(_delta):#State machine runs per frame
 	attackPosition = playerNode.position
@@ -173,7 +180,7 @@ func attack_state(_delta):
 	
 	smearContainer.supplied_player_position = get_parent().get_node('Player').position
 	
-	print(self.name + " is in attack state")
+	
 	if(self.position.distance_to(playerNode.position) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
@@ -191,12 +198,10 @@ func attack_state(_delta):
 			animationPlayer.stop()
 			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
 			animationPlayer.play('enemy_attack')
-		elif(animationPlayer.current_animation != 'enemy_attack'):
-			animationPlayer.stop()
-			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
-			animationPlayer.play('enemy_attack')
-		
 			animationPlayer.set("speed_scale", 1.0)
+		
+		
+			
 			
 		
 func idle_state(_delta):
@@ -254,11 +259,11 @@ func _on_hurtbox_area_entered(area):
 			playerPreviousPosition = get_parent().playerNode.position
 			change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 			animationPlayer.play("take_hit")
-			update_healthbar(area.get_parent().get_parent().currentDamage)
-			set_player_knockback(area.get_parent().get_parent().currentKnockbackStrength)
+			update_healthbar(player_damage)
+			
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
-			update_healthbar(area.get_parent().get_parent().currentDamage)	
-			set_player_knockback(area.get_parent().get_parent().currentKnockbackStrength)
+			update_healthbar(player_damage)	
+			
 			animationPlayer.set("speed_scale", 0.5)
 		if(current_health <= 0):
 			state = DEAD
@@ -266,7 +271,7 @@ func take_hit_state(_delta):
 	var pushBackDirection = position - playerPreviousPosition
 	
 	pushBackDirection = pushBackDirection.normalized()
-	set_player_knockback(playerNode.get_node('attackContainer').currentKnockbackStrength)
+	
 	animationPlayer.set("speed_scale", 1.0)
 	if(animationPlayer.current_animation_position == 0):
 		
@@ -351,7 +356,8 @@ func get_parried(enemy_id):
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
 	
-func set_player_knockback(knock_back_strength):
+func get_player_stats(knock_back_strength,damage):
 	pushBackStrength = knock_back_strength / 2
 	pushBackAcceleration = pushBackStrength 
+	player_damage = damage
 	

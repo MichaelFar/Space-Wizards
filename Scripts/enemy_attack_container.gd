@@ -13,8 +13,7 @@ var smearChildren = []
 func _ready():
 	
 	attackPlayer = $AttackPlayer
-	get_all_attack_specs()
-	set_new_attack_specs()
+	
 	for i in get_children():
 		
 		if '_smear' in  i.name:

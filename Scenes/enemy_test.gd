@@ -22,16 +22,18 @@ var idle_frames = 0
 var chosenPoint = Vector2.ZERO
 var children = []
 var playerPreviousPosition = Vector2.ZERO
-const noticeDist = 200
-const pursueDist = 130
-const attackDist = 40
+@export var noticeDist = 200
+@export var pursueDist = 130
+@export var attackDist = 40
 
+@export var shouldDie = false
 var attackPosition = Vector2.ZERO
-
+var deadframes = 0
 var previousPosition = Vector2.ZERO
 var direction = Vector2.ZERO
 var stuckFrames = 0
-
+var coolDownFrames = 0
+var coolDownTimerOn = false
 var validPoints = []
 
 var faceRight = true
@@ -47,7 +49,9 @@ var animationPlayer = null
 @onready var healthbar = $Healthbar
 
 @onready var stat_sheet = $pirate_grunt_stat_sheet
+@onready var shader = self
 
+var frameRate = 0
 signal enemy_attack_stats
 var attacks_dict = {}
 
@@ -67,20 +71,29 @@ enum {
 }
 
 func _ready():
+	#await playerNode.get_node("player_stat_sheet").player_stats
 	animationPlayer = $AnimationPlayer
 	
 	for i in self.get_children():
 		if i is Sprite2D:
 			children.append(i)
 	
+	
+		
+	
 	healthbar.value = 100
 	emoteContainer.play_emote('')
 	playerNode.parried.connect(get_parried)
 	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
 	attacks_dict = stat_sheet.attacks_dict
-
+	shader = shader.get("material")
+	
+func post_initialize():
+	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
+	
 func _physics_process(_delta):#State machine runs per frame
 	attackPosition = playerNode.position
+	frameRate = (1/_delta)
 	
 	match state:
 		
@@ -93,6 +106,7 @@ func _physics_process(_delta):#State machine runs per frame
 		WANDER:#Uses A* to navigate to a point, wander_state() is also used for pursuing the player (player position is supplied as an argument)
 			wander_state(chosenPoint, _delta)
 		ATTACK:
+			
 			attack_state(_delta)
 		PURSUE:#Supplies a dynamic point (last seen(distance based) player position) to wander_state() function
 			pursue_state(_delta)
@@ -124,8 +138,15 @@ func _physics_process(_delta):#State machine runs per frame
 		velocity = Vector2.ZERO
 		emoteContainer.play_emote('question')
 		
+	if(coolDownFrames / frameRate >= 1):
+		coolDownTimerOn = false
+		coolDownFrames = 0
+	if(coolDownTimerOn):
+		coolDownFrames += 1	
+	else:
+		smearContainer.supplied_player_position = get_parent().playerPosition
 	frame += 1 #Frame tracking for various function
-
+	
 func wander_state(target_point, _delta):
 	
 	nav.target_position = target_point
@@ -162,25 +183,26 @@ func wander_state(target_point, _delta):
 	
 	
 	if(self.position.distance_to(target_point) <= attackDist 
-	&& state == PURSUE 
-	&& playerNode.position.distance_to(target_point) <= 20):
+	&& state == PURSUE):
 		state = ATTACK
 		idle_frames = 0
 		stuckFrames = 0
+		coolDownFrames = 0
 		emoteContainer.play_emote('')
 		velocity = Vector2.ZERO
 		
 		animationPlayer.stop()
 		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
 		animationPlayer.play('enemy_attack')
-		
+		coolDownTimerOn = true
+		smearContainer.supplied_player_position = get_parent().playerPosition
 	move_and_slide()
 
 func attack_state(_delta):
 	
-	smearContainer.supplied_player_position = get_parent().get_node('Player').position
 	
-	
+		
+	print("Cooldown is " + str(coolDownFrames))	
 	if(self.position.distance_to(playerNode.position) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
@@ -192,18 +214,16 @@ func attack_state(_delta):
 			attackPosition = get_parent().get_node('Player').position
 			emoteContainer.play_emote('startled')
 			animationPlayer.set("speed_scale", 1.0)
-	else:
+	elif(!coolDownTimerOn):
 		
-		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
+		if(animationPlayer.current_animation != 'enemy_attack'):
 			animationPlayer.stop()
 			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
 			animationPlayer.play('enemy_attack')
 			animationPlayer.set("speed_scale", 1.0)
-		
-		
-			
-			
-		
+			coolDownTimerOn = true
+	
+
 func idle_state(_delta):
 
 	velocity = Vector2.ZERO
@@ -333,14 +353,31 @@ func pursue_state(_delta):
 
 func update_healthbar(health_change):#pass in negative values to increase health
 	
-	current_health -= health_change
-	healthbar.value = (current_health / max_health) * 100
-	print("Health bar value is " + str(healthbar.value))
+	if(healthbar != null):
+		current_health -= health_change
+		healthbar.value = (current_health / max_health) * 100
+		print("Health bar value is " + str(healthbar.value))
 	
 
 func dead_state(_delta):
-	pass
-	
+	deadframes += 1
+	var framerate = 1/_delta
+	emoteContainer.play_emote("")
+	animationPlayer.set("speed_scale", 1.0)
+	if(healthbar != null):
+		healthbar.queue_free()
+	$CollisionShape2D.disabled = true
+	if(deadframes / framerate >= 2):
+		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
+		
+		$"DeathEffect-sheet".show()
+		animationPlayer.play("death")
+			
+		if(shouldDie):
+			
+			animationPlayer.stop()
+			queue_free()
+			
 func flip_h_in_animation():
 	get_node("pirate_grunt_1").flip_h = !get_node("pirate_grunt_1").flip_h
 
@@ -357,6 +394,7 @@ func get_parried(enemy_id):
 		smearContainer.abort_animation()
 	
 func get_player_stats(knock_back_strength,damage):
+	
 	pushBackStrength = knock_back_strength / 2
 	pushBackAcceleration = pushBackStrength 
 	player_damage = damage

@@ -1,14 +1,20 @@
-[gd_scene load_steps=23 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=26 format=3 uid="uid://dusbiv02x5l05"]
 
+[ext_resource type="Material" uid="uid://cgf2rl34hpi83" path="res://Shaders/enemy_test.tres" id="1_dtlbr"]
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
 [ext_resource type="Script" path="res://Sprites/pirate_greenalien/pirate_grunt_stat_sheet.gd" id="2_2kxfx"]
 [ext_resource type="PackedScene" uid="uid://r8kroxten5qy" path="res://Scenes/hurtbox.tscn" id="4_cgwb5"]
+[ext_resource type="Texture2D" uid="uid://dgoqj8wf8qkwf" path="res://Sprites/pirate_greenalien/death_effect-Sheet.png" id="5_1fce0"]
 [ext_resource type="PackedScene" uid="uid://1n1ogpj3d1ai" path="res://Scenes/emote_container.tscn" id="6_cavpu"]
 [ext_resource type="Texture2D" uid="uid://422br5nre4n6" path="res://Sprites/pirate_greenalien/pirate_slasheffect_greenalien-Sheet.png" id="7_cqmtb"]
 [ext_resource type="Script" path="res://Scripts/enemy_attack_container.gd" id="8_ugmu3"]
 [ext_resource type="Script" path="res://enemy_attack_hitbox.gd" id="9_yuu8k"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="10_t608j"]
 [ext_resource type="Texture2D" uid="uid://crw6lx2r1lcsq" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet.png" id="12_wnmyr"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
+radius = 6.0
+height = 38.0
 
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
@@ -23,6 +29,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [15]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DeathEffect-sheet:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
 }
 
 [sub_resource type="Animation" id="Animation_6lhuj"]
@@ -154,19 +172,47 @@ tracks/1/keys = {
 "values": []
 }
 
+[sub_resource type="Animation" id="Animation_upbel"]
+resource_name = "death"
+length = 1.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DeathEffect-sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.4),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"shouldDie", true],
+"method": &"set"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gnggo"]
 _data = {
 "RESET": SubResource("Animation_467ej"),
+"death": SubResource("Animation_upbel"),
 "enemy_attack": SubResource("Animation_6lhuj"),
 "enemy_idle": SubResource("Animation_dp4kl"),
 "enemy_walk": SubResource("Animation_5wgrx"),
 "parried": SubResource("Animation_0wdms"),
 "take_hit": SubResource("Animation_0shvd")
 }
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
-radius = 6.0
-height = 38.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4lt5l"]
 size = Vector2(22, 59)
@@ -274,17 +320,33 @@ radius = 14.9771
 height = 79.0947
 
 [node name="Enemy_Test" type="CharacterBody2D"]
+material = ExtResource("1_dtlbr")
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_qhvur")
+attackDist = 60
 
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_1aek4")
+
 [node name="pirate_grunt_1" type="Sprite2D" parent="."]
+use_parent_material = true
 texture = ExtResource("12_wnmyr")
 offset = Vector2(0, -17)
 hframes = 6
 vframes = 4
 frame = 15
+
+[node name="DeathEffect-sheet" type="Sprite2D" parent="."]
+position = Vector2(-1, -34)
+scale = Vector2(1.75, 1.75)
+texture = ExtResource("5_1fce0")
+hframes = 15
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -293,11 +355,6 @@ libraries = {
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 target_desired_distance = 20.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 4)
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_1aek4")
 
 [node name="Hurtbox" parent="." instance=ExtResource("4_cgwb5")]
 

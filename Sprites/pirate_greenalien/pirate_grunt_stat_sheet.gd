@@ -3,6 +3,7 @@ extends Node
 @export var damage = 100#Godot is shit so the inspector has no effect on these variables for some reason, keeping the @export until they fix it
 @export var knockback_strength = 250
 @export var max_health = 1000
+@export var poise = 100
 
 signal pirate_grunt_stats
 var current_attack = "attack1"

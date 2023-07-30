@@ -1,9 +1,23 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dumxkcum8oy8r"]
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://dumxkcum8oy8r"]
 
 [ext_resource type="Shader" path="res://Shaders/player.gdshader" id="1_vfkd0"]
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_jn6cs"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0gfud"]
+width = 256
+height = 184
+noise = SubResource("FastNoiseLite_jn6cs")
+
 [resource]
 shader = ExtResource("1_vfkd0")
-shader_parameter/blue = 1.0
-shader_parameter/red = 0.75
-shader_parameter/applied = false
+shader_parameter/frame_coords = Vector2(0, 0)
+shader_parameter/nb_frames = Vector2(0, 0)
+shader_parameter/velocity = Vector2(0, 0)
+shader_parameter/velocity_max = 300.0
+shader_parameter/trail_size = 6.0
+shader_parameter/alpha_start = 0.8
+shader_parameter/alpha_tail = 0.2
+shader_parameter/alpha_factor = 1.2
+shader_parameter/noise_margin = 0.68
+shader_parameter/noise = SubResource("NoiseTexture2D_0gfud")

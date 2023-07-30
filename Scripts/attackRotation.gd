@@ -30,7 +30,7 @@ func _physics_process(delta):
 			self.look_at(get_global_mouse_position())
 			playerSpriteTree.set("parameters/IdleBlend/blend_position", playerNode.get_local_mouse_position())
 			animationState.travel("IdleBlend")
-	print('Damage is ' + str(currentDamage))
+	
 	
 func get_all_attack_specs():#Get attack spec scripts
 	

@@ -28,7 +28,7 @@ var parry_cool_down_frames = 0
 var parry_timer_on = false
 var attack_cool_down_frames = 0
 var attack_timer_on = false
-var hit_enemy = false #
+var hit_enemy = false 
 var parried_enemy = false
 
 var dodge_frames = 0
@@ -78,6 +78,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	shader = shader.get("material")
 	change_sprite("NakedWizard_armed")
 	populate_stats()
+	set_collision_mask_value(2, true)
 
 func post_initialize(animation_tree):
 	animationState = animation_tree.get("parameters/playback")
@@ -284,7 +285,7 @@ func _on_attack_hit_box_area_entered(area):
 
 func _on_player_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
-		if(area.name == 'enemy_attack_hitbox' && state != PARRY):
+		if(area.name == 'enemy_attack_hitbox' && state != PARRY && state != DODGE):
 			
 			state = TAKEHIT
 			assailantPosition = area.get_parent().get_parent().global_position
@@ -372,10 +373,12 @@ func dodge_state(direction, finalInput, _delta):#Candidate for player sheet
 		hit_box.disabled = false
 		dodge_timer_on = true
 		dodge_timer = 0
+		
 	else:
 		
 		hit_box.disabled = true
-	
+		
+	set_collision_mask_value(2, !hit_box.disabled)
 	move_and_slide()
 
 func get_enemy_attack_stats(enemy_id):

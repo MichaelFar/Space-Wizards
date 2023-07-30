@@ -34,9 +34,11 @@ func set_equipped_weapon(weapon = "broom"):
 							}
 	knockback_strength = weapons_dict[weapon]["knockback"]
 	damage = weapons_dict[weapon]["damage"]
-	player_stats.emit(knockback_strength, damage)
+	#player_stats.emit(knockback_strength, damage)
 #Holds values specific to one attack
 
+func _process(_delta):
+	player_stats.emit(knockback_strength, damage)
 
 
 

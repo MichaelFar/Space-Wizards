@@ -366,6 +366,8 @@ func dead_state(_delta):
 	animationPlayer.set("speed_scale", 1.0)
 	if(healthbar != null):
 		healthbar.queue_free()
+		animationPlayer.stop()
+		animationPlayer.play('parried')
 	$CollisionShape2D.disabled = true
 	if(deadframes / framerate >= 2):
 		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))

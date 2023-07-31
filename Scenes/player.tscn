@@ -1492,6 +1492,7 @@ script = ExtResource("1_cdtsu")
 
 [node name="player_stat_sheet" type="Node" parent="."]
 script = ExtResource("3_7wyvt")
+damage = 100000.0
 knockback_strength = 150.0
 
 [node name="NakedWizard_unequipped" type="Sprite2D" parent="."]

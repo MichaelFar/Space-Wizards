@@ -3,7 +3,7 @@ extends CharacterBody2D
 #Generic enemy ai, randomly wanders within a navigation area minus the 'Exclusion Zone'
 #This node will crash if there is no player, navigation area, parent with world.gd script, or exclusion zone
 #Provides a good basis for ai going forward
-#Uses multiple sprite sheets for animations
+#Uses multiple sprite nodes with the same sheet
 
 
 var acceleration = 200
@@ -83,8 +83,9 @@ func _ready():
 	
 	healthbar.value = 100
 	emoteContainer.play_emote('')
-	playerNode.parried.connect(get_parried)
-	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
+	if(playerNode != null):
+		playerNode.parried.connect(get_parried)
+		playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
 	attacks_dict = stat_sheet.attacks_dict
 	shader = shader.get("material")
 	
@@ -92,7 +93,8 @@ func post_initialize():
 	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
 	
 func _physics_process(_delta):#State machine runs per frame
-	attackPosition = playerNode.position
+	if(playerNode != null):
+		attackPosition = playerNode.position
 	frameRate = (1/_delta)
 	
 	match state:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=67 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Material" uid="uid://dumxkcum8oy8r" path="res://Shaders/player.tres" id="1_kkqpc"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://swc4t8u2jlia" path="res://Sprites/player sprite sheets/naked_wizard_02.png" id="5_qw86e"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="7_6wihs"]
 [ext_resource type="Texture2D" uid="uid://b13ydspxd8yli" path="res://Sprites/player sprite sheets/broom_smear_01.png" id="8_x7jvc"]
+[ext_resource type="Texture2D" uid="uid://7pxmkaq24sfm" path="res://Sprites/player sprite sheets/naked_wizard_06.png" id="14_rfyrk"]
 
 [sub_resource type="Animation" id="Animation_5cogu"]
 length = 0.001
@@ -87,6 +88,18 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [11]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("NakedWizard06:frame")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
 }
 
 [sub_resource type="Animation" id="Animation_qo5b1"]
@@ -584,7 +597,7 @@ tracks/4/keys = {
 
 [sub_resource type="Animation" id="Animation_2mm4e"]
 resource_name = "move_br"
-length = 0.5
+length = 0.55
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -646,10 +659,22 @@ tracks/4/keys = {
 "update": 1,
 "values": [1]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("NakedWizard06:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 9, 17, 25, 33, 41]
+}
 
 [sub_resource type="Animation" id="Animation_n516u"]
 resource_name = "move_down"
-length = 0.5
+length = 0.55
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -710,6 +735,18 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [Vector2(0, -16), Vector2(0, -17)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("NakedWizard06:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [2, 10, 18, 26, 34, 42]
 }
 
 [sub_resource type="Animation" id="Animation_ta7fb"]
@@ -1492,7 +1529,6 @@ script = ExtResource("1_cdtsu")
 
 [node name="player_stat_sheet" type="Node" parent="."]
 script = ExtResource("3_7wyvt")
-damage = 100000.0
 knockback_strength = 150.0
 
 [node name="NakedWizard_unequipped" type="Sprite2D" parent="."]
@@ -1603,6 +1639,14 @@ offset_left = -16.0
 offset_top = 8.0
 offset_right = 16.0
 offset_bottom = 13.0
+
+[node name="NakedWizard06" type="Sprite2D" parent="."]
+position = Vector2(-62, 0)
+texture = ExtResource("14_rfyrk")
+offset = Vector2(0, -5)
+hframes = 8
+vframes = 6
+frame = 2
 
 [connection signal="area_entered" from="attackContainer/broom_smear_1/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]
 [connection signal="area_entered" from="player_hurtbox" to="." method="_on_player_hurtbox_area_entered"]

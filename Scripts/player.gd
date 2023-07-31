@@ -378,7 +378,7 @@ func dodge_state(direction, finalInput, _delta):#Candidate for player sheet
 		
 		hit_box.disabled = true
 		
-	set_collision_mask_value(2, !hit_box.disabled)
+	set_collision_mask_value(2, !hit_box.disabled) #Changes the collision mask when dodging to go through enemies
 	move_and_slide()
 
 func get_enemy_attack_stats(enemy_id):

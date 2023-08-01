@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cm86dt70rv4jm"]
+
+[ext_resource type="Theme" uid="uid://ydhmuqqweu5h" path="res://UI/Themes/health_bar.tres" id="1_oylr1"]
+[ext_resource type="Script" path="res://UI/UI Scenes/poisebar.gd" id="2_gbd1a"]
+
+[node name="poisebar" type="ProgressBar"]
+z_index = 2
+offset_right = 39.0
+offset_bottom = 10.0
+theme = ExtResource("1_oylr1")
+value = 100.0
+show_percentage = false
+script = ExtResource("2_gbd1a")

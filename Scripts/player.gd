@@ -339,9 +339,11 @@ func cool_down_state(_delta):
 	if(hit_enemy):
 		cool_down_target = 15
 	
-		move_state(_delta)	
+		move_state(_delta)
 	if(parry_cool_down_frames == 0):
+		
 		if (InputBuffer.is_action_press_buffered('parry')):
+			
 			state = PARRY
 			parry_timer_on = true
 			attack_cool_down_frames = 0

@@ -13,7 +13,7 @@ var damage_taken = 0.0
 var pushBackStrength = 250
 var pushBackAcceleration = 0
 var poise = 100.0
-var poise_max = 0.0
+var max_poise = 0.0
 var poise_recovery = 3
 var player_poise_damage = 0
 var parry_poise_damage = 0
@@ -103,7 +103,7 @@ func _physics_process(_delta):#State machine runs per frame
 		attackPosition = playerNode.position
 	frameRate = (1/_delta)
 	
-	if(int(frame) % (int(frameRate) / 2) == 0):
+	if(int(frame) % (int(frameRate) / 2) == 0 && !(poise <= 0.0)):
 		update_poise_bar(poise_recovery)
 	
 	
@@ -119,7 +119,6 @@ func _physics_process(_delta):#State machine runs per frame
 		WANDER:#Uses A* to navigate to a point, wander_state() is also used for pursuing the player (player position is supplied as an argument)
 			wander_state(chosenPoint, _delta)
 		ATTACK:
-			
 			attack_state(_delta)
 		PURSUE:#Supplies a dynamic point (last seen(distance based) player position) to wander_state() function
 			pursue_state(_delta)
@@ -133,6 +132,7 @@ func _physics_process(_delta):#State machine runs per frame
 			dead_state(_delta)
 		PARRIED:
 			take_hit_state(_delta)
+	
 	if(get_parent().playerPosition.distance_to(position) <= noticeDist 
 	&& state != NOTICEPLAYER 
 	&& state != PURSUE 
@@ -152,14 +152,20 @@ func _physics_process(_delta):#State machine runs per frame
 		emoteContainer.play_emote('question')
 		
 	if(coolDownFrames / frameRate >= 1):
+		
 		coolDownTimerOn = false
 		coolDownFrames = 0
 		print("Cooldown timer is now " + str(coolDownTimerOn))
+	
 	if(coolDownTimerOn):
+		
 		coolDownFrames += 1	
 		print("Cooldown attack frames for enemy are " + str(coolDownFrames))
+	
 	else:
+		
 		smearContainer.supplied_player_position = get_parent().playerPosition
+	
 	frame += 1 #Frame tracking for various function
 	
 func wander_state(target_point, _delta):
@@ -285,7 +291,7 @@ func _on_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
 		if(area.name == 'AttackHitBox' && state != TAKEHIT && state != ATTACK):
 			
-			state = TAKEHIT
+			
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
 			playerPreviousPosition = get_parent().playerNode.position
@@ -294,13 +300,16 @@ func _on_hurtbox_area_entered(area):
 			update_healthbar(player_damage)
 			update_poise_bar(player_poise_damage)
 			
+			
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
 			update_healthbar(player_damage)	
 			update_poise_bar(player_poise_damage)
 			
 			animationPlayer.set("speed_scale", 0.5)
-		if(current_health <= 0):
-			state = DEAD
+		
+		
+		
+			
 func take_hit_state(_delta):
 	var pushBackDirection = position - playerPreviousPosition
 	
@@ -329,6 +338,8 @@ func take_hit_state(_delta):
 		playerPreviousPosition = get_parent().playerPosition
 		emoteContainer.play_emote('exclaim')
 		velocity = Vector2.ZERO
+		if(poise <= 0.0):
+			update_poise_bar(max_poise)
 	
 	if(current_health <= 0):
 		state = DEAD
@@ -372,6 +383,8 @@ func update_healthbar(health_change):#pass in negative values to increase health
 		current_health -= health_change
 		healthbar.value = (current_health / max_health) * 100
 		print("Health bar value is " + str(healthbar.value))
+		if(current_health <= 0):
+			state = DEAD
 	
 
 func dead_state(_delta):
@@ -406,13 +419,17 @@ func get_parried(enemy_id):
 	
 	print("Self is " + str(self) + " and enemy_id is " + str(enemy_id))
 	if(enemy_id == self):
-		state = PARRIED
+		
+		update_poise_bar(parry_poise_damage)
+		
 		velocity = Vector2.ZERO
 		animationPlayer.stop()
 		playerPreviousPosition = get_parent().playerNode.position
 		change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
+		
+		
 	
 func get_player_stats(knock_back_strength, damage, poise_damage, parryPoiseDamage):
 	
@@ -428,11 +445,19 @@ func populate_stats():
 	max_health = stat_sheet.max_health
 	poise = stat_sheet.max_poise
 	poise_recovery = stat_sheet.poise_recovery
-	poise_max = poise
+	max_poise = poise
 		
 func update_poise_bar(poise_change):
 	
 	if(poisebar != null):
-		poise += poise_change
-		poisebar.value = (poise / poise_max) * 100
-	
+		poise = clamp(poise + poise_change, 0.0, max_poise)
+		poisebar.value = (poise / max_poise) * 100
+		if(poise <= 0):
+			poisebar.hide()
+			if(state != PARRIED):
+				state = PARRIED
+			else:
+				state = TAKEHIT
+		else:
+			poisebar.show()
+		

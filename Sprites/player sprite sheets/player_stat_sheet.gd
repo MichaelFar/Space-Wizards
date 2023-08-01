@@ -7,8 +7,8 @@ extends Node
 @export var friction = 250 #Multiplied by delta
 @export var max_speed = 150 # NOT multiplied by delta
 @export var attack_movement = 400 #Multiplied by delta
-
-
+@export var poise_damage = -10.0
+@export var parry_poise_damage = -100.0
 signal player_stats
 
 
@@ -29,7 +29,8 @@ func set_equipped_weapon(weapon = "broom"):
 	var weapons_dict = {"broom": 
 							 {
 							  "knockback": knockback_strength, 
-							  "damage": damage
+							  "damage": damage,
+							  "poise_damage": poise_damage
 							 }
 							}
 	knockback_strength = weapons_dict[weapon]["knockback"]
@@ -38,7 +39,7 @@ func set_equipped_weapon(weapon = "broom"):
 #Holds values specific to one attack
 
 func _process(_delta):
-	player_stats.emit(knockback_strength, damage)
+	player_stats.emit(knockback_strength, damage, poise_damage, parry_poise_damage)
 
 
 

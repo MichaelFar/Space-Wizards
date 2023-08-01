@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=27 format=3 uid="uid://dusbiv02x5l05"]
 
 [ext_resource type="Material" uid="uid://cgf2rl34hpi83" path="res://Shaders/enemy_test.tres" id="1_dtlbr"]
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://Scripts/enemy_attack_container.gd" id="8_ugmu3"]
 [ext_resource type="Script" path="res://enemy_attack_hitbox.gd" id="9_yuu8k"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="10_t608j"]
+[ext_resource type="PackedScene" uid="uid://cm86dt70rv4jm" path="res://UI/UI Scenes/poisebar.tscn" id="12_hgiek"]
 [ext_resource type="Texture2D" uid="uid://crw6lx2r1lcsq" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet.png" id="12_wnmyr"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
@@ -402,6 +403,12 @@ offset_left = -16.0
 offset_top = 12.0
 offset_right = 16.0
 offset_bottom = 16.0
+
+[node name="poisebar" parent="." instance=ExtResource("12_hgiek")]
+offset_left = -16.0
+offset_top = 18.0
+offset_right = 16.0
+offset_bottom = 22.0
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

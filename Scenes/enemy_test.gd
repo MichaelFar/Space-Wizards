@@ -4,8 +4,6 @@ extends CharacterBody2D
 #This node will crash if there is no player, navigation area, parent with world.gd script, or exclusion zone
 #Provides a good basis for ai going forward
 #Uses multiple sprite nodes with the same sheet
-
-
 var acceleration = 200
 var max_speed = 200
 var speed = 150
@@ -14,7 +12,11 @@ var current_health = max_health
 var damage_taken = 0.0
 var pushBackStrength = 250
 var pushBackAcceleration = 0
-
+var poise = 100.0
+var poise_max = 0.0
+var poise_recovery = 3
+var player_poise_damage = 0
+var parry_poise_damage = 0
 var frame = 0
 var state = CHOOSEPOINT
 var inclusion_area = Vector2.ZERO
@@ -22,6 +24,7 @@ var idle_frames = 0
 var chosenPoint = Vector2.ZERO
 var children = []
 var playerPreviousPosition = Vector2.ZERO
+
 @export var noticeDist = 200
 @export var pursueDist = 130
 @export var attackDist = 40
@@ -47,6 +50,7 @@ var animationPlayer = null
 @onready var emoteContainer = $EmoteContainer
 @onready var smearContainer = $enemy_attack_container
 @onready var healthbar = $Healthbar
+@onready var poisebar = $poisebar
 
 @onready var stat_sheet = $pirate_grunt_stat_sheet
 @onready var shader = self
@@ -75,18 +79,20 @@ func _ready():
 	animationPlayer = $AnimationPlayer
 	
 	for i in self.get_children():
-		if i is Sprite2D:
-			children.append(i)
-	
-	
 		
-	
+		if i is Sprite2D:
+			
+			children.append(i)
+			
 	healthbar.value = 100
 	emoteContainer.play_emote('')
+	
 	if(playerNode != null):
+		
 		playerNode.parried.connect(get_parried)
 		playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
-	attacks_dict = stat_sheet.attacks_dict
+		
+	populate_stats()
 	shader = shader.get("material")
 	
 func post_initialize():
@@ -96,6 +102,11 @@ func _physics_process(_delta):#State machine runs per frame
 	if(playerNode != null):
 		attackPosition = playerNode.position
 	frameRate = (1/_delta)
+	
+	if(int(frame) % (int(frameRate) / 2) == 0):
+		update_poise_bar(poise_recovery)
+	
+	
 	
 	match state:
 		
@@ -143,8 +154,10 @@ func _physics_process(_delta):#State machine runs per frame
 	if(coolDownFrames / frameRate >= 1):
 		coolDownTimerOn = false
 		coolDownFrames = 0
+		print("Cooldown timer is now " + str(coolDownTimerOn))
 	if(coolDownTimerOn):
 		coolDownFrames += 1	
+		print("Cooldown attack frames for enemy are " + str(coolDownFrames))
 	else:
 		smearContainer.supplied_player_position = get_parent().playerPosition
 	frame += 1 #Frame tracking for various function
@@ -184,15 +197,16 @@ func wander_state(target_point, _delta):
 		emoteContainer.play_emote('')
 	
 	
-	if(self.position.distance_to(target_point) <= attackDist 
+	if(self.position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):
 		state = ATTACK
+		print("Self position is " + str(position) + " and target point is " + str(target_point))
 		idle_frames = 0
 		stuckFrames = 0
 		coolDownFrames = 0
 		emoteContainer.play_emote('')
 		velocity = Vector2.ZERO
-		
+		attackPosition = target_point
 		animationPlayer.stop()
 		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
 		animationPlayer.play('enemy_attack')
@@ -203,9 +217,7 @@ func wander_state(target_point, _delta):
 func attack_state(_delta):
 	
 	
-		
-	print("Cooldown is " + str(coolDownFrames))	
-	if(self.position.distance_to(playerNode.position) >= attackDist):
+	if(self.position.distance_to(attackPosition) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
 			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
@@ -217,15 +229,13 @@ func attack_state(_delta):
 			emoteContainer.play_emote('startled')
 			animationPlayer.set("speed_scale", 1.0)
 	elif(!coolDownTimerOn):
-		
-		if(animationPlayer.current_animation != 'enemy_attack'):
-			animationPlayer.stop()
-			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
-			animationPlayer.play('enemy_attack')
-			animationPlayer.set("speed_scale", 1.0)
-			coolDownTimerOn = true
+		animationPlayer.stop()
+		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
+		animationPlayer.play('enemy_attack')
+		animationPlayer.set("speed_scale", 1.0)
+		coolDownTimerOn = true
 	
-
+	
 func idle_state(_delta):
 
 	velocity = Vector2.ZERO
@@ -282,9 +292,11 @@ func _on_hurtbox_area_entered(area):
 			change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 			animationPlayer.play("take_hit")
 			update_healthbar(player_damage)
+			update_poise_bar(player_poise_damage)
 			
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
 			update_healthbar(player_damage)	
+			update_poise_bar(player_poise_damage)
 			
 			animationPlayer.set("speed_scale", 0.5)
 		if(current_health <= 0):
@@ -349,8 +361,9 @@ func notice_player_state(_delta):
 	
 func pursue_state(_delta):
 	
-	if(position.distance_to(get_parent().playerPosition) <= noticeDist):
+	if(position.distance_to(playerNode.playerPosition) <= noticeDist):
 		playerPreviousPosition = get_parent().playerPosition
+	
 	wander_state(playerPreviousPosition, _delta)
 
 func update_healthbar(health_change):#pass in negative values to increase health
@@ -366,11 +379,15 @@ func dead_state(_delta):
 	var framerate = 1/_delta
 	emoteContainer.play_emote("")
 	animationPlayer.set("speed_scale", 1.0)
+	
 	if(healthbar != null):
 		healthbar.queue_free()
 		animationPlayer.stop()
 		animationPlayer.play('parried')
+		poisebar.queue_free()
+		
 	$CollisionShape2D.disabled = true
+	
 	if(deadframes / framerate >= 2):
 		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
 		
@@ -397,9 +414,25 @@ func get_parried(enemy_id):
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
 	
-func get_player_stats(knock_back_strength,damage):
+func get_player_stats(knock_back_strength, damage, poise_damage, parryPoiseDamage):
 	
 	pushBackStrength = knock_back_strength / 2
 	pushBackAcceleration = pushBackStrength 
 	player_damage = damage
+	player_poise_damage = poise_damage
+	parry_poise_damage = parryPoiseDamage
+	
+func populate_stats():
+	
+	attacks_dict = stat_sheet.attacks_dict
+	max_health = stat_sheet.max_health
+	poise = stat_sheet.max_poise
+	poise_recovery = stat_sheet.poise_recovery
+	poise_max = poise
+		
+func update_poise_bar(poise_change):
+	
+	if(poisebar != null):
+		poise += poise_change
+		poisebar.value = (poise / poise_max) * 100
 	

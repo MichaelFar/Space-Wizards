@@ -46,6 +46,7 @@ var previous_velocity = Vector2.ZERO
 @onready var playerSpritePlayer = $PlayerSpriteAnimPlayer
 @onready var playerSpriteTree = $PlayerSpriteAnimTree
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
+@onready var nakedWizardBase = $NakedWizard_base
 
 var listOfSprites = []
 
@@ -76,9 +77,12 @@ func _ready():#Called when node loads into the scene, children ready functions r
 			listOfSprites.append(i)
 	
 	shader = shader.get("material")
-	change_sprite("NakedWizard_armed")
+	change_sprite("NakedWizard_base")
 	populate_stats()
 	set_collision_mask_value(2, true)
+	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
+	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
+	animationState.travel("MoveBlend")
 
 func post_initialize(animation_tree):
 	animationState = animation_tree.get("parameters/playback")
@@ -193,7 +197,8 @@ func attack_state(_delta):#State machine for attack combos will go here
 	if(attackSpritePlayer.current_animation_position == 0):
 		
 		attackSpritePlayer.play("melee_attack")
-		change_sprite("NakedWizard_unequipped")
+		#change_sprite("NakedWizard_base")
+		nakedWizardBase.switch_weapon_sprite("")
 		
 	elif(attackSpritePlayer.current_animation_position < attackSpritePlayer.current_animation_length):
 		
@@ -205,8 +210,8 @@ func attack_state(_delta):#State machine for attack combos will go here
 		print("Hit enemy is " + str(hit_enemy) + " and attack timer is set to " + str(attack_timer_on))
 		attackSpritePlayer.stop()
 		state = COOLDOWN
-		change_sprite("NakedWizard_armed")
-		
+		change_sprite("NakedWizard_base")
+		nakedWizardBase.switch_weapon_sprite("NakedwizardBroom01")
 		#velocity = Vector2.ZERO
 	move_and_slide()
 
@@ -231,7 +236,7 @@ func take_hit_state(_delta):
 
 		playerSpritePlayer.stop()
 		state = MOVE
-		change_sprite("NakedWizard_armed")
+		change_sprite("NakedWizard_base")
 		
 	if(current_health <= 0):
 		
@@ -248,7 +253,6 @@ func parry_state(_delta):
 	
 	if(attackSpritePlayer.current_animation_position == 0):
 		
-		
 		shader.set_shader_parameter("applied", true)
 	
 	if(parried_enemy):
@@ -256,6 +260,8 @@ func parry_state(_delta):
 			#attackSpritePlayer.stop()
 			attackSpritePlayer.play("parry_hit")
 			parried_enemy = false
+			#state = MOVE
+			#move_state(_delta)
 			
 	
 	if(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length 

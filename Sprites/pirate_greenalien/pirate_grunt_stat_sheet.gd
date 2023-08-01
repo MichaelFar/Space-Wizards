@@ -1,9 +1,10 @@
 extends Node
 
-@export var damage = 100#Godot is shit so the inspector has no effect on these variables for some reason, keeping the @export until they fix it
+@export var damage = 100
 @export var knockback_strength = 250
 @export var max_health = 1000
-@export var poise = 100
+@export var max_poise = 100
+@export var poise_recovery = 3
 
 signal pirate_grunt_stats
 var current_attack = "attack1"
@@ -25,8 +26,6 @@ func _ready():
 	
 	
 func post_initialize():
-	
-	
 	
 	set_attack("attack1")
 	notify_property_list_changed()

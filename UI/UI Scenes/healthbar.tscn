@@ -1,14 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bsgcp3yjcx28x"]
+[gd_scene load_steps=4 format=3 uid="uid://bsgcp3yjcx28x"]
 
 [ext_resource type="Theme" uid="uid://ydhmuqqweu5h" path="res://UI/Themes/health_bar.tres" id="1_ib3tu"]
 
 [sub_resource type="SystemFont" id="SystemFont_utaur"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kir1v"]
+bg_color = Color(0.235294, 0.705882, 0.360784, 1)
+
 [node name="healthbar" type="ProgressBar"]
 show_behind_parent = true
+z_index = 2
 offset_right = 32.0
 offset_bottom = 8.0
 theme = ExtResource("1_ib3tu")
 theme_override_fonts/font = SubResource("SystemFont_utaur")
+theme_override_styles/fill = SubResource("StyleBoxFlat_kir1v")
 value = 100.0
 rounded = true

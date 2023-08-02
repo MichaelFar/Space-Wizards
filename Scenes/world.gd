@@ -8,7 +8,7 @@ extends Node2D
 
 @onready var navigationRegion = $NavigationRegion2D
 @onready var exclusion_zone = $ExclusionZone#Get sibling
-# Called when the node enters the scene tree for the first time.
+
 @onready var playerNode = $Player
 var playerPosition = Vector2.ZERO
 var validpoints = []

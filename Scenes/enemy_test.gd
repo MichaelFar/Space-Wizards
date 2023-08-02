@@ -17,6 +17,8 @@ var max_poise = 0.0
 var poise_recovery = 3
 var player_poise_damage = 0
 var parry_poise_damage = 0
+var knockback_resistance = 0
+
 var frame = 0
 var state = CHOOSEPOINT
 var inclusion_area = Vector2.ZERO
@@ -71,7 +73,7 @@ enum {
 	TAKEHIT,
 	NOTICEPLAYER,
 	DEAD,
-	PARRIED
+	STAGGERED
 }
 
 func _ready():
@@ -130,7 +132,7 @@ func _physics_process(_delta):#State machine runs per frame
 			take_hit_state(_delta)
 		DEAD:
 			dead_state(_delta)
-		PARRIED:
+		STAGGERED:
 			take_hit_state(_delta)
 	
 	if(get_parent().playerPosition.distance_to(position) <= noticeDist 
@@ -139,7 +141,7 @@ func _physics_process(_delta):#State machine runs per frame
 	&& state != TAKEHIT
 	&& state != ATTACK
 	&& state != DEAD
-	&& state != PARRIED):
+	&& state != STAGGERED):
 	#Other states must be interrupted so that the player may be noticed
 	#However certain states should not be interrupted, hence the state exclusion in the condition
 	#Creates a '?' above the head of an enemy that noticed the player
@@ -304,8 +306,10 @@ func _on_hurtbox_area_entered(area):
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
 			update_healthbar(player_damage)	
 			update_poise_bar(player_poise_damage)
-			
-			animationPlayer.set("speed_scale", 0.5)
+			if(state != STAGGERED):
+				animationPlayer.set("speed_scale", 0.5)
+			else:
+				animationPlayer.stop()
 		
 		
 		
@@ -315,12 +319,13 @@ func take_hit_state(_delta):
 	
 	pushBackDirection = pushBackDirection.normalized()
 	
+			
 	animationPlayer.set("speed_scale", 1.0)
 	if(animationPlayer.current_animation_position == 0):
 		
 		if(state == TAKEHIT):
 			animationPlayer.play('take_hit')
-		elif(state == PARRIED):
+		elif(state == STAGGERED):
 			animationPlayer.play('parried')
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
@@ -445,17 +450,20 @@ func populate_stats():
 	max_health = stat_sheet.max_health
 	poise = stat_sheet.max_poise
 	poise_recovery = stat_sheet.poise_recovery
+	knockback_resistance = stat_sheet.knockback_resistance
 	max_poise = poise
 		
 func update_poise_bar(poise_change):
 	
 	if(poisebar != null):
+		
 		poise = clamp(poise + poise_change, 0.0, max_poise)
 		poisebar.value = (poise / max_poise) * 100
+		
 		if(poise <= 0):
 			poisebar.hide()
-			if(state != PARRIED):
-				state = PARRIED
+			if(state != STAGGERED):
+				state = STAGGERED
 			else:
 				state = TAKEHIT
 		else:

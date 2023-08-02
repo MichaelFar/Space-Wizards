@@ -11,13 +11,11 @@ extends Node
 @export var parry_poise_damage = -100.0
 signal player_stats
 
-
-	
 func update_specs(newDamage = 200.0, newKnockback = 250.0):
+	
 	damage = newDamage
 	knockback_strength = newKnockback
-		
-
+	
 func _ready():
 	post_initialize()
 	

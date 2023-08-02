@@ -5,6 +5,7 @@ extends Node
 @export var max_health = 1000
 @export var max_poise = 100
 @export var poise_recovery = 3
+@export var knockback_resistance = 0
 
 signal pirate_grunt_stats
 var current_attack = "attack1"

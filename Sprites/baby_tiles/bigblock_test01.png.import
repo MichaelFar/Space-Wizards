@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddp1ms1ryy0uy"
-path="res://.godot/imported/death_effect-Sheet.png-b4113bc55676cb2b9362a12b70a29d96.ctex"
+uid="uid://dueecbxjlql5g"
+path="res://.godot/imported/bigblock_test01.png-98187570427452095fce18890d32af36.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/pirate_greenalien/death_effect-Sheet.png"
-dest_files=["res://.godot/imported/death_effect-Sheet.png-b4113bc55676cb2b9362a12b70a29d96.ctex"]
+source_file="res://Sprites/baby_tiles/bigblock_test01.png"
+dest_files=["res://.godot/imported/bigblock_test01.png-98187570427452095fce18890d32af36.ctex"]
 
 [params]
 

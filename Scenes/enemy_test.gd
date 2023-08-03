@@ -184,8 +184,8 @@ func wander_state(target_point, _delta):
 	rayCastContainer.supplied_direction = direction + global_position
 	
 	if(rayCastContainer.suggested_vector != Vector2.ZERO):
-		direction = rayCastContainer.suggested_vector
-		
+		#direction = rayCastContainer.suggested_vector
+		pass
 	if((direction + global_position) == target_point ):
 		change_sprite(get_node('pirate_grunt_1'), target_point)
 	else:

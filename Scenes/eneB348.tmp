@@ -16,7 +16,7 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
 radius = 6.0
-height = 20.0
+height = 38.0
 
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
@@ -326,7 +326,10 @@ material = ExtResource("1_dtlbr")
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_qhvur")
+noticeDist = null
+pursueDist = null
 attackDist = 60
+shouldDie = null
 
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")
@@ -394,7 +397,6 @@ metadata/_edit_group_ = true
 [node name="enemy_attack_hitbox" type="Area2D" parent="enemy_attack_container/enemy_smear_2"]
 position = Vector2(-204.632, 116.213)
 scale = Vector2(1.14952, 1.63123)
-collision_layer = 2
 script = ExtResource("9_yuu8k")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="enemy_attack_container/enemy_smear_2/enemy_attack_hitbox"]
@@ -418,73 +420,31 @@ offset_bottom = 22.0
 
 [node name="RayCastContainer" type="Node2D" parent="."]
 position = Vector2(0, -16)
-rotation = 3.14159
+rotation = -1.5708
 script = ExtResource("13_6082h")
+metadata/_edit_group_ = true
 
-[node name="RayCast2D" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
+[node name="RayCast2Ddown" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(48, 19)
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="RayCast2D2" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(-22, 45)
+[node name="RayCast2Dbl" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(28, 41)
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="RayCast2D3" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(-40, 30)
+[node name="RayCast2Dbl2" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(-28, 41)
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="RayCast2D7" type="RayCast2D" parent="RayCastContainer"]
-rotation = 3.14159
+[node name="RayCast2Dleft" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(-48, 19)
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="RayCast2D13" type="RayCast2D" parent="RayCastContainer"]
-rotation = -1.5708
-target_position = Vector2(40, 30)
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D14" type="RayCast2D" parent="RayCastContainer"]
-rotation = -1.5708
-target_position = Vector2(22, 45)
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D4" type="RayCast2D" parent="RayCastContainer"]
-rotation = -1.5708
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D5" type="RayCast2D" parent="RayCastContainer"]
-rotation = -1.5708
-target_position = Vector2(-22, 45)
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D6" type="RayCast2D" parent="RayCastContainer"]
-rotation = -1.5708
-target_position = Vector2(-40, 30)
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D8" type="RayCast2D" parent="RayCastContainer"]
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D11" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(40, 30)
-collide_with_areas = true
-collide_with_bodies = false
-
-[node name="RayCast2D12" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(22, 45)
+[node name="RayCast2Dleft2" type="RayCast2D" parent="RayCastContainer"]
 collide_with_areas = true
 collide_with_bodies = false
 

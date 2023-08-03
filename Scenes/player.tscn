@@ -13,8 +13,12 @@
 [ext_resource type="Script" path="res://Scripts/WizardWeaponContainer.gd" id="5_s86xv"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="7_6wihs"]
 [ext_resource type="Texture2D" uid="uid://b13ydspxd8yli" path="res://Sprites/player sprite sheets/broom_smear_01.png" id="8_x7jvc"]
-[ext_resource type="Texture2D" uid="uid://7pxmkaq24sfm" path="res://Sprites/player sprite sheets/naked_wizard_06.png" id="14_rfyrk"]
-[ext_resource type="Texture2D" uid="uid://i13memyivr6m" path="res://Sprites/player sprite sheets/nakedwizard_broom_01.png" id="15_wnbpv"]
+[ext_resource type="Texture2D" uid="uid://ddhk5cw02ba74" path="res://Sprites/player sprite sheets/naked_wizard_06.png" id="14_rfyrk"]
+[ext_resource type="Texture2D" uid="uid://dpdlkwabtfqv5" path="res://Sprites/player sprite sheets/nakedwizard_broom_01.png" id="15_wnbpv"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
+radius = 3.0
+height = 20.0
 
 [sub_resource type="Animation" id="Animation_5cogu"]
 length = 0.001
@@ -57,22 +61,10 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("NakedWizard_base:offset")
+tracks/3/path = NodePath("NakedWizard_base/NakedwizardBroom01:frame")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [Vector2(0, -4)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("NakedWizard_base/NakedwizardBroom01:frame")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -515,10 +507,10 @@ tracks/2/path = NodePath("NakedWizard_base:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [7]
+"values": [7, 15]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -543,18 +535,6 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [Vector2(0, -12), Vector2(0, -13)]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("NakedWizard_base:offset")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [Vector2(0, -4), Vector2(0, -5)]
 }
 
 [sub_resource type="Animation" id="Animation_n16xm"]
@@ -1490,15 +1470,16 @@ shader_parameter/applied = true
 radius = 8.0
 height = 34.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
-radius = 3.0
-height = 20.0
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5wr3i"]
 
 [node name="Player" type="CharacterBody2D"]
 material = ExtResource("1_kkqpc")
+collision_layer = 2
 script = ExtResource("1_cdtsu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_hslqc")
 
 [node name="player_stat_sheet" type="Node" parent="."]
 script = ExtResource("3_7wyvt")
@@ -1507,12 +1488,11 @@ poise_damage = -45.0
 
 [node name="NakedWizard_base" type="Sprite2D" parent="."]
 texture = ExtResource("14_rfyrk")
-offset = Vector2(0, -4)
+offset = Vector2(0, -12)
 hframes = 8
 vframes = 6
 frame = 2
 script = ExtResource("5_s86xv")
-metadata/_edit_group_ = true
 
 [node name="NakedwizardBroom01" type="Sprite2D" parent="NakedWizard_base"]
 position = Vector2(0, -1)
@@ -1523,12 +1503,11 @@ frame = 3
 
 [node name="NakedWizard_hurt_armed" type="Sprite2D" parent="."]
 use_parent_material = true
-position = Vector2(0, 1)
 texture = ExtResource("2_mxy5m")
 offset = Vector2(0, -16)
 hframes = 8
 vframes = 4
-frame = 11
+frame = 13
 
 [node name="PlayerSpriteAnimPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -1578,6 +1557,7 @@ hframes = 4
 
 [node name="AttackHitBox" parent="attackContainer/broom_smear_1" instance=ExtResource("4_nryts")]
 position = Vector2(-24, 4)
+collision_layer = 2
 
 [node name="CollisionShape2D" parent="attackContainer/broom_smear_1/AttackHitBox" index="0"]
 position = Vector2(31, -3)
@@ -1593,11 +1573,8 @@ offset = Vector2(0, -10)
 hframes = 16
 frame = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = -1.5708
-shape = SubResource("CapsuleShape2D_hslqc")
-
 [node name="player_hurtbox" type="Area2D" parent="."]
+collision_layer = 2
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_hurtbox"]

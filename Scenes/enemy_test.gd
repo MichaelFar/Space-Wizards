@@ -18,6 +18,9 @@ var poise_recovery = 3
 var player_poise_damage = 0
 var parry_poise_damage = 0
 var knockback_resistance = 0
+var knockback_modifier = 0 # Poise overkill results in longer knockback
+var stun_modifier = 0.0
+var velocityClone = Vector2.ZERO
 
 var frame = 0
 var state = CHOOSEPOINT
@@ -53,6 +56,8 @@ var animationPlayer = null
 @onready var smearContainer = $enemy_attack_container
 @onready var healthbar = $Healthbar
 @onready var poisebar = $poisebar
+@onready var navAgent = $NavigationAgent2D
+@onready var rayCastContainer = $RayCastContainer
 
 @onready var stat_sheet = $pirate_grunt_stat_sheet
 @onready var shader = self
@@ -176,6 +181,11 @@ func wander_state(target_point, _delta):
 	
 	direction = nav.get_next_path_position() - global_position
 	
+	rayCastContainer.supplied_direction = direction + global_position
+	
+	if(rayCastContainer.suggested_vector != Vector2.ZERO):
+		direction = rayCastContainer.suggested_vector
+		
 	if((direction + global_position) == target_point ):
 		change_sprite(get_node('pirate_grunt_1'), target_point)
 	else:
@@ -204,9 +214,9 @@ func wander_state(target_point, _delta):
 		stuckFrames = 0
 		emoteContainer.play_emote('')
 	
-	
 	if(self.position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):
+		
 		state = ATTACK
 		print("Self position is " + str(position) + " and target point is " + str(target_point))
 		idle_frames = 0
@@ -220,10 +230,10 @@ func wander_state(target_point, _delta):
 		animationPlayer.play('enemy_attack')
 		coolDownTimerOn = true
 		smearContainer.supplied_player_position = get_parent().playerPosition
+	
 	move_and_slide()
 
 func attack_state(_delta):
-	
 	
 	if(self.position.distance_to(attackPosition) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
@@ -242,8 +252,7 @@ func attack_state(_delta):
 		animationPlayer.play('enemy_attack')
 		animationPlayer.set("speed_scale", 1.0)
 		coolDownTimerOn = true
-	
-	
+
 func idle_state(_delta):
 
 	velocity = Vector2.ZERO
@@ -259,13 +268,13 @@ func choose_point():
 	
 	var randomPoint = RandomNumberGenerator.new()
 	var chosen_point = Vector2.ZERO
-	var valueRange = 150
+	var choice_radius = 150
 	var travelPoints = []
 	
 	validPoints = self.get_parent().validpoints
 	
 	for i in validPoints:
-		if i.distance_to(self.position) <= valueRange:
+		if i.distance_to(self.position) <= choice_radius:
 			travelPoints.append(i)
 	
 	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
@@ -293,7 +302,6 @@ func _on_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
 		if(area.name == 'AttackHitBox' && state != TAKEHIT && state != ATTACK):
 			
-			
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
 			playerPreviousPosition = get_parent().playerNode.position
@@ -302,25 +310,23 @@ func _on_hurtbox_area_entered(area):
 			update_healthbar(player_damage)
 			update_poise_bar(player_poise_damage)
 			
-			
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
+			
 			update_healthbar(player_damage)	
 			update_poise_bar(player_poise_damage)
+			
 			if(state != STAGGERED):
 				animationPlayer.set("speed_scale", 0.5)
 			else:
 				animationPlayer.stop()
-		
-		
-		
-			
+
 func take_hit_state(_delta):
 	var pushBackDirection = position - playerPreviousPosition
 	
 	pushBackDirection = pushBackDirection.normalized()
 	
-			
-	animationPlayer.set("speed_scale", 1.0)
+	animationPlayer.set("speed_scale", 1.0 + stun_modifier)
+	
 	if(animationPlayer.current_animation_position == 0):
 		
 		if(state == TAKEHIT):
@@ -331,7 +337,7 @@ func take_hit_state(_delta):
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
 		print("Pushback acceleration is " + str(pushBackAcceleration))
-		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)
+		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
@@ -343,6 +349,7 @@ func take_hit_state(_delta):
 		playerPreviousPosition = get_parent().playerPosition
 		emoteContainer.play_emote('exclaim')
 		velocity = Vector2.ZERO
+		animationPlayer.set("speed_scale", 1.0)
 		if(poise <= 0.0):
 			update_poise_bar(max_poise)
 	
@@ -385,14 +392,16 @@ func pursue_state(_delta):
 func update_healthbar(health_change):#pass in negative values to increase health
 	
 	if(healthbar != null):
+		
 		current_health -= health_change
 		healthbar.value = (current_health / max_health) * 100
 		print("Health bar value is " + str(healthbar.value))
+		
 		if(current_health <= 0):
 			state = DEAD
-	
 
 func dead_state(_delta):
+	
 	deadframes += 1
 	var framerate = 1/_delta
 	emoteContainer.play_emote("")
@@ -418,11 +427,13 @@ func dead_state(_delta):
 			queue_free()
 			
 func flip_h_in_animation():
+	
 	get_node("pirate_grunt_1").flip_h = !get_node("pirate_grunt_1").flip_h
 
 func get_parried(enemy_id):
 	
 	print("Self is " + str(self) + " and enemy_id is " + str(enemy_id))
+	
 	if(enemy_id == self):
 		
 		update_poise_bar(parry_poise_damage)
@@ -434,12 +445,10 @@ func get_parried(enemy_id):
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
 		
-		
-	
 func get_player_stats(knock_back_strength, damage, poise_damage, parryPoiseDamage):
 	
 	pushBackStrength = knock_back_strength / 2
-	pushBackAcceleration = pushBackStrength 
+	pushBackAcceleration = pushBackStrength + knockback_modifier - knockback_resistance
 	player_damage = damage
 	player_poise_damage = poise_damage
 	parry_poise_damage = parryPoiseDamage
@@ -457,7 +466,18 @@ func update_poise_bar(poise_change):
 	
 	if(poisebar != null):
 		
-		poise = clamp(poise + poise_change, 0.0, max_poise)
+		poise += poise_change
+		
+		if(poise <= 0.0):
+			stun_modifier = poise / 180.0
+			print("Stun modifier is " + str(stun_modifier))
+			knockback_modifier = absf(poise)
+			
+		else:
+			stun_modifier = 0.0
+			knockback_modifier = 0.0 
+		
+		poise = clamp(poise, 0.0, max_poise)
 		poisebar.value = (poise / max_poise) * 100
 		
 		if(poise <= 0):

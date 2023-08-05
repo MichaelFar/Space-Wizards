@@ -37,7 +37,7 @@ func get_suggested_vector():
 	for i in raycastChildren:
 		if(!i.is_colliding()):
 			vector_candidate += i.target_position
-			print("Vector candidate is " + str(vector_candidate))
+			#print("Vector candidate is " + str(vector_candidate))
 			num_good_rays += 1
 	
 	if(num_good_rays == raycastChildren.size() || num_good_rays == 0):
@@ -46,7 +46,7 @@ func get_suggested_vector():
 		vector_candidate = vector_candidate / num_good_rays
 	
 	suggested_vector = vector_candidate
-	print("Suggested direction is " + str(vector_candidate))
+	#print("Suggested direction is " + str(vector_candidate))
 
 func get_colliding_vectors():
 	

@@ -1,8 +1,9 @@
-[gd_scene load_steps=68 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=69 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Material" uid="uid://dumxkcum8oy8r" path="res://Shaders/player.tres" id="1_kkqpc"]
 [ext_resource type="Texture2D" uid="uid://cme7itjvd6u5m" path="res://Sprites/player sprite sheets/naked_wizard_04.png" id="2_mxy5m"]
+[ext_resource type="Script" path="res://Scripts/PlayerAttackPoints.gd" id="3_1rn36"]
 [ext_resource type="Script" path="res://Sprites/player sprite sheets/player_stat_sheet.gd" id="3_7wyvt"]
 [ext_resource type="Script" path="res://Scripts/attackRotation.gd" id="3_esf8s"]
 [ext_resource type="Shader" path="res://Shaders/forcefield.gdshader" id="3_ud6rq"]
@@ -1474,8 +1475,46 @@ height = 34.0
 
 [node name="Player" type="CharacterBody2D"]
 material = ExtResource("1_kkqpc")
-collision_layer = 2
 script = ExtResource("1_cdtsu")
+
+[node name="AttackPoints" type="Node2D" parent="."]
+script = ExtResource("3_1rn36")
+
+[node name="RayCast2D" type="RayCast2D" parent="AttackPoints"]
+target_position = Vector2(0, 60)
+collide_with_areas = true
+
+[node name="RayCast2D2" type="RayCast2D" parent="AttackPoints"]
+target_position = Vector2(60, 0)
+collide_with_areas = true
+
+[node name="RayCast2D3" type="RayCast2D" parent="AttackPoints"]
+target_position = Vector2(-60, 0)
+collide_with_areas = true
+
+[node name="RayCast2D4" type="RayCast2D" parent="AttackPoints"]
+target_position = Vector2(0, -60)
+collide_with_areas = true
+
+[node name="RayCast2D5" type="RayCast2D" parent="AttackPoints"]
+rotation = 0.785398
+target_position = Vector2(0, 63)
+collide_with_areas = true
+
+[node name="RayCast2D6" type="RayCast2D" parent="AttackPoints"]
+rotation = 0.785398
+target_position = Vector2(63, 0)
+collide_with_areas = true
+
+[node name="RayCast2D7" type="RayCast2D" parent="AttackPoints"]
+rotation = 0.785398
+target_position = Vector2(-63, 0)
+collide_with_areas = true
+
+[node name="RayCast2D8" type="RayCast2D" parent="AttackPoints"]
+rotation = 0.785398
+target_position = Vector2(0, -63)
+collide_with_areas = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = -1.5708
@@ -1557,7 +1596,6 @@ hframes = 4
 
 [node name="AttackHitBox" parent="attackContainer/broom_smear_1" instance=ExtResource("4_nryts")]
 position = Vector2(-24, 4)
-collision_layer = 2
 
 [node name="CollisionShape2D" parent="attackContainer/broom_smear_1/AttackHitBox" index="0"]
 position = Vector2(31, -3)
@@ -1574,7 +1612,6 @@ hframes = 16
 frame = 2
 
 [node name="player_hurtbox" type="Area2D" parent="."]
-collision_layer = 2
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_hurtbox"]

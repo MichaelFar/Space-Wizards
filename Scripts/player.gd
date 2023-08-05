@@ -15,6 +15,7 @@ var max_health = 1000
 var current_health = max_health
 var pushBackStrength = 0
 var frame = 0
+var attack_points = []
 
 var animationState = null
 
@@ -47,12 +48,14 @@ var previous_velocity = Vector2.ZERO
 @onready var playerSpriteTree = $PlayerSpriteAnimTree
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
+@onready var attackPointsContainer = $AttackPoints
 
 var listOfSprites = []
 
 var state = MOVE
 
-signal parried
+signal s_parried
+signal s_attack_points
 
 enum {
 	MOVE,
@@ -97,6 +100,9 @@ func populate_stats():
 	attack_movement = stat_sheet.attack_movement #Multiplied by delta
 	current_health = max_health
 func _physics_process(_delta):#Runs per frame, contains starting player state machine
+	
+	attack_points = attackPointsContainer.valid_attack_points
+	s_attack_points.emit(attack_points)
 	
 	frame += 1
 	match state:
@@ -308,7 +314,7 @@ func _on_player_hurtbox_area_entered(area):
 				
 			update_healthbar(enemy_damage, enemy_knockback)
 		elif(area.name == 'enemy_attack_hitbox' && state == PARRY):
-			parried.emit(area.get_enemy_id())
+			s_parried.emit(area.get_enemy_id())
 			parry_timer_on = false
 			parried_enemy = true
 			parry_cool_down_frames = 0

@@ -359,7 +359,7 @@ libraries = {
 target_desired_distance = 20.0
 avoidance_enabled = true
 radius = 100.0
-time_horizon_agents = 5.0
+neighbor_distance = 120.0
 max_speed = 400.0
 
 [node name="Hurtbox" parent="." instance=ExtResource("4_cgwb5")]
@@ -394,7 +394,6 @@ metadata/_edit_group_ = true
 [node name="enemy_attack_hitbox" type="Area2D" parent="enemy_attack_container/enemy_smear_2"]
 position = Vector2(-204.632, 116.213)
 scale = Vector2(1.14952, 1.63123)
-collision_layer = 2
 script = ExtResource("9_yuu8k")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="enemy_attack_container/enemy_smear_2/enemy_attack_hitbox"]

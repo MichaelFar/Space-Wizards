@@ -21,6 +21,9 @@ var knockback_resistance = 0
 var knockback_modifier = 0 # Poise overkill results in longer knockback
 var stun_modifier = 0.0
 var velocityClone = Vector2.ZERO
+var playerAttackPoints = []
+var reserved_point = Vector2.ZERO
+var reserved_index = 0
 
 var frame = 0
 var state = CHOOSEPOINT
@@ -58,6 +61,7 @@ var animationPlayer = null
 @onready var poisebar = $poisebar
 @onready var navAgent = $NavigationAgent2D
 @onready var rayCastContainer = $RayCastContainer
+@onready var parent = get_parent()
 
 @onready var stat_sheet = $pirate_grunt_stat_sheet
 @onready var shader = self
@@ -96,11 +100,12 @@ func _ready():
 	
 	if(playerNode != null):
 		
-		playerNode.parried.connect(get_parried)
+		playerNode.s_parried.connect(get_parried)
 		playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
 		
 	populate_stats()
 	shader = shader.get("material")
+	playerPreviousPosition = playerNode.position
 	
 func post_initialize():
 	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
@@ -114,6 +119,8 @@ func _physics_process(_delta):#State machine runs per frame
 		update_poise_bar(poise_recovery)
 	
 	
+	
+	playerAttackPoints = playerNode.attack_points
 	
 	match state:
 		
@@ -140,7 +147,7 @@ func _physics_process(_delta):#State machine runs per frame
 		STAGGERED:
 			take_hit_state(_delta)
 	
-	if(get_parent().playerPosition.distance_to(position) <= noticeDist 
+	if(parent.playerPosition.distance_to(position) <= noticeDist 
 	&& state != NOTICEPLAYER 
 	&& state != PURSUE 
 	&& state != TAKEHIT
@@ -162,26 +169,25 @@ func _physics_process(_delta):#State machine runs per frame
 		
 		coolDownTimerOn = false
 		coolDownFrames = 0
-		print("Cooldown timer is now " + str(coolDownTimerOn))
+		#print("Cooldown timer is now " + str(coolDownTimerOn))
 	
 	if(coolDownTimerOn):
 		
 		coolDownFrames += 1	
-		print("Cooldown attack frames for enemy are " + str(coolDownFrames))
+		#print("Cooldown attack frames for enemy are " + str(coolDownFrames))
 	
 	else:
 		
-		smearContainer.supplied_player_position = get_parent().playerPosition
+		smearContainer.supplied_player_position = parent.playerPosition
 	
 	frame += 1 #Frame tracking for various function
+	print("State is " + str(state))
 	
 func wander_state(target_point, _delta):
 	
 	nav.target_position = target_point
 	
 	direction = nav.get_next_path_position() - global_position
-	
-	rayCastContainer.supplied_direction = direction + global_position
 	
 	if(rayCastContainer.suggested_vector != Vector2.ZERO):
 		#direction = rayCastContainer.suggested_vector
@@ -201,7 +207,8 @@ func wander_state(target_point, _delta):
 	
 	direction = direction.normalized()
 	
-	velocity = velocity.move_toward(direction * max_speed, _delta * acceleration)
+	nav.velocity = direction
+	velocity = velocity.move_toward(nav.velocity * max_speed, _delta * acceleration)
 	
 	
 	if(self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
@@ -226,10 +233,10 @@ func wander_state(target_point, _delta):
 		velocity = Vector2.ZERO
 		attackPosition = target_point
 		animationPlayer.stop()
-		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
+		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
 		animationPlayer.play('enemy_attack')
 		coolDownTimerOn = true
-		smearContainer.supplied_player_position = get_parent().playerPosition
+		smearContainer.supplied_player_position = parent.playerPosition
 	
 	move_and_slide()
 
@@ -238,23 +245,25 @@ func attack_state(_delta):
 	if(self.position.distance_to(attackPosition) >= attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
-			change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
+			reserve_attack_position()
+			change_sprite(get_node('pirate_grunt_1'), playerPreviousPosition)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_walk')
 			state = PURSUE
 			idle_frames = 0
-			attackPosition = get_parent().get_node('Player').position
+			
 			emoteContainer.play_emote('startled')
 			animationPlayer.set("speed_scale", 1.0)
 	elif(!coolDownTimerOn):
 		animationPlayer.stop()
-		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
+		change_sprite(get_node('pirate_grunt_1'),parent.playerPosition)
 		animationPlayer.play('enemy_attack')
 		animationPlayer.set("speed_scale", 1.0)
 		coolDownTimerOn = true
 
 func idle_state(_delta):
 
+	reserved_point = Vector2.ZERO
 	velocity = Vector2.ZERO
 	idle_frames += 1
 	var seconds = 60
@@ -271,10 +280,10 @@ func choose_point():
 	var choice_radius = 150
 	var travelPoints = []
 	
-	validPoints = self.get_parent().validpoints
+	validPoints = parent.validpoints
 	
 	for i in validPoints:
-		if i.distance_to(self.position) <= choice_radius:
+		if i.distance_to(position) <= choice_radius:
 			travelPoints.append(i)
 	
 	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
@@ -304,7 +313,7 @@ func _on_hurtbox_area_entered(area):
 			
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
-			playerPreviousPosition = get_parent().playerNode.position
+			playerPreviousPosition = parent.playerNode.position
 			change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 			animationPlayer.play("take_hit")
 			update_healthbar(player_damage)
@@ -341,12 +350,12 @@ func take_hit_state(_delta):
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
-		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
+		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 		state = PURSUE
 		idle_frames = 0
-		playerPreviousPosition = get_parent().playerPosition
+		playerPreviousPosition = parent.playerPosition
 		emoteContainer.play_emote('exclaim')
 		velocity = Vector2.ZERO
 		animationPlayer.set("speed_scale", 1.0)
@@ -362,30 +371,40 @@ func notice_player_state(_delta):
 	change_sprite(get_node("pirate_grunt_1"), playerNode.position)
 	idle_frames += 1
 	
-	if(idle_frames / 60 == 2 
-	&& position.distance_to(get_parent().playerPosition) <= noticeDist 
-	|| position.distance_to(get_parent().playerPosition) < pursueDist):
+	if(idle_frames / frameRate == 2 
+	&& position.distance_to(parent.playerPosition) <= noticeDist 
+	|| position.distance_to(parent.playerPosition) < pursueDist):
 		
-		change_sprite(get_node('pirate_grunt_1'), get_parent().playerPosition)
+		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 		state = PURSUE
 		idle_frames = 0
-		playerPreviousPosition = get_parent().playerPosition
+		print("Player position before reserving new attack position is " + str(playerPreviousPosition))
+		
+		reserve_attack_position()
+		print("Player position after reserving new attack position is " + str(playerPreviousPosition))
 		emoteContainer.play_emote('exclaim')
 		
-	elif(position.distance_to(get_parent().playerPosition) > noticeDist):
+	elif(position.distance_to(parent.playerPosition) > noticeDist):
 		
 		idle_frames = 0
 		state = CHOOSEPOINT
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 		emoteContainer.play_emote('')
-	
+		
 func pursue_state(_delta):
 	
-	if(position.distance_to(playerNode.playerPosition) <= noticeDist):
-		playerPreviousPosition = get_parent().playerPosition
+	var randomPoint = RandomNumberGenerator.new()
+	
+	
+	
+	if(position.distance_to(playerNode.position) <= noticeDist
+	&& !parent.compare_float_vectors(playerPreviousPosition, reserved_point)):
+		#playerPreviousPosition = current_valid_points[randomPoint.randi_range(0, current_valid_points.size() - 1)]
+		
+		reserve_attack_position()
 	
 	wander_state(playerPreviousPosition, _delta)
 
@@ -440,7 +459,7 @@ func get_parried(enemy_id):
 		
 		velocity = Vector2.ZERO
 		animationPlayer.stop()
-		playerPreviousPosition = get_parent().playerNode.position
+		playerPreviousPosition = parent.playerNode.position
 		change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
@@ -469,9 +488,9 @@ func update_poise_bar(poise_change):
 		poise += poise_change
 		
 		if(poise <= 0.0):
-			stun_modifier = poise / 180.0
+			stun_modifier = poise / 180.0 #Increases the length of the animation based on how overkill the poise damage was
 			print("Stun modifier is " + str(stun_modifier))
-			knockback_modifier = absf(poise)
+			knockback_modifier = absf(poise)#How far the enemy is knocked back when poise overkill occurs (currently no effect)
 			
 		else:
 			stun_modifier = 0.0
@@ -489,3 +508,25 @@ func update_poise_bar(poise_change):
 		else:
 			poisebar.show()
 		
+
+func reserve_attack_position():
+	
+	var geometry = Geometry2D
+	if(reserved_point != Vector2.ZERO):
+				print("Reserved point is " + str(reserved_point))
+				for j in parent.reservedAttackPoints.size():
+					if(!parent.compare_float_vectors(reserved_point, playerAttackPoints[reserved_index][1])):
+						print("Previously reserved spot " + str(reserved_point) + " has been freed")
+						parent.reservedAttackPoints[j] = false
+						break
+	for i in playerAttackPoints.size():
+		if(!playerAttackPoints[i][0] 
+		&& !parent.reservedAttackPoints[i] 
+		&& !geometry.is_point_in_polygon(playerAttackPoints[i][1], parent.exclusionArea)):
+				
+			reserved_point = playerAttackPoints[i][1]
+			reserved_index = i
+			playerPreviousPosition = reserved_point
+			parent.reservedAttackPoints[i] = true
+			
+			break

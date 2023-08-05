@@ -32,6 +32,8 @@ var idle_frames = 0
 var chosenPoint = Vector2.ZERO
 var children = []
 var playerPreviousPosition = Vector2.ZERO
+var all_other_reserved_indexes = []
+
 
 @export var noticeDist = 200
 @export var pursueDist = 130
@@ -67,11 +69,14 @@ var animationPlayer = null
 @onready var shader = self
 
 var frameRate = 0
-signal enemy_attack_stats
+
 var attacks_dict = {}
 
 var player_state = null
 var player_damage = 0
+
+signal enemy_attack_stats
+signal index_reserved
 
 enum {
 	WANDER,
@@ -106,6 +111,9 @@ func _ready():
 	populate_stats()
 	shader = shader.get("material")
 	playerPreviousPosition = playerNode.position
+	for i in parent.enemyChildren:
+		if i != self:
+			i.index_reserved.connect(get_other_reserved_indexes)
 	
 func post_initialize():
 	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
@@ -118,7 +126,8 @@ func _physics_process(_delta):#State machine runs per frame
 	if(int(frame) % (int(frameRate) / 2) == 0 && !(poise <= 0.0)):
 		update_poise_bar(poise_recovery)
 	
-	
+	if(parent.noReservedPoints):
+		all_other_reserved_indexes = []
 	
 	playerAttackPoints = playerNode.attack_points
 	
@@ -242,10 +251,11 @@ func wander_state(target_point, _delta):
 
 func attack_state(_delta):
 	
-	if(self.position.distance_to(attackPosition) >= attackDist):
+	if(self.position.distance_to(attackPosition) > attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
-			reserve_attack_position()
+			free_attack_position()
+			
 			change_sprite(get_node('pirate_grunt_1'), playerPreviousPosition)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_walk')
@@ -255,6 +265,7 @@ func attack_state(_delta):
 			emoteContainer.play_emote('startled')
 			animationPlayer.set("speed_scale", 1.0)
 	elif(!coolDownTimerOn):
+		
 		animationPlayer.stop()
 		change_sprite(get_node('pirate_grunt_1'),parent.playerPosition)
 		animationPlayer.play('enemy_attack')
@@ -370,10 +381,13 @@ func notice_player_state(_delta):
 	
 	change_sprite(get_node("pirate_grunt_1"), playerNode.position)
 	idle_frames += 1
-	
+	if(idle_frames == 1):
+		free_attack_position()
+		reserve_attack_position()
 	if(idle_frames / frameRate == 2 
 	&& position.distance_to(parent.playerPosition) <= noticeDist 
 	|| position.distance_to(parent.playerPosition) < pursueDist):
+		
 		
 		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
 		animationPlayer.stop()
@@ -381,13 +395,14 @@ func notice_player_state(_delta):
 		state = PURSUE
 		idle_frames = 0
 		print("Player position before reserving new attack position is " + str(playerPreviousPosition))
-		
+		free_attack_position()
 		reserve_attack_position()
 		print("Player position after reserving new attack position is " + str(playerPreviousPosition))
 		emoteContainer.play_emote('exclaim')
 		
 	elif(position.distance_to(parent.playerPosition) > noticeDist):
 		
+		free_attack_position()
 		idle_frames = 0
 		state = CHOOSEPOINT
 		animationPlayer.stop()
@@ -396,16 +411,13 @@ func notice_player_state(_delta):
 		
 func pursue_state(_delta):
 	
-	var randomPoint = RandomNumberGenerator.new()
-	
-	
 	
 	if(position.distance_to(playerNode.position) <= noticeDist
 	&& !parent.compare_float_vectors(playerPreviousPosition, reserved_point)):
-		#playerPreviousPosition = current_valid_points[randomPoint.randi_range(0, current_valid_points.size() - 1)]
 		
 		reserve_attack_position()
-	
+	else:
+		free_attack_position()
 	wander_state(playerPreviousPosition, _delta)
 
 func update_healthbar(health_change):#pass in negative values to increase health
@@ -512,21 +524,30 @@ func update_poise_bar(poise_change):
 func reserve_attack_position():
 	
 	var geometry = Geometry2D
-	if(reserved_point != Vector2.ZERO):
-				print("Reserved point is " + str(reserved_point))
-				for j in parent.reservedAttackPoints.size():
-					if(!parent.compare_float_vectors(reserved_point, playerAttackPoints[reserved_index][1])):
-						print("Previously reserved spot " + str(reserved_point) + " has been freed")
-						parent.reservedAttackPoints[j] = false
-						break
+	
 	for i in playerAttackPoints.size():
-		if(!playerAttackPoints[i][0] 
-		&& !parent.reservedAttackPoints[i] 
-		&& !geometry.is_point_in_polygon(playerAttackPoints[i][1], parent.exclusionArea)):
+		if(!playerAttackPoints[i][0] #Raycast has not collided
+		&& !parent.reservedAttackPoints[i] #Point has not been previously reserved
+		&& !geometry.is_point_in_polygon(playerAttackPoints[i][1], parent.exclusionArea)
+		&& !reserved_index in all_other_reserved_indexes):#Point is not in a forbidden location
 				
-			reserved_point = playerAttackPoints[i][1]
-			reserved_index = i
-			playerPreviousPosition = reserved_point
-			parent.reservedAttackPoints[i] = true
+			reserved_point = playerAttackPoints[i][1]#The actual coordinates to the point are set
+			reserved_index = i #Index of point is noted
+			index_reserved.emit(reserved_index)
+			playerPreviousPosition = reserved_point #playerPreviousPosition is passed into pursue state
+			parent.reservedAttackPoints[i] = true #Reserve the point
 			
 			break
+
+func free_attack_position():
+	if(reserved_point != Vector2.ZERO):#Reserved point is not zero
+		
+		for j in parent.reservedAttackPoints.size():
+			if(!parent.compare_float_vectors(reserved_point, playerAttackPoints[reserved_index][1])):#Custom function that uses epsilon to determine approximate equivalence of float vectors
+				print("Previously reserved spot " + str(reserved_point) + " has been freed")
+				parent.reservedAttackPoints[j] = false
+				reserved_point = Vector2.ZERO
+				
+
+func get_other_reserved_indexes(index):
+	all_other_reserved_indexes.append(index)

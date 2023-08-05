@@ -330,7 +330,6 @@ attackDist = 60
 
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")
-knockback_strength = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 4)
@@ -358,6 +357,7 @@ libraries = {
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 50.0
+target_desired_distance = 20.0
 avoidance_enabled = true
 radius = 100.0
 neighbor_distance = 120.0

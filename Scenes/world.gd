@@ -16,7 +16,8 @@ var enemyChildren = []
 var playerAttackPoints = []
 var reservedAttackPoints = []
 var exclusionArea = []
-
+var frame = 0
+var noReservedPoints = false
 func _ready():
 	
 	var inclusion_area = get_dimensions(navigationRegion.navigation_polygon.get_vertices())
@@ -27,6 +28,19 @@ func _ready():
 	for i in get_children():
 		if 'Enemy_' in i.name:
 			enemyChildren.append(i)
+	
+func _process(_delta):
+	frame += 1
+	if(Input.is_action_pressed("escape")):
+		get_tree().quit()
+	elif(Input.is_action_pressed("restart")):
+		get_tree().reload_current_scene()
+	
+	if(frame == 3 || Input.is_action_just_pressed("PrintReserved")):
+		print_reserved_points()
+	playerPosition = playerNode.position
+	
+	noReservedPoints = !(true in reservedAttackPoints)
 	
 func get_dimensions(vertices):
 	var xArray = []
@@ -53,31 +67,24 @@ func get_valid_points(_min, _max):
 				
 	return validPoints
 	
-func _process(_delta):
-	
-	if(Input.is_action_pressed("escape")):
-		get_tree().quit()
-	elif(Input.is_action_pressed("restart")):
-		get_tree().reload_current_scene()
-	playerPosition = playerNode.position
-	
-
 func get_player_attack_points(attack_points):
 	
 	playerAttackPoints = attack_points
 	
 	if(reservedAttackPoints.size() < playerAttackPoints.size()):
 		reservedAttackPoints.resize(playerAttackPoints.size())
-		for i in reservedAttackPoints:
-			i = false
+		for i in reservedAttackPoints.size():
+			reservedAttackPoints[i] = false
 
 func compare_floats(a, b):
-	if abs(a - b) < 0.000001:
-		return true
-	return false
+	return abs(a - b) < 0.000001
+		
 
 func compare_float_vectors(a, b):
-	if abs(a - b) < Vector2(0.000001,0.000001):
-		return true
-	return false
+	return abs(a - b) < Vector2(0.000001,0.000001)
+		
 
+func print_reserved_points():
+	for i in reservedAttackPoints.size():
+		print("Point " +str(i) + " (" + str(playerAttackPoints[i][1]) +") reserved = " + str(reservedAttackPoints[i]))
+		

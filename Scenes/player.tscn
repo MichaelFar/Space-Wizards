@@ -1496,26 +1496,6 @@ collide_with_areas = true
 target_position = Vector2(0, -60)
 collide_with_areas = true
 
-[node name="RayCast2D5" type="RayCast2D" parent="AttackPoints"]
-rotation = 0.785398
-target_position = Vector2(0, 63)
-collide_with_areas = true
-
-[node name="RayCast2D6" type="RayCast2D" parent="AttackPoints"]
-rotation = 0.785398
-target_position = Vector2(63, 0)
-collide_with_areas = true
-
-[node name="RayCast2D7" type="RayCast2D" parent="AttackPoints"]
-rotation = 0.785398
-target_position = Vector2(-63, 0)
-collide_with_areas = true
-
-[node name="RayCast2D8" type="RayCast2D" parent="AttackPoints"]
-rotation = 0.785398
-target_position = Vector2(0, -63)
-collide_with_areas = true
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
@@ -1523,6 +1503,7 @@ shape = SubResource("CapsuleShape2D_hslqc")
 [node name="player_stat_sheet" type="Node" parent="."]
 script = ExtResource("3_7wyvt")
 knockback_strength = 150.0
+max_health = 1e+07
 poise_damage = -45.0
 
 [node name="NakedWizard_base" type="Sprite2D" parent="."]

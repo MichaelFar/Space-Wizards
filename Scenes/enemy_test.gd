@@ -190,18 +190,16 @@ func _physics_process(_delta):#State machine runs per frame
 		smearContainer.supplied_player_position = parent.playerPosition
 	
 	frame += 1 #Frame tracking for various function
-	print("State is " + str(state))
+	#print("State is " + str(state))
 	
 func wander_state(target_point, _delta):
 	
-	nav.target_position = target_point
+	#nav.target_position = target_point
 	
-	direction = nav.get_next_path_position() - global_position
+	direction = target_point - global_position#nav.get_next_path_position() - global_position
 	
-	if(rayCastContainer.suggested_vector != Vector2.ZERO):
-		#direction = rayCastContainer.suggested_vector
-		pass
-	if((direction + global_position) == target_point ):
+	rayCastContainer.supplied_direction = direction.normalized()
+	if(parent.compare_float_vectors((direction + global_position), target_point)):
 		change_sprite(get_node('pirate_grunt_1'), target_point)
 	else:
 		change_sprite(get_node('pirate_grunt_1'), direction + global_position)
@@ -216,9 +214,9 @@ func wander_state(target_point, _delta):
 	
 	direction = direction.normalized()
 	
-	nav.velocity = direction
-	velocity = velocity.move_toward(nav.velocity * max_speed, _delta * acceleration)
 	
+	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, _delta * acceleration)
+	#print(name + " velocity while in wander_state() is " + str(velocity))
 	
 	if(self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
 		
@@ -356,7 +354,7 @@ func take_hit_state(_delta):
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
-		print("Pushback acceleration is " + str(pushBackAcceleration))
+		#print("Pushback acceleration is " + str(pushBackAcceleration))
 		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
@@ -394,10 +392,10 @@ func notice_player_state(_delta):
 		animationPlayer.play('enemy_walk')
 		state = PURSUE
 		idle_frames = 0
-		print("Player position before reserving new attack position is " + str(playerPreviousPosition))
+		#print("Player position before reserving new attack position is " + str(playerPreviousPosition))
 		free_attack_position()
 		reserve_attack_position()
-		print("Player position after reserving new attack position is " + str(playerPreviousPosition))
+		#print("Player position after reserving new attack position is " + str(playerPreviousPosition))
 		emoteContainer.play_emote('exclaim')
 		
 	elif(position.distance_to(parent.playerPosition) > noticeDist):
@@ -544,7 +542,7 @@ func free_attack_position():
 		
 		for j in parent.reservedAttackPoints.size():
 			if(!parent.compare_float_vectors(reserved_point, playerAttackPoints[reserved_index][1])):#Custom function that uses epsilon to determine approximate equivalence of float vectors
-				print("Previously reserved spot " + str(reserved_point) + " has been freed")
+				
 				parent.reservedAttackPoints[j] = false
 				reserved_point = Vector2.ZERO
 				

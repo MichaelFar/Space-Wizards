@@ -101,7 +101,7 @@ func populate_stats():
 	current_health = max_health
 func _physics_process(_delta):#Runs per frame, contains starting player state machine
 	
-	attack_points = attackPointsContainer.valid_attack_points
+	
 	s_attack_points.emit(attack_points)
 	
 	frame += 1

@@ -6,8 +6,8 @@ extends Node2D
 #Also contains debug commands like escaping
 
 
-@onready var navigationRegion = $NavigationRegion2D
-@onready var exclusion_zone = $ExclusionZone#Get sibling
+@onready var navigationRegion = $InclusionZone
+@onready var exclusion_zone = $ExclusionZone
 
 @onready var playerNode = $Player
 var playerPosition = Vector2.ZERO
@@ -15,13 +15,15 @@ var validpoints = []
 var enemyChildren = []
 var playerAttackPoints = []
 var reservedAttackPoints = []
-var exclusionArea = []
+var exclusionAreas = []
+var exclusionDimensions = []
 var frame = 0
 var noReservedPoints = false
+
 func _ready():
 	
-	var inclusion_area = get_dimensions(navigationRegion.navigation_polygon.get_vertices())
-	exclusionArea = get_dimensions(exclusion_zone.polygon)
+	var inclusion_area = get_dimensions(navigationRegion.polygon)
+	get_exclusion_children()
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
 	playerNode.s_attack_points.connect(get_player_attack_points)
 	
@@ -58,12 +60,13 @@ func get_valid_points(_min, _max):
 	var validPoints = []
 	
 	var geometry = Geometry2D
-	var polygon = exclusion_zone.polygon
-
-	for i in range(_max.x):
-		for j in range(_max.y):
-			if(!geometry.is_point_in_polygon(Vector2(i, j), polygon) && i > _min.x && j > _min.y):
-				validPoints.append(Vector2(i,j))
+	
+	
+	for i in exclusionDimensions:
+		for j in range(_max.x):
+			for k in range(_max.y):
+				if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
+					validPoints.append(Vector2(j,k))
 				
 	return validPoints
 	
@@ -88,3 +91,11 @@ func print_reserved_points():
 	for i in reservedAttackPoints.size():
 		print("Point " +str(i) + " (" + str(playerAttackPoints[i][1]) +") reserved = " + str(reservedAttackPoints[i]))
 		
+
+func get_exclusion_children():
+	for i in get_children():
+		if 'ExclusionZone' in i.name:
+			exclusionAreas.append(i)
+			print("Added " + i.name + " to exclusion zones")
+	for i in exclusionAreas:
+		exclusionDimensions.append(i.get_children()[0].polygon)

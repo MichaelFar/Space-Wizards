@@ -14,10 +14,6 @@
 [ext_resource type="Texture2D" uid="uid://crw6lx2r1lcsq" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet.png" id="12_wnmyr"]
 [ext_resource type="Script" path="res://Scripts/RayCastContainer.gd" id="13_6082h"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
-radius = 6.0
-height = 20.0
-
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
 tracks/0/type = "value"
@@ -321,21 +317,21 @@ _data = {
 radius = 14.9771
 height = 79.0947
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1aek4"]
+radius = 12.0
+height = 32.0
+
 [node name="Enemy_Test" type="CharacterBody2D"]
 material = ExtResource("1_dtlbr")
 collision_layer = 2
-collision_mask = 3
+collision_mask = 2
 script = ExtResource("1_qhvur")
-attackDist = 60
+acceleration = 50
+max_speed = 50
 
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")
 knockback_strength = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 4)
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_1aek4")
 
 [node name="pirate_grunt_1" type="Sprite2D" parent="."]
 use_parent_material = true
@@ -356,15 +352,8 @@ libraries = {
 "": SubResource("AnimationLibrary_gnggo")
 }
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-path_desired_distance = 70.0
-target_desired_distance = 50.0
-avoidance_enabled = true
-radius = 100.0
-neighbor_distance = 120.0
-max_speed = 400.0
-
 [node name="Hurtbox" parent="." instance=ExtResource("4_cgwb5")]
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" parent="Hurtbox" index="0"]
 position = Vector2(-1, -24)
@@ -417,49 +406,46 @@ offset_top = 18.0
 offset_right = 16.0
 offset_bottom = 22.0
 
-[node name="RayCastContainer" type="Node2D" parent="."]
-rotation = 3.14159
+[node name="RayCastContainer" type="CharacterBody2D" parent="."]
+position = Vector2(0, -12)
 script = ExtResource("13_6082h")
 metadata/_edit_group_ = true
 
+[node name="RayCast2D" type="RayCast2D" parent="RayCastContainer"]
+collide_with_areas = true
+
 [node name="RayCast2D2" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(-32, 35)
+target_position = Vector2(50, 0)
 collide_with_areas = true
 
 [node name="RayCast2D3" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(-32, -35)
-collide_with_areas = true
-
-[node name="RayCast2D5" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(32, 35)
-collide_with_areas = true
-
-[node name="RayCast2D6" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(32, -35)
-collide_with_areas = true
-
-[node name="RayCast2D4" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
 target_position = Vector2(-50, 0)
 collide_with_areas = true
 
-[node name="RayCast2D7" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-collide_with_areas = true
-
-[node name="RayCast2D8" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
+[node name="RayCast2D4" type="RayCast2D" parent="RayCastContainer"]
 target_position = Vector2(0, -50)
 collide_with_areas = true
 
 [node name="RayCast2D9" type="RayCast2D" parent="RayCastContainer"]
-rotation = 1.5708
-target_position = Vector2(50, 0)
+target_position = Vector2(-35, 50)
 collide_with_areas = true
+
+[node name="RayCast2D10" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(35, 50)
+collide_with_areas = true
+
+[node name="RayCast2D11" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(-35, -50)
+collide_with_areas = true
+
+[node name="RayCast2D12" type="RayCast2D" parent="RayCastContainer"]
+target_position = Vector2(35, -50)
+collide_with_areas = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+rotation = -3.14159
+shape = SubResource("CapsuleShape2D_1aek4")
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

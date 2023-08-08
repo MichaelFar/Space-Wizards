@@ -4,8 +4,8 @@ extends CharacterBody2D
 #This node will crash if there is no player, navigation area, parent with world.gd script, or exclusion zone
 #Provides a good basis for ai going forward
 #Uses multiple sprite nodes with the same sheet
-var acceleration = 200
-var max_speed = 200
+@export var acceleration = 200
+@export var max_speed = 200
 var speed = 150
 var max_health = 1000.0
 var current_health = max_health
@@ -38,8 +38,10 @@ var all_other_reserved_indexes = []
 @export var noticeDist = 200
 @export var pursueDist = 130
 @export var attackDist = 40
+@export var path_desired_distance = 50
+@export var target_distance = 20
 
-@export var shouldDie = false
+@export var shouldDie = false#Do not change this in the inspector
 var attackPosition = Vector2.ZERO
 var deadframes = 0
 var previousPosition = Vector2.ZERO
@@ -48,14 +50,13 @@ var stuckFrames = 0
 var coolDownFrames = 0
 var coolDownTimerOn = false
 var validPoints = []
-
+var travelPoints = []
 var faceRight = true
 
 var animationPlayer = null
 
-@onready var nav = $NavigationAgent2D
-@onready var path_desired_distance = nav.get("path_desired_distance")
-@onready var target_distance = nav.get("target_desired_distance")
+
+
 @onready var playerNode = get_node("../Player")
 @onready var emoteContainer = $EmoteContainer
 @onready var smearContainer = $enemy_attack_container
@@ -114,6 +115,7 @@ func _ready():
 	for i in parent.enemyChildren:
 		if i != self:
 			i.index_reserved.connect(get_other_reserved_indexes)
+	travelPoints = get_travel_points()
 	
 func post_initialize():
 	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
@@ -136,7 +138,7 @@ func _physics_process(_delta):#State machine runs per frame
 		CHOOSEPOINT:#CHOOSEPOINT is used to get a valid point to travel to, then state transitions to WANDER
 			if(frame > 2):#Give nav time to update
 				state = WANDER
-			chosenPoint = choose_point()
+			chosenPoint = choose_point(travelPoints)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_walk')
 		WANDER:#Uses A* to navigate to a point, wander_state() is also used for pursuing the player (player position is supplied as an argument)
@@ -195,6 +197,8 @@ func _physics_process(_delta):#State machine runs per frame
 func wander_state(target_point, _delta):
 	
 	#nav.target_position = target_point
+	if(rayCastContainer.debug):
+		print("target_point is " + str(target_point) + " and player position is " + str(playerNode.position))
 	
 	direction = target_point - global_position#nav.get_next_path_position() - global_position
 	
@@ -212,10 +216,10 @@ func wander_state(target_point, _delta):
 	else:
 		stuckFrames = 0
 	
-	direction = direction.normalized()
 	
 	
-	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, _delta * acceleration)
+	
+	velocity = velocity.lerp(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
 	#print(name + " velocity while in wander_state() is " + str(velocity))
 	
 	if(self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
@@ -252,7 +256,7 @@ func attack_state(_delta):
 	if(self.position.distance_to(attackPosition) > attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
-			free_attack_position()
+			playerPreviousPosition = parent.playerPosition
 			
 			change_sprite(get_node('pirate_grunt_1'), playerPreviousPosition)
 			animationPlayer.stop()
@@ -282,22 +286,24 @@ func idle_state(_delta):
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 	
-func choose_point():
+func choose_point(travelPoints):
 	
 	var randomPoint = RandomNumberGenerator.new()
 	var chosen_point = Vector2.ZERO
-	var choice_radius = 150
+	
+	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
+	
+	return chosen_point
+
+func get_travel_points():
 	var travelPoints = []
 	
+	var choice_radius = 150
 	validPoints = parent.validpoints
 	
 	for i in validPoints:
 		if i.distance_to(position) <= choice_radius:
 			travelPoints.append(i)
-	
-	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
-	
-	return chosen_point
 
 func change_sprite(spriteName, chosen_point):
 	
@@ -379,28 +385,25 @@ func notice_player_state(_delta):
 	
 	change_sprite(get_node("pirate_grunt_1"), playerNode.position)
 	idle_frames += 1
-	if(idle_frames == 1):
-		free_attack_position()
-		reserve_attack_position()
+	
 	if(idle_frames / frameRate == 2 
 	&& position.distance_to(parent.playerPosition) <= noticeDist 
 	|| position.distance_to(parent.playerPosition) < pursueDist):
 		
-		
+		playerPreviousPosition = parent.playerPosition
 		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 		state = PURSUE
 		idle_frames = 0
 		#print("Player position before reserving new attack position is " + str(playerPreviousPosition))
-		free_attack_position()
-		reserve_attack_position()
+		
 		#print("Player position after reserving new attack position is " + str(playerPreviousPosition))
 		emoteContainer.play_emote('exclaim')
 		
 	elif(position.distance_to(parent.playerPosition) > noticeDist):
 		
-		free_attack_position()
+		
 		idle_frames = 0
 		state = CHOOSEPOINT
 		animationPlayer.stop()
@@ -409,13 +412,16 @@ func notice_player_state(_delta):
 		
 func pursue_state(_delta):
 	
-	
-	if(position.distance_to(playerNode.position) <= noticeDist
-	&& !parent.compare_float_vectors(playerPreviousPosition, reserved_point)):
-		
-		reserve_attack_position()
-	else:
-		free_attack_position()
+	var rand_obj = RandomNumberGenerator
+	if(position.distance_to(playerNode.position) <= noticeDist):
+		playerPreviousPosition = playerNode.position
+#	
+#	if(position.distance_to(playerNode.position) <= noticeDist
+#	&& !parent.compare_float_vectors(playerPreviousPosition, reserved_point)):
+#
+#		reserve_attack_position()
+#	else:
+#		free_attack_position()
 	wander_state(playerPreviousPosition, _delta)
 
 func update_healthbar(health_change):#pass in negative values to increase health

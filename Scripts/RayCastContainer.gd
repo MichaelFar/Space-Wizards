@@ -1,6 +1,7 @@
 extends Node2D
 
 var raycastChildren = []
+var debug = false
 
 var suggestedVector = Vector2.ZERO
 @onready var supplied_direction = get_parent().playerPreviousPosition
@@ -8,6 +9,7 @@ var suggestedVector = Vector2.ZERO
 var interest_array = []
 var danger_array = []
 var relevant_raycasts = []
+var final_interest = []
 func _ready():
 	raycastChildren = set_raycast_children()
 	
@@ -19,15 +21,18 @@ func _process(delta):
 	set_interest()
 	set_danger()
 	suggestedVector = get_suggested_vector()
+	debug = false
 	if(Input.is_action_just_released("relevant_raycasts")):
 		print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
-		for i in raycastChildren:
+		for i in relevant_raycasts:
 			print(i.name + ":" 
 			+ str(i.target_position) 
 			+ " " +str(rad_to_deg(i.target_position.angle_to(supplied_direction))) + ": ,")
 		print("The interest array is set to: ")
 		for i in interest_array.size():
-			print(raycastChildren[i].name + ": " + str(interest_array[i]))
+			print(raycastChildren[i].name + ": " + str(final_interest[i]))
+		print("And suggested vector is " + str(suggestedVector))
+		debug = true
 	relevant_raycasts = []
 func set_raycast_children():
 	var raycast_children = []
@@ -46,17 +51,18 @@ func set_supplied_direction(newDirection):
 func get_suggested_vector():
 	var suggested_vector = Vector2.ZERO
 	
-	var final_interest = []
+	
 	final_interest.resize(interest_array.size())
 	for i in interest_array.size():
 		
-		final_interest[i] = interest_array[i] - danger_array[i]
-		
+		final_interest[i] = clampf(interest_array[i] - danger_array[i], -1.0, 1.0)
+		if debug:
+			print("final_interest has added " + str(final_interest[i]) + " to " + raycastChildren[i].name)
 	for i in interest_array.size():
 		
 		suggested_vector += (raycastChildren[i].target_position) * final_interest[i]
-	
-	#print("supplied_direction is " + str(supplied_direction) + " and suggested_vector is " + str(suggested_vector.normalized()))
+	if debug:
+		print("supplied_direction is " + str(supplied_direction) + " and suggested_vector is " + str(suggested_vector.normalized()))
 	return suggested_vector.normalized()
 
 func set_danger():# Sets danger based on if the raycasts are colliding or not
@@ -64,13 +70,21 @@ func set_danger():# Sets danger based on if the raycasts are colliding or not
 	
 	var collidingVectorsIndexes = []
 	
-	for i in raycastChildren.size():
+	
+	
+	for i in raycastChildren:
+		var distance = i.position.distance_to(i.target_position)
 		
-		if(raycastChildren[i].is_colliding()):
-			collidingVectorsIndexes.append(i)
-			danger_array[i] = 1.0
+		if(i.is_colliding()):
+			collidingVectorsIndexes.append(raycastChildren.find(i))
+			#Uncomment for distance based danger weights
+			#danger_array[raycastChildren.find(i)] = ((i.position.distance_to(i.get_collider().position)) / distance) 
+			danger_array[raycastChildren.find(i)] = 1.0
+			if(debug):
+				print((str(i.position.distance_to(i.get_collider().position)) + " is the distance between parent and target"))
+				print("danger_array now has danger value " + str(danger_array[raycastChildren.find(i)]))
 		else:
-			danger_array[i] = 0.0
+			danger_array[raycastChildren.find(i)] = 0.0
 			
 	return collidingVectorsIndexes
 
@@ -91,5 +105,6 @@ func set_interest():
 		for i in interest_array.size():
 			var d = raycastChildren[i].target_position.normalized().dot(supplied_direction)
 			interest_array[i] = maxf(0.0, d)
-			#print("Set the interest of " + raycastChildren[i].name + " to " + str(interest_array[i]))
+			if debug:
+				print("Set the interest of " + raycastChildren[i].name + " to " + str(interest_array[i]))
 

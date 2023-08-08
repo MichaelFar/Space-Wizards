@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://2oyu28cf4l1v"]
 
-[node name="ExclusionZone" type="Polygon2D"]
-color = Color(1, 1, 1, 0)
-polygon = PackedVector2Array(336, 96, 224, 160, 224, 184, 336, 248, 448, 184, 448, 160)
-polygons = [PackedInt32Array(), null, null]
+[node name="ExclusionZone" type="CharacterBody2D"]
+metadata/_edit_group_ = true
+
+[node name="ExclusionPolygon" type="CollisionPolygon2D" parent="."]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bwq38vpmxek4r"]
+[gd_scene load_steps=10 format=3 uid="uid://bwq38vpmxek4r"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
@@ -13,50 +13,46 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rc24i"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n34m3"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
 shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_wkxqt")
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_hugf2"]
-vertices = PackedVector2Array(528, 288, 656, 352, 112, 352, 256, 288, 656, 56, 528, 128, 112, 56, 256, 128)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 1, 0, 5), PackedInt32Array(6, 4, 5, 7), PackedInt32Array(2, 6, 7, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(112, 56, 112, 352, 656, 352, 656, 56), PackedVector2Array(256, 128, 256, 288, 528, 288, 528, 128)])
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_uwxsa"]
-frequency = 0.0655
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3bkeo"]
-noise = SubResource("FastNoiseLite_uwxsa")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_16spo"]
-resource_local_to_scene = true
-shader = ExtResource("3_8ic1f")
-shader_parameter/dissolve_value = 1.0
-shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_3bkeo")
-
 [node name="testDevGitThing" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_ucx5p")
 
-[node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_rc24i")
-position = Vector2(199, 181)
-
 [node name="Level1Tiles" parent="." instance=ExtResource("2_38p6r")]
 position = Vector2(66, 39)
-
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_hugf2")
-avoidance_layers = 2
-
-[node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
-polygon = PackedVector2Array(528, 128, 256, 128, 256, 288, 528, 288, 528, 208)
 
 [node name="Player" parent="." instance=ExtResource("2_rau2v")]
 position = Vector2(590, 204)
 
-[node name="Enemy_Test2" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_16spo")
-position = Vector2(175, 319)
+[node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
+material = SubResource("ShaderMaterial_n34m3")
+position = Vector2(288, 161)
+
+[node name="InclusionZone" type="Polygon2D" parent="."]
+position = Vector2(8, 1)
+color = Color(1, 1, 1, 0)
+polygon = PackedVector2Array(107, 51, 107, 359, 658, 358, 658, 52)
+
+[node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone" index="0"]
+polygon = PackedVector2Array(171, 184, 171, 300, 211, 300, 211, 183)
+
+[node name="ExclusionZone2" parent="." instance=ExtResource("5_dsw61")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone2" index="0"]
+polygon = PackedVector2Array(357, 132, 399, 132, 399, 291, 358, 291)
+
+[node name="ExclusionZone3" parent="." instance=ExtResource("5_dsw61")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone3" index="0"]
+polygon = PackedVector2Array(526, 127, 526, 145, 512, 155, 512, 212, 527, 223, 527, 306, 542, 316, 559, 306, 559, 202, 546, 192, 545, 169, 560, 161, 561, 127)
+
+[editable path="ExclusionZone"]
+[editable path="ExclusionZone2"]
+[editable path="ExclusionZone3"]

@@ -23,17 +23,21 @@ func _process(delta):
 	suggestedVector = get_suggested_vector()
 	debug = false
 	if(Input.is_action_just_released("relevant_raycasts")):
+		var index = 0
 		print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
 		for i in relevant_raycasts:
 			print(i.name + ":" 
 			+ str(i.target_position) 
 			+ " " +str(rad_to_deg(i.target_position.angle_to(supplied_direction))) + ": ,")
 		print("The interest array is set to: ")
-		for i in interest_array.size():
-			print(raycastChildren[i].name + ": " + str(final_interest[i]))
+		for i in interest_array:
+			print(raycastChildren[index].name + ": " + str(final_interest[index]))
+			index += 1
 		print("And suggested vector is " + str(suggestedVector))
 		debug = true
+		index = 0
 	relevant_raycasts = []
+	
 func set_raycast_children():
 	var raycast_children = []
 	for i in get_children():
@@ -51,16 +55,19 @@ func set_supplied_direction(newDirection):
 func get_suggested_vector():
 	var suggested_vector = Vector2.ZERO
 	
-	
+	var index = 0
 	final_interest.resize(interest_array.size())
-	for i in interest_array.size():
+	for i in interest_array:
 		
-		final_interest[i] = clampf(interest_array[i] - danger_array[i], -1.0, 1.0)
+		final_interest[index] = clampf(interest_array[index] - danger_array[index], -1.0, 1.0)
 		if debug:
-			print("final_interest has added " + str(final_interest[i]) + " to " + raycastChildren[i].name)
-	for i in interest_array.size():
+			print("final_interest has added " + str(final_interest[index]) + " to " + raycastChildren[index].name)
+		index += 1
+	index = 0
+	for i in interest_array:
 		
-		suggested_vector += (raycastChildren[i].target_position) * final_interest[i]
+		suggested_vector += (raycastChildren[index].target_position) * final_interest[index]
+		index += 1
 	if debug:
 		print("supplied_direction is " + str(supplied_direction) + " and suggested_vector is " + str(suggested_vector.normalized()))
 	return suggested_vector.normalized()
@@ -69,8 +76,6 @@ func set_danger():# Sets danger based on if the raycasts are colliding or not
 	# More complex behavior can be had by making this function have more conditions and having the danger value be more values
 	
 	var collidingVectorsIndexes = []
-	
-	
 	
 	for i in raycastChildren:
 		var distance = i.position.distance_to(i.target_position)
@@ -101,10 +106,12 @@ func set_relevant_directions():
 
 func set_interest():
 	# Set interest in each slot based on world direction
-	
-		for i in interest_array.size():
-			var d = raycastChildren[i].target_position.normalized().dot(supplied_direction)
-			interest_array[i] = maxf(0.0, d)
-			if debug:
-				print("Set the interest of " + raycastChildren[i].name + " to " + str(interest_array[i]))
+	var index = 0
+	for i in interest_array:
+		var d = raycastChildren[index].target_position.normalized().dot(supplied_direction)
+		interest_array[index] = maxf(0.0, d)
+		if debug:
+			print("Set the interest of " + raycastChildren[index].name + " to " + str(interest_array[index]))
+		
+		index += 1
 

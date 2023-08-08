@@ -115,15 +115,31 @@ func _ready():
 	for i in parent.enemyChildren:
 		if i != self:
 			i.index_reserved.connect(get_other_reserved_indexes)
-	travelPoints = get_travel_points()
+	
 	
 func post_initialize():
 	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
+	travelPoints = get_ideal_travel_points()
+
+func get_ideal_travel_points():
+	var travel_points = []
 	
-func _physics_process(_delta):#State machine runs per frame
+	var choice_radius = 150
+	validPoints = parent.validpoints
+	
+	for i in validPoints:
+		if i.distance_to(floor(position) - floor(global_position)) <= choice_radius:
+			travel_points.append(i)
+			#print("Ideal point " + str(i) + " added")
+	return travel_points
+
+func _process(_delta):#State machine runs per frame
 	if(playerNode != null):
 		attackPosition = playerNode.position
 	frameRate = (1/_delta)
+	
+	if frame == 0:
+		post_initialize()
 	
 	if(int(frame) % (int(frameRate) / 2) == 0 && !(poise <= 0.0)):
 		update_poise_bar(poise_recovery)
@@ -200,7 +216,7 @@ func wander_state(target_point, _delta):
 	if(rayCastContainer.debug):
 		print("target_point is " + str(target_point) + " and player position is " + str(playerNode.position))
 	
-	direction = target_point - global_position#nav.get_next_path_position() - global_position
+	direction = target_point - floor(global_position)#nav.get_next_path_position() - global_position
 	
 	rayCastContainer.supplied_direction = direction.normalized()
 	if(parent.compare_float_vectors((direction + global_position), target_point)):
@@ -286,24 +302,35 @@ func idle_state(_delta):
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 	
-func choose_point(travelPoints):
+func choose_point(travel_points):
 	
 	var randomPoint = RandomNumberGenerator.new()
 	var chosen_point = Vector2.ZERO
+	var newPoints = []
 	
-	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
+	chosen_point = travel_points[randomPoint.randi_range(0, travel_points.size() - 1)]
+	print("I am " + name + " and I chose the point " + str(chosen_point + floor(global_position)))
+	
+	chosen_point += floor(global_position)
+	if((chosen_point) not in validPoints):
+		
+		
+		travelPoints = get_ideal_travel_points()
+		chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
+		print("I am " + name + " and I changed my point decision" + str(chosen_point))
 	
 	return chosen_point
 
 func get_travel_points():
-	var travelPoints = []
+	var travel_points = []
 	
 	var choice_radius = 150
 	validPoints = parent.validpoints
 	
 	for i in validPoints:
-		if i.distance_to(position) <= choice_radius:
-			travelPoints.append(i)
+		if i.distance_to(floor(position)) <= choice_radius:
+			travel_points.append(i)
+	return travel_points
 
 func change_sprite(spriteName, chosen_point):
 	

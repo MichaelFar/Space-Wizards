@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bwq38vpmxek4r"]
+[gd_scene load_steps=14 format=3 uid="uid://bwq38vpmxek4r"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
@@ -13,11 +13,29 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_n34m3"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gcwiu"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
 shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_wkxqt")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_olxhf"]
+frequency = 0.0655
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6ydvh"]
+noise = SubResource("FastNoiseLite_olxhf")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c744x"]
+resource_local_to_scene = true
+shader = ExtResource("3_8ic1f")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_6ydvh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_foqjb"]
+resource_local_to_scene = true
+shader = ExtResource("3_8ic1f")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_6ydvh")
 
 [node name="testDevGitThing" type="Node2D"]
 y_sort_enabled = true
@@ -26,15 +44,12 @@ script = ExtResource("1_ucx5p")
 [node name="Level1Tiles" parent="." instance=ExtResource("2_38p6r")]
 position = Vector2(66, 39)
 
-[node name="Player" parent="." instance=ExtResource("2_rau2v")]
-position = Vector2(590, 204)
-
 [node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_n34m3")
+material = SubResource("ShaderMaterial_gcwiu")
 position = Vector2(288, 161)
 
 [node name="InclusionZone" type="Polygon2D" parent="."]
-position = Vector2(8, 1)
+position = Vector2(16, -19)
 color = Color(1, 1, 1, 0)
 polygon = PackedVector2Array(107, 51, 107, 359, 658, 358, 658, 52)
 
@@ -52,6 +67,17 @@ polygon = PackedVector2Array(357, 132, 399, 132, 399, 291, 358, 291)
 
 [node name="ExclusionPolygon" parent="ExclusionZone3" index="0"]
 polygon = PackedVector2Array(526, 127, 526, 145, 512, 155, 512, 212, 527, 223, 527, 306, 542, 316, 559, 306, 559, 202, 546, 192, 545, 169, 560, 161, 561, 127)
+
+[node name="Enemy_Test2" parent="." instance=ExtResource("5_l5hco")]
+material = SubResource("ShaderMaterial_c744x")
+position = Vector2(287, 293)
+
+[node name="Enemy_Test3" parent="." instance=ExtResource("5_l5hco")]
+material = SubResource("ShaderMaterial_foqjb")
+position = Vector2(450, 270)
+
+[node name="Player" parent="." instance=ExtResource("2_rau2v")]
+position = Vector2(1056, 153)
 
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]

@@ -415,11 +415,11 @@ metadata/_edit_group_ = true
 collide_with_areas = true
 
 [node name="RayCast2D2" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(50, 0)
+target_position = Vector2(35, 0)
 collide_with_areas = true
 
 [node name="RayCast2D3" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(-50, 0)
+target_position = Vector2(-35, 0)
 collide_with_areas = true
 
 [node name="RayCast2D4" type="RayCast2D" parent="RayCastContainer"]

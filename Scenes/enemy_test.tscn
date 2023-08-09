@@ -324,7 +324,7 @@ height = 32.0
 [node name="Enemy_Test" type="CharacterBody2D"]
 material = ExtResource("1_dtlbr")
 collision_layer = 2
-collision_mask = 2
+collision_mask = 7
 script = ExtResource("1_qhvur")
 acceleration = 50
 max_speed = 50
@@ -406,46 +406,39 @@ offset_top = 18.0
 offset_right = 16.0
 offset_bottom = 22.0
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+rotation = -3.14159
+shape = SubResource("CapsuleShape2D_1aek4")
+
 [node name="RayCastContainer" type="CharacterBody2D" parent="."]
 position = Vector2(0, -12)
 script = ExtResource("13_6082h")
 metadata/_edit_group_ = true
 
-[node name="RayCast2D" type="RayCast2D" parent="RayCastContainer"]
-collide_with_areas = true
+[node name="RayTarget" type="Node2D" parent="RayCastContainer"]
+position = Vector2(70, 0)
 
-[node name="RayCast2D2" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(35, 0)
-collide_with_areas = true
+[node name="RayTarget2" type="Node2D" parent="RayCastContainer"]
+position = Vector2(-70, 0)
 
-[node name="RayCast2D3" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(-35, 0)
-collide_with_areas = true
+[node name="RayTarget3" type="Node2D" parent="RayCastContainer"]
+position = Vector2(0, 70)
 
-[node name="RayCast2D4" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(0, -50)
-collide_with_areas = true
+[node name="RayTarget4" type="Node2D" parent="RayCastContainer"]
+position = Vector2(0, -70)
 
-[node name="RayCast2D9" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(-35, 50)
-collide_with_areas = true
+[node name="RayTarget5" type="Node2D" parent="RayCastContainer"]
+position = Vector2(50, -50)
 
-[node name="RayCast2D10" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(35, 50)
-collide_with_areas = true
+[node name="RayTarget6" type="Node2D" parent="RayCastContainer"]
+position = Vector2(-50, -50)
 
-[node name="RayCast2D11" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(-35, -50)
-collide_with_areas = true
+[node name="RayTarget7" type="Node2D" parent="RayCastContainer"]
+position = Vector2(-50, 50)
 
-[node name="RayCast2D12" type="RayCast2D" parent="RayCastContainer"]
-target_position = Vector2(35, -50)
-collide_with_areas = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -1)
-rotation = -3.14159
-shape = SubResource("CapsuleShape2D_1aek4")
+[node name="RayTarget8" type="Node2D" parent="RayCastContainer"]
+position = Vector2(50, 50)
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

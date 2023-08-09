@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bwq38vpmxek4r"]
+[gd_scene load_steps=17 format=3 uid="uid://bwq38vpmxek4r"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
@@ -13,7 +13,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_gcwiu"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tftbv"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
@@ -25,13 +25,31 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6ydvh"]
 noise = SubResource("FastNoiseLite_olxhf")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_c744x"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c6865"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
 shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_6ydvh")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_foqjb"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l6iri"]
+resource_local_to_scene = true
+shader = ExtResource("3_8ic1f")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_6ydvh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xneph"]
+resource_local_to_scene = true
+shader = ExtResource("3_8ic1f")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_6ydvh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jlelf"]
+resource_local_to_scene = true
+shader = ExtResource("3_8ic1f")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_6ydvh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s1ve8"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
@@ -45,11 +63,10 @@ script = ExtResource("1_ucx5p")
 position = Vector2(66, 39)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_gcwiu")
+material = SubResource("ShaderMaterial_tftbv")
 position = Vector2(288, 161)
 
 [node name="InclusionZone" type="Polygon2D" parent="."]
-position = Vector2(16, -19)
 color = Color(1, 1, 1, 0)
 polygon = PackedVector2Array(107, 51, 107, 359, 658, 358, 658, 52)
 
@@ -69,15 +86,27 @@ polygon = PackedVector2Array(357, 132, 399, 132, 399, 291, 358, 291)
 polygon = PackedVector2Array(526, 127, 526, 145, 512, 155, 512, 212, 527, 223, 527, 306, 542, 316, 559, 306, 559, 202, 546, 192, 545, 169, 560, 161, 561, 127)
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_c744x")
+material = SubResource("ShaderMaterial_c6865")
 position = Vector2(287, 293)
 
 [node name="Enemy_Test3" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_foqjb")
+material = SubResource("ShaderMaterial_l6iri")
 position = Vector2(450, 270)
 
 [node name="Player" parent="." instance=ExtResource("2_rau2v")]
-position = Vector2(1056, 153)
+position = Vector2(587, 87)
+
+[node name="Enemy_Test4" parent="." instance=ExtResource("5_l5hco")]
+material = SubResource("ShaderMaterial_xneph")
+position = Vector2(160, 155)
+
+[node name="Enemy_Test5" parent="." instance=ExtResource("5_l5hco")]
+material = SubResource("ShaderMaterial_jlelf")
+position = Vector2(141, 233)
+
+[node name="Enemy_Test6" parent="." instance=ExtResource("5_l5hco")]
+material = SubResource("ShaderMaterial_s1ve8")
+position = Vector2(214, 315)
 
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]

@@ -58,16 +58,31 @@ func get_dimensions(vertices):
 func get_valid_points(_min, _max):
 	
 	var validPoints = []
-	
+	validPoints.resize((_max.x * _max.y))
+	print("The size of valid points is " + str(validPoints.size()))
 	var geometry = Geometry2D
-	
+	var index = 0
 	
 	for i in exclusionDimensions:
 		for j in range(_max.x):
 			for k in range(_max.y):
-				if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
-					validPoints.append(Vector2(j,k))
-				
+				#if(index != validPoints.size()):
+					if(validPoints[index] != Vector2(j,k)):
+						if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
+							validPoints[index] = Vector2(j,k)
+						
+					index += 1	
+		index = 0
+	var temp_points = []
+	
+	for i in range(validPoints.size()):
+		if(!validPoints[i] == null):
+			temp_points.append(validPoints[i])
+	
+	validPoints = temp_points
+	
+	print("The size of valid points is " + str(validPoints.size()))
+	
 	return validPoints
 	
 func get_player_attack_points(attack_points):

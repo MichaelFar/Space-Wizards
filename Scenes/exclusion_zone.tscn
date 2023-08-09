@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://2oyu28cf4l1v"]
 
 [node name="ExclusionZone" type="CharacterBody2D"]
+collision_layer = 4
 metadata/_edit_group_ = true
 
 [node name="ExclusionPolygon" type="CollisionPolygon2D" parent="."]

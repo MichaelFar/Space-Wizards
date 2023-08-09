@@ -118,7 +118,7 @@ func _ready():
 	
 	
 func post_initialize():
-	playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
+	#playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
 	travelPoints = get_ideal_travel_points()
 
 func get_ideal_travel_points():
@@ -133,7 +133,7 @@ func get_ideal_travel_points():
 			#print("Ideal point " + str(i) + " added")
 	return travel_points
 
-func _process(_delta):#State machine runs per frame
+func _physics_process(_delta):#State machine runs per frame
 	if(playerNode != null):
 		attackPosition = playerNode.position
 	frameRate = (1/_delta)
@@ -235,7 +235,7 @@ func wander_state(target_point, _delta):
 	
 	
 	
-	velocity = velocity.lerp(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
+	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
 	#print(name + " velocity while in wander_state() is " + str(velocity))
 	
 	if(self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
@@ -315,7 +315,7 @@ func choose_point(travel_points):
 	if((chosen_point) not in validPoints):
 		
 		
-		travelPoints = get_ideal_travel_points()
+		travelPoints = get_travel_points()
 		chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
 		print("I am " + name + " and I changed my point decision" + str(chosen_point))
 	

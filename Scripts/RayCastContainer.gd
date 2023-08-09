@@ -41,7 +41,7 @@ func _process(delta):
 func set_raycast_children():
 	var raycast_children = []
 	for i in get_children():
-		if i is RayCast2D:
+		if 'RayTarget' in i.name:
 			raycast_children.append(i)
 			interest_array.append(0.0)
 			danger_array.append(0.0)
@@ -66,7 +66,7 @@ func get_suggested_vector():
 	index = 0
 	for i in interest_array:
 		
-		suggested_vector += (raycastChildren[index].target_position) * final_interest[index]
+		suggested_vector += (raycastChildren[index].position) * final_interest[index]
 		index += 1
 	if debug:
 		print("supplied_direction is " + str(supplied_direction) + " and suggested_vector is " + str(suggested_vector.normalized()))
@@ -74,19 +74,25 @@ func get_suggested_vector():
 
 func set_danger():# Sets danger based on if the raycasts are colliding or not
 	# More complex behavior can be had by making this function have more conditions and having the danger value be more values
+	var space_state = get_world_2d().direct_space_state
 	
 	var collidingVectorsIndexes = []
 	
 	for i in raycastChildren:
-		var distance = i.position.distance_to(i.target_position)
 		
-		if(i.is_colliding()):
+		var distance = position.distance_to(i.position)
+		var query = PhysicsRayQueryParameters2D.create(global_position, i.global_position)
+		query.exclude.append(get_parent().get_rid())
+		query.collide_with_areas = true
+		var result = space_state.intersect_ray(query)
+		#print("Result is " + str(result))
+		if(result):
 			collidingVectorsIndexes.append(raycastChildren.find(i))
 			#Uncomment for distance based danger weights
 			#danger_array[raycastChildren.find(i)] = ((i.position.distance_to(i.get_collider().position)) / distance) 
 			danger_array[raycastChildren.find(i)] = 1.0
 			if(debug):
-				print((str(i.position.distance_to(i.get_collider().position)) + " is the distance between parent and target"))
+				print((str(i.position.distance_to(i.collider.position)) + " is the distance between parent and target"))
 				print("danger_array now has danger value " + str(danger_array[raycastChildren.find(i)]))
 		else:
 			danger_array[raycastChildren.find(i)] = 0.0
@@ -98,7 +104,7 @@ func set_relevant_directions():
 	
 	for i in raycastChildren:
 		
-		if absf(rad_to_deg((i.target_position.normalized()).angle_to(supplied_direction))) <= 90.0:
+		if absf(rad_to_deg((i.position.normalized()).angle_to(supplied_direction))) <= 90.0:
 			relevant_raycasts.append(i)
 		#print(str(rad_to_deg(i.target_position.angle_to(supplied_direction))))
 				
@@ -108,7 +114,7 @@ func set_interest():
 	# Set interest in each slot based on world direction
 	var index = 0
 	for i in interest_array:
-		var d = raycastChildren[index].target_position.normalized().dot(supplied_direction)
+		var d = raycastChildren[index].position.normalized().dot(supplied_direction)
 		interest_array[index] = maxf(0.0, d)
 		if debug:
 			print("Set the interest of " + raycastChildren[index].name + " to " + str(interest_array[index]))

@@ -212,17 +212,17 @@ func _physics_process(_delta):#State machine runs per frame
 	
 func wander_state(target_point, _delta):
 	
-	#nav.target_position = target_point
+	
 	if(rayCastContainer.debug):
 		print("target_point is " + str(target_point) + " and player position is " + str(playerNode.position))
 	
-	direction = target_point - floor(global_position)#nav.get_next_path_position() - global_position
-	
-	rayCastContainer.supplied_direction = direction.normalized()
-	if(parent.compare_float_vectors((direction + global_position), target_point)):
+	direction = target_point#nav.get_next_path_position() - global_position
+	navAgent.target_position = direction
+	rayCastContainer.supplied_direction = (navAgent.get_next_path_position()  - floor(global_position)).normalized()#A* next position
+	if(parent.compare_float_vectors((direction), target_point)):
 		change_sprite(get_node('pirate_grunt_1'), target_point)
 	else:
-		change_sprite(get_node('pirate_grunt_1'), direction + global_position)
+		change_sprite(get_node('pirate_grunt_1'), global_position)
 	
 	if(frame % 20 == 0):
 		previousPosition = position

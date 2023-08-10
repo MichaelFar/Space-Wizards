@@ -10,16 +10,20 @@ var interest_array = []
 var danger_array = []
 var relevant_raycasts = []
 var final_interest = []
+var frame = 0
+var frameRate = 0
 func _ready():
 	raycastChildren = set_raycast_children()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	#look_at(supplied_direction)
+	frameRate = get_parent().frameRate
 	
-	set_relevant_directions()
-	set_interest()
-	set_danger()
+	if frame % 2 == 0:	
+		set_relevant_directions()
+		set_interest()
+		set_danger()
 	suggestedVector = get_suggested_vector()
 	debug = false
 	if(Input.is_action_just_released("relevant_raycasts")):
@@ -27,8 +31,8 @@ func _process(delta):
 		print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
 		for i in relevant_raycasts:
 			print(i.name + ":" 
-			+ str(i.target_position) 
-			+ " " +str(rad_to_deg(i.target_position.angle_to(supplied_direction))) + ": ,")
+			+ str(i.position) 
+			+ " " +str(rad_to_deg(i.position.angle_to(supplied_direction))) + ": ,")
 		print("The interest array is set to: ")
 		for i in interest_array:
 			print(raycastChildren[index].name + ": " + str(final_interest[index]))
@@ -37,6 +41,7 @@ func _process(delta):
 		debug = true
 		index = 0
 	relevant_raycasts = []
+	frame +=1
 	
 func set_raycast_children():
 	var raycast_children = []
@@ -70,6 +75,8 @@ func get_suggested_vector():
 		index += 1
 	if debug:
 		print("supplied_direction is " + str(supplied_direction) + " and suggested_vector is " + str(suggested_vector.normalized()))
+		for i in final_interest:
+			print("Ray " + raycastChildren[final_interest.find(i)].name + " has interest " + str(i))
 	return suggested_vector.normalized()
 
 func set_danger():# Sets danger based on if the raycasts are colliding or not
@@ -82,18 +89,25 @@ func set_danger():# Sets danger based on if the raycasts are colliding or not
 		
 		var distance = position.distance_to(i.position)
 		var query = PhysicsRayQueryParameters2D.create(global_position, i.global_position)
-		query.exclude.append(get_parent().get_rid())
+		#query.exclude.append(get_parent().get_rid())
 		query.collide_with_areas = true
+		query.collide_with_bodies = true
+		query.collision_mask = 4
+
+		#print("Collision mask of the raycast is " + str(query.collision_mask))
 		var result = space_state.intersect_ray(query)
 		#print("Result is " + str(result))
 		if(result):
 			collidingVectorsIndexes.append(raycastChildren.find(i))
 			#Uncomment for distance based danger weights
-			#danger_array[raycastChildren.find(i)] = ((i.position.distance_to(i.get_collider().position)) / distance) 
-			danger_array[raycastChildren.find(i)] = 1.0
+			var d = position.normalized().dot(i.global_position)
+			#print("Collider position is " + str(result.collider.get_children()[0].global_position))
+			#print(result.collider.name)
+			danger_array[raycastChildren.find(i)] = ((position.distance_to(i.position)) / (distance)) 
+			#danger_array[raycastChildren.find(i)] = 1.0
 			if(debug):
-				print((str(i.position.distance_to(i.collider.position)) + " is the distance between parent and target"))
-				print("danger_array now has danger value " + str(danger_array[raycastChildren.find(i)]))
+				print((str(position.distance_to(result.collider.position)) + " is the distance between parent and target"))
+				print(raycastChildren[raycastChildren.find(i)].name + " now has danger value " + str(danger_array[raycastChildren.find(i)]))
 		else:
 			danger_array[raycastChildren.find(i)] = 0.0
 			

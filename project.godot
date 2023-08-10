@@ -102,6 +102,10 @@ relevant_raycasts={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_3="raycast"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

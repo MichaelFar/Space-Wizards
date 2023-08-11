@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bwq38vpmxek4r"]
+[gd_scene load_steps=14 format=3 uid="uid://bwq38vpmxek4r"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
@@ -8,9 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="5_l5hco"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_mqv7x"]
-vertices = PackedVector2Array(105, 360, 211, 300, 358, 291, 398, 291, 509, 324, 574, 324, 666, 360, 171, 300, 105, 61, 171, 184, 665, 57, 573, 119, 508, 123, 398, 130, 357, 131, 211, 183)
+vertices = PackedVector2Array(105, 360, 211, 300, 358, 291, 398, 291, 514, 317, 563, 321, 666, 360, 171, 300, 105, 61, 171, 184, 665, 57, 561, 124, 511, 122, 398, 130, 357, 131, 211, 183)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 0, 4), PackedInt32Array(7, 1, 0), PackedInt32Array(7, 0, 8, 9), PackedInt32Array(10, 6, 5, 11), PackedInt32Array(8, 10, 11, 12), PackedInt32Array(12, 4, 3, 13), PackedInt32Array(8, 12, 13, 14), PackedInt32Array(9, 8, 14, 15), PackedInt32Array(15, 14, 2, 1)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(105, 61, 105, 360, 666, 360, 665, 57), PackedVector2Array(171, 184, 211, 183, 211, 300, 171, 300), PackedVector2Array(357, 131, 358, 291, 398, 291, 398, 130), PackedVector2Array(508, 123, 509, 324, 574, 324, 573, 119)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(105, 61, 105, 360, 666, 360, 665, 57), PackedVector2Array(171, 184, 211, 183, 211, 300, 171, 300), PackedVector2Array(357, 131, 358, 291, 398, 291, 398, 130), PackedVector2Array(511, 122, 514, 317, 563, 321, 561, 124)])
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_iat87"]
 frequency = 0.0655
@@ -18,29 +18,23 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_m10mx"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lrtwf"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
 shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_wkxqt")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_wkuqu"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ycnrp"]
 frequency = 0.0655
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_n5sbk"]
-noise = SubResource("FastNoiseLite_wkuqu")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bp4u1"]
+noise = SubResource("FastNoiseLite_ycnrp")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wlpsx"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7m026"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
-shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_n5sbk")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_puga1"]
-resource_local_to_scene = true
-shader = ExtResource("3_8ic1f")
-shader_parameter/dissolve_value = 1.0
-shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_n5sbk")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_bp4u1")
 
 [node name="testDevGitThing" type="Node2D"]
 y_sort_enabled = true
@@ -97,16 +91,12 @@ polygon = PackedVector2Array(64, 360, 704, 360, 704, 396, 64, 397)
 polygon = PackedVector2Array(704, 17, 705, 396, 669, 397, 665, 16)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_m10mx")
+material = SubResource("ShaderMaterial_lrtwf")
 position = Vector2(288, 161)
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_wlpsx")
-position = Vector2(262, 255)
-
-[node name="Enemy_Test3" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_puga1")
-position = Vector2(300, 300)
+material = SubResource("ShaderMaterial_7m026")
+position = Vector2(210, 141)
 
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]
@@ -115,3 +105,5 @@ position = Vector2(300, 300)
 [editable path="ExclusionZone5"]
 [editable path="ExclusionZone6"]
 [editable path="ExclusionZone7"]
+[editable path="Enemy_Test"]
+[editable path="Enemy_Test/Hurtbox"]

@@ -326,8 +326,8 @@ material = ExtResource("1_dtlbr")
 collision_layer = 2
 collision_mask = 7
 script = ExtResource("1_qhvur")
-acceleration = 75
-max_speed = 75
+acceleration = 125
+max_speed = 125
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 

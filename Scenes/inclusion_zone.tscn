@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://swe0uvicqhik"]
+
+[node name="InclusionZone" type="Polygon2D"]
+color = Color(1, 1, 1, 0)

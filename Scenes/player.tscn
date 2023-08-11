@@ -1473,6 +1473,7 @@ height = 34.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5wr3i"]
 
 [node name="Player" type="CharacterBody2D"]
+y_sort_enabled = true
 material = ExtResource("1_kkqpc")
 script = ExtResource("1_cdtsu")
 

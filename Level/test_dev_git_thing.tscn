@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://bwq38vpmxek4r"]
+[gd_scene load_steps=16 format=3 uid="uid://bwq38vpmxek4r"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_rau2v"]
 [ext_resource type="Shader" path="res://Shaders/enemy_dissolve.gdshader" id="3_8ic1f"]
+[ext_resource type="PackedScene" uid="uid://chjsc3jl771ci" path="res://Scenes/inclusion_zone.tscn" id="4_oofib"]
 [ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="5_dsw61"]
 [ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="5_l5hco"]
 [ext_resource type="Texture2D" uid="uid://bqabf4g66sxg8" path="res://Sprites/pirate_snail/pirate_all_snail.png" id="7_j8bn5"]
@@ -19,7 +20,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_yf3lg"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xvgha"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
@@ -31,7 +32,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bp4u1"]
 noise = SubResource("FastNoiseLite_ycnrp")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_oirs1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a7m20"]
 resource_local_to_scene = true
 shader = ExtResource("3_8ic1f")
 shader_parameter/dissolve_value = 1.0
@@ -50,9 +51,7 @@ position = Vector2(66, 39)
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_mqv7x")
 
-[node name="InclusionZone" type="Polygon2D" parent="."]
-color = Color(1, 1, 1, 0)
-polygon = PackedVector2Array(107, 51, 107, 359, 658, 358, 658, 52)
+[node name="InclusionZone" parent="." instance=ExtResource("4_oofib")]
 
 [node name="ExclusionZone" parent="." instance=ExtResource("5_dsw61")]
 
@@ -92,11 +91,11 @@ polygon = PackedVector2Array(64, 360, 704, 360, 704, 396, 64, 397)
 polygon = PackedVector2Array(704, 17, 705, 396, 669, 397, 665, 16)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_yf3lg")
+material = SubResource("ShaderMaterial_xvgha")
 position = Vector2(288, 161)
 
 [node name="Enemy_Test2" parent="." instance=ExtResource("5_l5hco")]
-material = SubResource("ShaderMaterial_oirs1")
+material = SubResource("ShaderMaterial_a7m20")
 position = Vector2(210, 141)
 
 [node name="PirateAllSnail" type="Sprite2D" parent="."]

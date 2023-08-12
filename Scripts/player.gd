@@ -41,6 +41,8 @@ var enemy_knockback = 0
 
 var previous_velocity = Vector2.ZERO
 
+var type = 'player'
+
 @onready var healthbar = $healthbar
 @onready var shader = self
 @onready var hit_box = $player_hurtbox/CollisionShape2D
@@ -236,7 +238,7 @@ func take_hit_state(_delta):
 
 	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
 
-		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackStrength)
+		velocity = velocity.move_toward(pushBackDirection * enemy_knockback, enemy_knockback)
 
 	elif(playerSpritePlayer.current_animation_position == playerSpritePlayer.current_animation_length):
 
@@ -399,3 +401,6 @@ func get_enemy_attack_stats(enemy_id):
 	var enemy_sheet = enemy_id.stat_sheet
 	enemy_damage = enemy_sheet.damage
 	enemy_knockback = enemy_sheet.knockback_strength
+
+func node_type():
+	type = 'enemy_test'

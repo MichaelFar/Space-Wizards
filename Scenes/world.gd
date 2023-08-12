@@ -6,7 +6,7 @@ extends Node2D
 #Also contains debug commands like escaping
 
 
-@onready var navigationRegion = $InclusionZone
+@onready var inclusionZone = $InclusionZone
 @onready var exclusion_zone = $ExclusionZone
 
 @onready var playerNode = $Player
@@ -19,17 +19,23 @@ var exclusionAreas = []
 var exclusionDimensions = []
 var frame = 0
 var noReservedPoints = false
+var enemyScene = 0
+var currentDifficulty = 0
+
+enum {
+	EASY,
+	MEDIUM,
+	HARD
+}
 
 func _ready():
 	
-	var inclusion_area = get_dimensions(navigationRegion.polygon)
+	var inclusion_area = get_dimensions(inclusionZone.polygon)
 	get_exclusion_children()
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
+	enemyScene = preload("res://Scenes/enemy_test.tscn")
 	
-	
-	for i in get_children():
-		if 'Enemy_' in i.name:
-			enemyChildren.append(i)
+	get_enemy_children()
 	
 func _process(_delta):
 	frame += 1
@@ -38,8 +44,18 @@ func _process(_delta):
 	elif(Input.is_action_pressed("restart")):
 		get_tree().reload_current_scene()
 	
-	
+	if(Input.is_action_just_pressed("Easy")):
+		currentDifficulty = EASY
+		apply_difficulty()
+	if(Input.is_action_just_pressed("Medium")):
+		currentDifficulty = MEDIUM
+		apply_difficulty()
+	if(Input.is_action_just_pressed("Hard")):
+		currentDifficulty = HARD
+		apply_difficulty()
 	playerPosition = playerNode.position
+	if(Input.is_action_just_pressed("SpawnEnemyDemo")):
+		spawn_enemy()
 	
 	noReservedPoints = !(true in reservedAttackPoints)
 	
@@ -66,11 +82,11 @@ func get_valid_points(_min, _max):
 		for j in range(_max.x):
 			for k in range(_max.y):
 				#if(index != validPoints.size()):
-					if(validPoints[index] != Vector2(j,k)):
-						if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
-							validPoints[index] = Vector2(j,k)
-						
-					index += 1	
+				if(validPoints[index] != Vector2(j,k)):
+					if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
+						validPoints[index] = Vector2(j,k)
+					
+				index += 1	
 		index = 0
 	var temp_points = []
 	
@@ -84,8 +100,6 @@ func get_valid_points(_min, _max):
 	
 	return validPoints
 	
-
-
 func compare_floats(a, b):
 	return abs(a - b) < 0.000001
 		
@@ -101,3 +115,33 @@ func get_exclusion_children():
 			print("Added " + i.name + " to exclusion zones")
 	for i in exclusionAreas:
 		exclusionDimensions.append(i.get_children()[0].polygon)
+		print("Exclusion polygon vertices for " + i.name + " are " + str(i.get_children()[0].polygon))
+
+func spawn_enemy():
+	
+	var random = RandomNumberGenerator.new()
+	var enemy = enemyScene.instantiate()
+	enemy.global_position = Vector2(400, 200)
+	add_child(enemy)
+	
+func get_enemy_children():
+	enemyChildren = []
+	for i in get_children():
+		if i.has_method('node_type'):
+			if(i.type == 'enemy_test'):
+				enemyChildren.append(i)
+func apply_difficulty():
+	
+	get_enemy_children()
+	for i in enemyChildren:
+		match currentDifficulty:
+			EASY:
+				i.stat_sheet.damage = 75
+				i.stat_sheet.knockback_strength = 50
+				
+			MEDIUM:
+				i.stat_sheet.damage = 150
+				i.stat_sheet.knockback_strength = 125
+			HARD:
+				i.stat_sheet.damage = 200
+				i.stat_sheet.knockback_strength = 150

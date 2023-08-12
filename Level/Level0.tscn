@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://n2ilovmo80v4"]
+[gd_scene load_steps=12 format=3 uid="uid://n2ilovmo80v4"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ehqt5"]
 [ext_resource type="PackedScene" uid="uid://dtfcmfx67ol1t" path="res://Level/combat_demo_arena.tscn" id="2_mhx6l"]
@@ -19,13 +19,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_oeg0n"]
-resource_local_to_scene = true
-shader = ExtResource("7_2nqcc")
-shader_parameter/dissolve_value = 1.0
-shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_wkxqt")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_aaxtp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rxoke"]
 resource_local_to_scene = true
 shader = ExtResource("7_2nqcc")
 shader_parameter/dissolve_value = 1.0
@@ -35,8 +29,8 @@ shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_wkxqt")
 y_sort_enabled = true
 script = ExtResource("1_ehqt5")
 
-[node name="combat_demo_arena" parent="." instance=ExtResource("2_mhx6l")]
-position = Vector2(281, 108)
+[node name="Player" parent="." instance=ExtResource("3_e782x")]
+position = Vector2(171, 168)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_4kerf")
@@ -66,22 +60,55 @@ polygon = PackedVector2Array(494, 112, 430, 155, 470, 179, 511, 155, 554, 146, 5
 [node name="ExclusionPolygon" parent="ExclusionZone5" index="0"]
 polygon = PackedVector2Array(604, 140, 587, 156, 622, 178, 640, 161)
 
-[node name="Player" parent="." instance=ExtResource("3_e782x")]
-position = Vector2(171, 168)
+[node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
+material = SubResource("ShaderMaterial_rxoke")
+position = Vector2(578, 269)
+
+[node name="ExclusionZone6" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone6" index="0"]
+polygon = PackedVector2Array(74, 197, 74, 175, 336, 25, 430, 28, 690, 176, 690, 197, 707, 197, 707, 171, 421, 4, 344, 5, 58, 170, 58, 197)
+
+[node name="ExclusionZone7" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone7" index="0"]
+polygon = PackedVector2Array(74, 196, 57, 196, 57, 226, 344, 390, 420, 390, 708, 226, 708, 197, 690, 197, 690, 219, 420, 374, 345, 375, 74, 220)
+
+[node name="combat_demo_arena" parent="." instance=ExtResource("2_mhx6l")]
+position = Vector2(281, 108)
 
 [node name="InclusionZone" parent="." instance=ExtResource("5_txe7l")]
-polygon = PackedVector2Array(74, 176, 74, 219, 344, 374, 420, 374, 690, 219, 690, 175, 641, 161, 622, 178, 587, 156, 605, 140, 578, 126, 554, 146, 511, 155, 470, 179, 430, 155, 493, 113, 520, 131, 550, 110, 408, 27, 336, 25)
+color = Color(1, 1, 1, 0.411765)
+polygon = PackedVector2Array(75, 0, 75, 386, 381, 386, 690, 386, 690, 198, 690, 1)
 
-[node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
-material = SubResource("ShaderMaterial_oeg0n")
-position = Vector2(283, 256)
+[node name="ExclusionZone8" parent="." instance=ExtResource("3_54leo")]
 
-[node name="Enemy_Test2" parent="." instance=ExtResource("6_3gqdu")]
-material = SubResource("ShaderMaterial_aaxtp")
-position = Vector2(398, 238)
+[node name="ExclusionPolygon" parent="ExclusionZone8" index="0"]
+polygon = PackedVector2Array(74, 0, 74, 176, 382, 0)
+
+[node name="ExclusionZone9" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone9" index="0"]
+polygon = PackedVector2Array(382, 0, 690, 175, 690, 0)
+
+[node name="ExclusionZone10" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone10" index="0"]
+polygon = PackedVector2Array(690, 234, 427, 386, 690, 386)
+
+[node name="ExclusionZone11" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone11" index="0"]
+polygon = PackedVector2Array(75, 220, 75, 386, 337, 386)
 
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]
 [editable path="ExclusionZone3"]
 [editable path="ExclusionZone4"]
 [editable path="ExclusionZone5"]
+[editable path="ExclusionZone6"]
+[editable path="ExclusionZone7"]
+[editable path="ExclusionZone8"]
+[editable path="ExclusionZone9"]
+[editable path="ExclusionZone10"]
+[editable path="ExclusionZone11"]

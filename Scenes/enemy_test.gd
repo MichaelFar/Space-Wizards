@@ -33,7 +33,7 @@ var chosenPoint = Vector2.ZERO
 var children = []
 var playerPreviousPosition = Vector2.ZERO
 var all_other_reserved_indexes = []
-
+var type = 'enemy_test'
 
 @export var noticeDist = 200
 @export var pursueDist = 130
@@ -112,9 +112,7 @@ func _ready():
 	populate_stats()
 	shader = shader.get("material")
 	playerPreviousPosition = playerNode.position
-	for i in parent.enemyChildren:
-		if i != self:
-			i.index_reserved.connect(get_other_reserved_indexes)
+	
 	
 	
 func post_initialize():
@@ -231,9 +229,6 @@ func wander_state(target_point, _delta):
 		stuckFrames += 1
 	else:
 		stuckFrames = 0
-	
-	
-	
 	
 	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
 	#print(name + " velocity while in wander_state() is " + str(velocity))
@@ -388,7 +383,7 @@ func take_hit_state(_delta):
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
 		#print("Pushback acceleration is " + str(pushBackAcceleration))
-		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
+		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration * _delta)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
@@ -430,7 +425,6 @@ func notice_player_state(_delta):
 		
 	elif(position.distance_to(parent.playerPosition) > noticeDist):
 		
-		
 		idle_frames = 0
 		state = CHOOSEPOINT
 		animationPlayer.stop()
@@ -443,12 +437,6 @@ func pursue_state(_delta):
 	if(position.distance_to(playerNode.position) <= noticeDist):
 		playerPreviousPosition = playerNode.position
 #	
-#	if(position.distance_to(playerNode.position) <= noticeDist
-#	&& !parent.compare_float_vectors(playerPreviousPosition, reserved_point)):
-#
-#		reserve_attack_position()
-#	else:
-#		free_attack_position()
 	wander_state(playerPreviousPosition, _delta)
 
 func update_healthbar(health_change):#pass in negative values to increase health
@@ -522,6 +510,7 @@ func populate_stats():
 	poise = stat_sheet.max_poise
 	poise_recovery = stat_sheet.poise_recovery
 	knockback_resistance = stat_sheet.knockback_resistance
+	pushBackStrength = stat_sheet.knockback_strength
 	max_poise = poise
 		
 func update_poise_bar(poise_change):
@@ -552,33 +541,5 @@ func update_poise_bar(poise_change):
 			poisebar.show()
 		
 
-func reserve_attack_position():
-	
-	var geometry = Geometry2D
-	
-	for i in playerAttackPoints.size():
-		if(!playerAttackPoints[i][0] #Raycast has not collided
-		&& !parent.reservedAttackPoints[i] #Point has not been previously reserved
-		&& !geometry.is_point_in_polygon(playerAttackPoints[i][1], parent.exclusionArea)
-		&& !reserved_index in all_other_reserved_indexes):#Point is not in a forbidden location
-				
-			reserved_point = playerAttackPoints[i][1]#The actual coordinates to the point are set
-			reserved_index = i #Index of point is noted
-			index_reserved.emit(reserved_index)
-			playerPreviousPosition = reserved_point #playerPreviousPosition is passed into pursue state
-			parent.reservedAttackPoints[i] = true #Reserve the point
-			
-			break
-
-func free_attack_position():
-	if(reserved_point != Vector2.ZERO):#Reserved point is not zero
-		
-		for j in parent.reservedAttackPoints.size():
-			if(!parent.compare_float_vectors(reserved_point, playerAttackPoints[reserved_index][1])):#Custom function that uses epsilon to determine approximate equivalence of float vectors
-				
-				parent.reservedAttackPoints[j] = false
-				reserved_point = Vector2.ZERO
-				
-
-func get_other_reserved_indexes(index):
-	all_other_reserved_indexes.append(index)
+func node_type():
+	type = 'enemy_test'

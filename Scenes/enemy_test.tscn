@@ -332,7 +332,7 @@ max_speed = 125
 
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")
-knockback_strength = 0
+knockback_strength = 150
 
 [node name="pirate_grunt_1" type="Sprite2D" parent="."]
 use_parent_material = true

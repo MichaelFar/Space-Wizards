@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://cjvcu65kt7hc2"]
+
+[ext_resource type="Shader" path="res://Shaders/pixeltrail.gdshader" id="1_ldt1y"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_dp0nm"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_dwgu1"]
+noise = SubResource("FastNoiseLite_dp0nm")
+
+[resource]
+shader = ExtResource("1_ldt1y")
+shader_parameter/frame_coords = Vector2(0, 0)
+shader_parameter/nb_frames = Vector2(0, 0)
+shader_parameter/velocity = Vector2(0, 0)
+shader_parameter/velocity_max = 300.0
+shader_parameter/trail_size = 6.0
+shader_parameter/alpha_start = 0.8
+shader_parameter/alpha_tail = 0.2
+shader_parameter/alpha_factor = 1.2
+shader_parameter/noise_margin = 0.68
+shader_parameter/noise = SubResource("NoiseTexture2D_dwgu1")

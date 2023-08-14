@@ -4,15 +4,23 @@ extends Sprite2D
 
 var weaponChildren = []
 
+
+var noiseObject = material.get_shader_parameter("noise")
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	for i in get_children():
 		weaponChildren.append(i)
+	noiseObject.height = texture.get_height()
+	noiseObject.width = texture.get_width()
+			
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	material.set_shader_parameter("frame_coords",frame_coords)
+
+	material.set_shader_parameter("velocity",get_parent().velocity)
 
 
 func switch_weapon_sprite(weapon):

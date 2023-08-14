@@ -1,3 +1,10 @@
-[gd_resource type="ShaderMaterial" format=3 uid="uid://dumxkcum8oy8r"]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dumxkcum8oy8r"]
+
+[ext_resource type="Shader" path="res://Shaders/player.gdshader" id="1_vfkd0"]
 
 [resource]
+shader = ExtResource("1_vfkd0")
+shader_parameter/deform = Vector2(0, 0)
+shader_parameter/offset = Vector2(-3, -1)
+shader_parameter/modulate = Color(0, 0, 0, 0.47451)
+shader_parameter/texture_size = null

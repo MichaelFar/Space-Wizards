@@ -139,13 +139,15 @@ func _physics_process(_delta):#State machine runs per frame
 	if frame == 0:
 		post_initialize()
 	
+	if(parent.debug):
+		print("State of " + name + " is " + str(state))
 	if(int(frame) % (int(frameRate) / 2) == 0 && !(poise <= 0.0)):
 		update_poise_bar(poise_recovery)
 	
 	if(parent.noReservedPoints):
 		all_other_reserved_indexes = []
-	
-	playerAttackPoints = playerNode.attack_points
+	if(playerNode != null):
+		playerAttackPoints = playerNode.attack_points
 	
 	match state:
 		
@@ -233,7 +235,7 @@ func wander_state(target_point, _delta):
 	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
 	#print(name + " velocity while in wander_state() is " + str(velocity))
 	
-	if(self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
+	if(state != PURSUE && self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
 		
 		state = IDLE
 		idle_frames = 0
@@ -243,9 +245,10 @@ func wander_state(target_point, _delta):
 		stuckFrames = 0
 		emoteContainer.play_emote('')
 	
-	if(self.position.distance_to(attackPosition) <= attackDist
+	if(position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):
-		
+		if(parent.debug):
+			print("In the wander_state function while in the PURSUE state and I should attack the player")
 		state = ATTACK
 		print("Self position is " + str(position) + " and target point is " + str(target_point))
 		idle_frames = 0
@@ -253,13 +256,17 @@ func wander_state(target_point, _delta):
 		coolDownFrames = 0
 		emoteContainer.play_emote('')
 		velocity = Vector2.ZERO
-		attackPosition = target_point
+		#attackPosition = target_point
 		animationPlayer.stop()
-		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
+		change_sprite(get_node('pirate_grunt_1'), attackPosition)
 		animationPlayer.play('enemy_attack')
 		coolDownTimerOn = true
 		smearContainer.supplied_player_position = parent.playerPosition
-	
+	elif(state == PURSUE):
+		if(parent.debug):
+			print("In the wander_state function while in the PURSUE state and I am farther away than attackDist")
+	elif(parent.debug):
+		print("In the wander_state function and state is " + str(state))
 	move_and_slide()
 
 func attack_state(_delta):
@@ -278,7 +285,7 @@ func attack_state(_delta):
 			emoteContainer.play_emote('startled')
 			animationPlayer.set("speed_scale", 1.0)
 	elif(!coolDownTimerOn):
-		
+		print('CoolDownTimer is off and I tried to attack')
 		animationPlayer.stop()
 		change_sprite(get_node('pirate_grunt_1'),parent.playerPosition)
 		animationPlayer.play('enemy_attack')
@@ -353,6 +360,8 @@ func _on_hurtbox_area_entered(area):
 			playerPreviousPosition = parent.playerNode.position
 			change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 			animationPlayer.play("take_hit")
+			if(state != STAGGERED):
+				state = TAKEHIT
 			update_healthbar(player_damage)
 			update_poise_bar(player_poise_damage)
 			
@@ -383,7 +392,7 @@ func take_hit_state(_delta):
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
 		#print("Pushback acceleration is " + str(pushBackAcceleration))
-		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration * _delta)# + knockback_modifier), pushBackAcceleration)
+		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
@@ -403,14 +412,14 @@ func take_hit_state(_delta):
 		state = DEAD
 	move_and_slide()
 	
-func notice_player_state(_delta):
+func notice_player_state(_delta):#Probably where the collision bug is
 	
 	change_sprite(get_node("pirate_grunt_1"), playerNode.position)
 	idle_frames += 1
 	
 	if(idle_frames / frameRate == 2 
-	&& position.distance_to(parent.playerPosition) <= noticeDist 
-	|| position.distance_to(parent.playerPosition) < pursueDist):
+	&& position.distance_to(attackPosition) <= noticeDist 
+	|| position.distance_to(attackPosition) < pursueDist):
 		
 		playerPreviousPosition = parent.playerPosition
 		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
@@ -418,9 +427,6 @@ func notice_player_state(_delta):
 		animationPlayer.play('enemy_walk')
 		state = PURSUE
 		idle_frames = 0
-		#print("Player position before reserving new attack position is " + str(playerPreviousPosition))
-		
-		#print("Player position after reserving new attack position is " + str(playerPreviousPosition))
 		emoteContainer.play_emote('exclaim')
 		
 	elif(position.distance_to(parent.playerPosition) > noticeDist):
@@ -433,9 +439,13 @@ func notice_player_state(_delta):
 		
 func pursue_state(_delta):
 	
-	var rand_obj = RandomNumberGenerator
+	
 	if(position.distance_to(playerNode.position) <= noticeDist):
-		playerPreviousPosition = playerNode.position
+		playerPreviousPosition = attackPosition
+		if(parent.debug):
+			print("player was less than notice distance")
+	elif(parent.debug):
+			print("player was not less than notice distance")
 #	
 	wander_state(playerPreviousPosition, _delta)
 
@@ -480,7 +490,7 @@ func flip_h_in_animation():
 	
 	get_node("pirate_grunt_1").flip_h = !get_node("pirate_grunt_1").flip_h
 
-func get_parried(enemy_id):
+func get_parried(enemy_id):#Function that is called when the player is in parry state and enemy has attacked
 	
 	print("Self is " + str(self) + " and enemy_id is " + str(enemy_id))
 	
@@ -494,6 +504,8 @@ func get_parried(enemy_id):
 		change_sprite(get_node("pirate_grunt_1"), playerPreviousPosition)
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
+		coolDownTimerOn = false
+		coolDownFrames = 0
 		
 func get_player_stats(knock_back_strength, damage, poise_damage, parryPoiseDamage):
 	
@@ -539,6 +551,7 @@ func update_poise_bar(poise_change):
 				state = TAKEHIT
 		else:
 			poisebar.show()
+			
 		
 
 func node_type():

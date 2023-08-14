@@ -19,7 +19,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rxoke"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mtdqx"]
 resource_local_to_scene = true
 shader = ExtResource("7_2nqcc")
 shader_parameter/dissolve_value = 1.0
@@ -60,10 +60,6 @@ polygon = PackedVector2Array(494, 112, 430, 155, 470, 179, 511, 155, 554, 146, 5
 [node name="ExclusionPolygon" parent="ExclusionZone5" index="0"]
 polygon = PackedVector2Array(604, 140, 587, 156, 622, 178, 640, 161)
 
-[node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
-material = SubResource("ShaderMaterial_rxoke")
-position = Vector2(578, 269)
-
 [node name="ExclusionZone6" parent="." instance=ExtResource("3_54leo")]
 
 [node name="ExclusionPolygon" parent="ExclusionZone6" index="0"]
@@ -78,7 +74,6 @@ polygon = PackedVector2Array(74, 196, 57, 196, 57, 226, 344, 390, 420, 390, 708,
 position = Vector2(281, 108)
 
 [node name="InclusionZone" parent="." instance=ExtResource("5_txe7l")]
-color = Color(1, 1, 1, 0.411765)
 polygon = PackedVector2Array(75, 0, 75, 386, 381, 386, 690, 386, 690, 198, 690, 1)
 
 [node name="ExclusionZone8" parent="." instance=ExtResource("3_54leo")]
@@ -94,12 +89,21 @@ polygon = PackedVector2Array(382, 0, 690, 175, 690, 0)
 [node name="ExclusionZone10" parent="." instance=ExtResource("3_54leo")]
 
 [node name="ExclusionPolygon" parent="ExclusionZone10" index="0"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+self_modulate = Color(1, 1, 1, 0)
 polygon = PackedVector2Array(690, 234, 427, 386, 690, 386)
 
 [node name="ExclusionZone11" parent="." instance=ExtResource("3_54leo")]
 
 [node name="ExclusionPolygon" parent="ExclusionZone11" index="0"]
+modulate = Color(1, 1, 1, 0)
+self_modulate = Color(1, 1, 1, 0)
 polygon = PackedVector2Array(75, 220, 75, 386, 337, 386)
+
+[node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
+material = SubResource("ShaderMaterial_mtdqx")
+position = Vector2(379, 189)
 
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]

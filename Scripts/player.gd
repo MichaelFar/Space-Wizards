@@ -5,8 +5,10 @@ extends CharacterBody2D
 #8 directional movement
 #All directions can be attacked
 var input_vector = Vector2.ZERO
+var shouldDie = false
 
 var acceleration = 450 #Multiplied by delta
+var prevAcceleration = acceleration
 var friction = 250 #Multiplied by delta
 var max_speed = 150 # NOT multiplied by delta
 var attack_movement = 400 #Multiplied by delta
@@ -187,6 +189,7 @@ func move_state(_delta):
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			attackSpritePlayer.play("parry_whiff")
+			acceleration = prevAcceleration * 1.8
 			
 			
 	if(!dodge_timer_on):
@@ -246,14 +249,20 @@ func take_hit_state(_delta):
 		state = MOVE
 		change_sprite("NakedWizard_base")
 		
-	if(current_health <= 0):
-		
-		state = DEAD
+	
 		
 	move_and_slide()
 
 func dead_state(_delta):
-	pass
+	
+	animationState.stop()
+	playerSpritePlayer.play('death')
+	
+	if(shouldDie):
+		playerSpritePlayer.stop()
+		queue_free()
+		healthbar.hide()
+	
 
 func parry_state(_delta):
 	mouse_coordinates = get_local_mouse_position()
@@ -284,7 +293,9 @@ func parry_state(_delta):
 
 
 func _on_attack_hit_box_area_entered(area):
+	
 	if (area.name == "Hurtbox"):
+		
 		knockBackDirection = -1
 		velocity = Vector2.ZERO
 		hit_enemy = true
@@ -299,7 +310,7 @@ func _on_attack_hit_box_area_entered(area):
 
 func _on_player_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
-		if(area.name == 'enemy_attack_hitbox' && state != PARRY && state != DODGE):
+		if(area.name == 'enemy_attack_hitbox' && state != PARRY && state != DODGE && state != DEAD):
 			
 			state = TAKEHIT
 			assailantPosition = area.get_parent().get_parent().global_position
@@ -312,7 +323,7 @@ func _on_player_hurtbox_area_entered(area):
 			if(attackSpritePlayer.current_animation != ''):
 				
 				shader.set_shader_parameter("applied", false)
-				attackSpritePlayer.get_parent().abort_animation()
+			attackSpritePlayer.get_parent().abort_animation()#Hope this fixed the smear bug
 				
 			update_healthbar(enemy_damage, enemy_knockback)
 		elif(area.name == 'enemy_attack_hitbox' && state == PARRY):
@@ -329,7 +340,12 @@ func update_healthbar(health_change, knock_back_strength):#pass in negative valu
 	healthbar.value = (current_health / max_health) * 100.0
 	print("Health bar value is " + str(healthbar.value))
 	pushBackStrength = knock_back_strength
-
+	if(current_health <= 0):
+			state = DEAD
+			change_sprite('NakedWizard_base')
+			playerSpritePlayer.stop()
+			
+	
 func change_sprite(spriteName):
 	
 	for i in listOfSprites:
@@ -346,7 +362,7 @@ func cool_down_state(_delta):
 	
 	if(hit_enemy):
 		cool_down_target = 15
-	
+		acceleration = prevAcceleration * 1.8
 		move_state(_delta)
 	if(parry_cool_down_frames == 0):
 		
@@ -357,6 +373,7 @@ func cool_down_state(_delta):
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			attackSpritePlayer.play("parry_whiff")
+			acceleration = prevAcceleration * 1.8
 	
 	velocity = velocity.move_toward(Vector2.ZERO, friction  * _delta)
 	
@@ -365,6 +382,7 @@ func cool_down_state(_delta):
 		attack_cool_down_frames = 0
 		attack_timer_on = false
 		state = MOVE
+		acceleration = prevAcceleration
 		
 	move_and_slide()
 
@@ -404,3 +422,5 @@ func get_enemy_attack_stats(enemy_id):
 
 func node_type():
 	type = 'enemy_test'
+func player_must_die():
+	shouldDie = true

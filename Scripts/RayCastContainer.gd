@@ -26,20 +26,20 @@ func _process(delta):
 		set_danger()
 	suggestedVector = get_suggested_vector()
 	debug = false
-	if(Input.is_action_just_released("relevant_raycasts")):
-		var index = 0
-		print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
-		for i in relevant_raycasts:
-			print(i.name + ":" 
-			+ str(i.position) 
-			+ " " +str(rad_to_deg(i.position.angle_to(supplied_direction))) + ": ,")
-		print("The interest array is set to: ")
-		for i in interest_array:
-			print(raycastChildren[index].name + ": " + str(final_interest[index]))
-			index += 1
-		print("And suggested vector is " + str(suggestedVector))
-		debug = true
-		index = 0
+#	if(Input.is_action_just_released("relevant_raycasts")):
+#		var index = 0
+#		print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
+#		for i in relevant_raycasts:
+#			print(i.name + ":" 
+#			+ str(i.position) 
+#			+ " " +str(rad_to_deg(i.position.angle_to(supplied_direction))) + ": ,")
+#		print("The interest array is set to: ")
+#		for i in interest_array:
+#			print(raycastChildren[index].name + ": " + str(final_interest[index]))
+#			index += 1
+#		print("And suggested vector is " + str(suggestedVector))
+#		debug = true
+#		index = 0
 	relevant_raycasts = []
 	frame +=1
 	

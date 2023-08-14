@@ -21,6 +21,7 @@ var frame = 0
 var noReservedPoints = false
 var enemyScene = 0
 var currentDifficulty = 0
+var debug = false
 
 enum {
 	EASY,
@@ -39,6 +40,7 @@ func _ready():
 	
 func _process(_delta):
 	frame += 1
+	debug = false
 	if(Input.is_action_pressed("escape")):
 		get_tree().quit()
 	elif(Input.is_action_pressed("restart")):
@@ -53,9 +55,13 @@ func _process(_delta):
 	if(Input.is_action_just_pressed("Hard")):
 		currentDifficulty = HARD
 		apply_difficulty()
-	playerPosition = playerNode.position
+	if(playerNode != null):
+		playerPosition = playerNode.position
 	if(Input.is_action_just_pressed("SpawnEnemyDemo")):
 		spawn_enemy()
+	if(Input.is_action_just_pressed("relevant_raycasts")):
+		debug = true
+	
 	
 	noReservedPoints = !(true in reservedAttackPoints)
 	
@@ -138,10 +144,13 @@ func apply_difficulty():
 			EASY:
 				i.stat_sheet.damage = 75
 				i.stat_sheet.knockback_strength = 50
+				i.stat_sheet.knockback_resistance = 0.0
 				
 			MEDIUM:
 				i.stat_sheet.damage = 150
 				i.stat_sheet.knockback_strength = 125
+				i.stat_sheet.knockback_resistance = 25.0
 			HARD:
 				i.stat_sheet.damage = 200
 				i.stat_sheet.knockback_strength = 150
+				i.stat_sheet.knockback_resistance = 50.0

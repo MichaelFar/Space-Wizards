@@ -1,18 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://cspmh1ychdh6t"]
+[gd_scene load_steps=2 format=3 uid="uid://cspmh1ychdh6t"]
 
-[ext_resource type="Shader" path="res://test1.gdshader" id="1_lsg1j"]
 [ext_resource type="Texture2D" uid="uid://hc4hv2lvt8lc" path="res://Sprites/lilgob/lil_goblin.png" id="2_ibvw2"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_u74pd"]
-shader = ExtResource("1_lsg1j")
-shader_parameter/background_color = null
-shader_parameter/shadow_color = null
-shader_parameter/offset_in_pixels = null
 
 [node name="Node2D" type="Node2D"]
 
 [node name="LilGoblin" type="Sprite2D" parent="."]
-material = SubResource("ShaderMaterial_u74pd")
-position = Vector2(-21.0625, 10.4434)
-scale = Vector2(2.88663, 1.82575)
+use_parent_material = true
+position = Vector2(-8, 7)
 texture = ExtResource("2_ibvw2")

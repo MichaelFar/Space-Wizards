@@ -233,17 +233,18 @@ func wander_state(target_point, _delta):
 		stuckFrames = 0
 	
 	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
+	
 	#print(name + " velocity while in wander_state() is " + str(velocity))
 	
 	if(state != PURSUE && self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
 		
-		state = IDLE
-		idle_frames = 0
 		change_sprite(get_node('pirate_grunt_1'), target_point)
 		animationPlayer.stop()
 		animationPlayer.play('enemy_idle')
 		stuckFrames = 0
 		emoteContainer.play_emote('')
+		state = IDLE
+		idle_frames = 0
 	
 	if(position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):

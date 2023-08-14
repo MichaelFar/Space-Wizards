@@ -19,7 +19,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mtdqx"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kdksj"]
 resource_local_to_scene = true
 shader = ExtResource("7_2nqcc")
 shader_parameter/dissolve_value = 1.0
@@ -102,7 +102,7 @@ self_modulate = Color(1, 1, 1, 0)
 polygon = PackedVector2Array(75, 220, 75, 386, 337, 386)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
-material = SubResource("ShaderMaterial_mtdqx")
+material = SubResource("ShaderMaterial_kdksj")
 position = Vector2(379, 189)
 
 [editable path="ExclusionZone"]

@@ -2,11 +2,12 @@ shader_type canvas_item;
 
 uniform vec4 background_color : source_color;
 uniform vec4 shadow_color : source_color;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
 // Currently pixels always in application size, so zooming in further wouldn't increase the size of the dropdown
 // but changing that would also be relatively trivial
 uniform vec2 offset_in_pixels;
 
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
 
 
 void fragment() {

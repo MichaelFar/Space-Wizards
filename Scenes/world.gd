@@ -5,7 +5,7 @@ extends Node2D
 #Calculates a list of valid points once as well as player position and delivers to the ai
 #Also contains debug commands like escaping
 
-@onready var inclusionZone = $InclusionZone
+
 @onready var exclusion_zone = $ExclusionZone
 
 @onready var playerNode = $Player
@@ -20,9 +20,12 @@ var exclusionDimensions = []
 var frame = 0
 var noReservedPoints = false
 var enemyScene = 0
+var playerScene = 0
 var currentDifficulty = 0
 var debug = false
-
+var navOutline = null
+var playerStartPos = Vector2.ZERO
+var enemyStartPositions = []
 enum {
 	EASY,
 	MEDIUM,
@@ -31,21 +34,30 @@ enum {
 
 func _ready():
 	
-	var inclusion_area = get_dimensions(navRegion.navigation_polygon.get_outline(0))
+	navOutline = navRegion.navigation_polygon.get_outline(0)
+	var inclusion_area = get_dimensions(navOutline)
+	
 	#print(" min " + str(inclusionZone.shape.get_rect().position + inclusionZone.global_position) + "; max : " + str(inclusionZone.shape.get_rect().size + inclusionZone.global_position))
 	get_exclusion_children()
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
 	enemyScene = preload("res://Scenes/enemy_test.tscn")
+	playerScene = preload("res://Scenes/player.tscn")
+	
 	
 	get_enemy_children()
+	for i in enemyChildren:
+		enemyStartPositions.append(i.global_position)
+		
+	playerStartPos = playerNode.global_position
 	
+
 func _process(_delta):
 	frame += 1
 	debug = false
 	if(Input.is_action_pressed("escape")):
 		get_tree().quit()
 	elif(Input.is_action_pressed("restart")):
-		get_tree().reload_current_scene()
+		simple_restart()
 	
 	if(Input.is_action_just_pressed("Easy")):
 		currentDifficulty = EASY
@@ -59,11 +71,14 @@ func _process(_delta):
 	if(playerNode != null):
 		playerPosition = playerNode.position
 	if(Input.is_action_just_pressed("SpawnEnemyDemo")):
-		spawn_enemy()
+		spawn_scene(enemyScene)
 	if(Input.is_action_just_pressed("relevant_raycasts")):
 		debug = true
 	
 	noReservedPoints = !(true in reservedAttackPoints)
+	
+	if(debug):
+		print("Outline 0 of nav region is " + str(navRegion.navigation_polygon.get_outline(0)))
 	
 func get_dimensions(vertices):
 	var xArray = []
@@ -80,7 +95,7 @@ func get_dimensions(vertices):
 func get_valid_points(_min, _max):
 	
 	var validPoints = []
-	validPoints.resize((_max.x * _max.y))
+	#validPoints.resize((_max.x * _max.y))
 	print("The value of _max.x is " + str(_max.x) + " and the value of _max.y is " + str(_max.y))
 	print("The size of valid points is " + str(validPoints.size()))
 	var geometry = Geometry2D
@@ -88,24 +103,44 @@ func get_valid_points(_min, _max):
 	#print("Range for max x is " + str(range(_max.x)))
 	#print("Range for max y is " + str(range(_max.y)))
 	
-	for i in exclusionDimensions:
-		for j in range(_max.x):
+#	for i in exclusionDimensions:
+#		for j in range(_max.x):
+#			for k in range(_max.y):
+#				#if(index != validPoints.size()):
+#				if(validPoints[index] != Vector2(j,k)):
+#					if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
+#						validPoints[index] = Vector2(j,k)
+#
+#				index += 1	
+#		index = 0
+		
+	for j in range(_max.x):
 			for k in range(_max.y):
 				#if(index != validPoints.size()):
-				if(validPoints[index] != Vector2(j,k)):
-					if(!geometry.is_point_in_polygon(Vector2(j, k), i) && j > _min.x && k > _min.y):
-						validPoints[index] = Vector2(j,k)
-					
-				index += 1	
-		index = 0
+				
+				if(geometry.is_point_in_polygon(Vector2(j, k), navOutline)):
+					validPoints.append(Vector2(j,k))
+					#print("Added " + str(Vector2(j,k)) + " to validpoints")
+	
+	
+	for i in validPoints:
+		if i == null:
+			print("Null found at " + str(validPoints.find(i)))
+	index = 0
+	for i in exclusionDimensions:
+		print(str(i))
+		for j in validPoints:
+			
+			if(geometry.is_point_in_polygon(j, i)):
+				validPoints[validPoints.find(j)] = Vector2(1000000,1000000)
 	var temp_points = []
 	#print("Range for valid points is " + str(range(validPoints.size())))
-	for i in range(validPoints.size()):
-		if(!validPoints[i] == null && validPoints[i].x < _max.x && validPoints[i].y < _max.y):
-			temp_points.append(validPoints[i])
+	for i in validPoints:
+		if(i.x < _max.x && i.y < _max.y):
+			temp_points.append(i)
 			index += 1
 	#print("Range for temp points is " + str(range(validPoints.size())))
-	get_dimensions(temp_points)
+	#get_dimensions(temp_points)
 	
 	#print("The size of temp_points is " + str(temp_points.size()))
 	validPoints = temp_points
@@ -131,13 +166,16 @@ func get_exclusion_children():
 		exclusionDimensions.append(i.get_children()[0].polygon)
 		print("Exclusion polygon vertices for " + i.name + " are " + str(i.get_children()[0].polygon))
 
-func spawn_enemy():
+func spawn_scene(scene, randompoint = Vector2.ZERO):
 	
 	var random = RandomNumberGenerator.new()
-	var enemy = enemyScene.instantiate()
-	enemy.global_position = Vector2(400, 200)
-	add_child(enemy)
-	
+	var node = scene.instantiate()
+	if(!randompoint):
+		node.global_position = validpoints[random.randi_range(0, validpoints.size() - 1)]
+	else:
+		node.global_position = randompoint
+	add_child(node)
+	return node
 func get_enemy_children():
 	
 	enemyChildren = []
@@ -166,3 +204,17 @@ func apply_difficulty():
 				i.stat_sheet.damage = 200
 				i.stat_sheet.knockback_strength = 150
 				i.stat_sheet.knockback_resistance = 50.0
+
+func simple_restart():
+	get_enemy_children()
+	for i in enemyChildren:
+		i.queue_free()
+	
+	if(playerNode == null):
+		playerNode = spawn_scene(playerScene, playerStartPos)
+		playerNode.velocity = Vector2.ZERO
+	else:
+		playerNode.global_position = playerStartPos
+		playerNode.update_healthbar(-10000)
+	for i in enemyStartPositions:
+		spawn_scene(enemyScene, i)

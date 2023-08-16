@@ -90,6 +90,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
 	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
 	animationState.travel("MoveBlend")
+	material.set_shader_parameter("texture_size", nakedWizardBase.texture.get_size())
 
 func post_initialize(animation_tree):
 	animationState = animation_tree.get("parameters/playback")
@@ -228,7 +229,7 @@ func attack_state(_delta):#State machine for attack combos will go here
 
 func take_hit_state(_delta):
 
-	var pushBackStrength = 150
+	var pushBackStrength = enemy_knockback
 
 	var pushBackDirection = position - assailantPosition
 
@@ -255,13 +256,14 @@ func take_hit_state(_delta):
 
 func dead_state(_delta):
 	
+	shader.set_shader_parameter("modulate", Vector4(0,0,0,0))
 	animationState.stop()
-	playerSpritePlayer.play('death')
-	
 	if(shouldDie):
 		playerSpritePlayer.stop()
+		
 		queue_free()
-		healthbar.hide()
+		
+		
 	
 
 func parry_state(_delta):
@@ -325,7 +327,7 @@ func _on_player_hurtbox_area_entered(area):
 				shader.set_shader_parameter("applied", false)
 			attackSpritePlayer.get_parent().abort_animation()#Hope this fixed the smear bug
 				
-			update_healthbar(enemy_damage, enemy_knockback)
+			update_healthbar(enemy_damage)
 		elif(area.name == 'enemy_attack_hitbox' && state == PARRY):
 			s_parried.emit(area.get_enemy_id())
 			parry_timer_on = false
@@ -333,17 +335,20 @@ func _on_player_hurtbox_area_entered(area):
 			parry_cool_down_frames = 0
 			
 				
-func update_healthbar(health_change, knock_back_strength):#pass in negative values to increase health
+func update_healthbar(health_change):#pass in negative values to increase health
 	
-	current_health -= health_change
+	current_health = clamp(current_health - health_change, -1, max_health)
+	
 	print("Health percentage is " + str((current_health / max_health) * 100.0))
 	healthbar.value = (current_health / max_health) * 100.0
 	print("Health bar value is " + str(healthbar.value))
-	pushBackStrength = knock_back_strength
+	
 	if(current_health <= 0):
-			state = DEAD
-			change_sprite('NakedWizard_base')
-			playerSpritePlayer.stop()
+		state = DEAD
+		change_sprite('NakedWizard_base')
+		playerSpritePlayer.stop()
+		animationState.stop()
+		playerSpritePlayer.play('death')
 			
 	
 func change_sprite(spriteName):

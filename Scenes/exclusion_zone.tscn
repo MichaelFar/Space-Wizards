@@ -6,3 +6,4 @@ collision_mask = 5
 motion_mode = 1
 
 [node name="ExclusionPolygon" type="CollisionPolygon2D" parent="."]
+z_index = 3

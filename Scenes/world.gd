@@ -5,11 +5,11 @@ extends Node2D
 #Calculates a list of valid points once as well as player position and delivers to the ai
 #Also contains debug commands like escaping
 
-
 @onready var inclusionZone = $InclusionZone
 @onready var exclusion_zone = $ExclusionZone
 
 @onready var playerNode = $Player
+@onready var navRegion = $NavigationRegion2D
 var playerPosition = Vector2.ZERO
 var validpoints = []
 var enemyChildren = []
@@ -31,7 +31,8 @@ enum {
 
 func _ready():
 	
-	var inclusion_area = get_dimensions(inclusionZone.polygon)
+	var inclusion_area = get_dimensions(navRegion.navigation_polygon.get_outline(0))
+	#print(" min " + str(inclusionZone.shape.get_rect().position + inclusionZone.global_position) + "; max : " + str(inclusionZone.shape.get_rect().size + inclusionZone.global_position))
 	get_exclusion_children()
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
 	enemyScene = preload("res://Scenes/enemy_test.tscn")
@@ -62,7 +63,6 @@ func _process(_delta):
 	if(Input.is_action_just_pressed("relevant_raycasts")):
 		debug = true
 	
-	
 	noReservedPoints = !(true in reservedAttackPoints)
 	
 func get_dimensions(vertices):
@@ -73,6 +73,7 @@ func get_dimensions(vertices):
 		yArray.append(i.y)
 	xArray.sort()
 	yArray.sort()
+	
 	return [Vector2(xArray[0], yArray[0]), Vector2(xArray[xArray.size() - 1], yArray[yArray.size() - 1])]
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 
@@ -80,9 +81,12 @@ func get_valid_points(_min, _max):
 	
 	var validPoints = []
 	validPoints.resize((_max.x * _max.y))
+	print("The value of _max.x is " + str(_max.x) + " and the value of _max.y is " + str(_max.y))
 	print("The size of valid points is " + str(validPoints.size()))
 	var geometry = Geometry2D
 	var index = 0
+	#print("Range for max x is " + str(range(_max.x)))
+	#print("Range for max y is " + str(range(_max.y)))
 	
 	for i in exclusionDimensions:
 		for j in range(_max.x):
@@ -95,14 +99,18 @@ func get_valid_points(_min, _max):
 				index += 1	
 		index = 0
 	var temp_points = []
-	
+	#print("Range for valid points is " + str(range(validPoints.size())))
 	for i in range(validPoints.size()):
-		if(!validPoints[i] == null):
+		if(!validPoints[i] == null && validPoints[i].x < _max.x && validPoints[i].y < _max.y):
 			temp_points.append(validPoints[i])
+			index += 1
+	#print("Range for temp points is " + str(range(validPoints.size())))
+	get_dimensions(temp_points)
 	
+	#print("The size of temp_points is " + str(temp_points.size()))
 	validPoints = temp_points
 	
-	print("The size of valid points is " + str(validPoints.size()))
+	#print("The size of valid points is " + str(validPoints.size()))
 	
 	return validPoints
 	
@@ -131,11 +139,14 @@ func spawn_enemy():
 	add_child(enemy)
 	
 func get_enemy_children():
+	
 	enemyChildren = []
+	
 	for i in get_children():
 		if i.has_method('node_type'):
 			if(i.type == 'enemy_test'):
 				enemyChildren.append(i)
+				
 func apply_difficulty():
 	
 	get_enemy_children()
@@ -150,6 +161,7 @@ func apply_difficulty():
 				i.stat_sheet.damage = 150
 				i.stat_sheet.knockback_strength = 125
 				i.stat_sheet.knockback_resistance = 25.0
+				
 			HARD:
 				i.stat_sheet.damage = 200
 				i.stat_sheet.knockback_strength = 150

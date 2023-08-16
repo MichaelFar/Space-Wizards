@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://swe0uvicqhik"]
+[gd_scene load_steps=2 format=3 uid="uid://swe0uvicqhik"]
 
-[node name="InclusionZone" type="Polygon2D"]
-color = Color(1, 1, 1, 0)
+[ext_resource type="Script" path="res://Scripts/inclusion_zone.gd" id="1_x4avy"]
+
+[node name="InclusionZone" type="CollisionShape2D"]
+disabled = true
+script = ExtResource("1_x4avy")

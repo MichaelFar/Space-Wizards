@@ -38,8 +38,8 @@ var type = 'enemy_test'
 @export var noticeDist = 200
 @export var pursueDist = 130
 @export var attackDist = 40
-@export var path_desired_distance = 50
-@export var target_distance = 20
+var path_desired_distance = 50
+var target_distance = 20
 
 @export var shouldDie = false#Do not change this in the inspector
 var attackPosition = Vector2.ZERO
@@ -112,8 +112,8 @@ func _ready():
 	populate_stats()
 	shader = shader.get("material")
 	playerPreviousPosition = playerNode.position
-	
-	
+	target_distance = navAgent.target_desired_distance
+	path_desired_distance = navAgent.path_desired_distance
 	
 func post_initialize():
 	#playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
@@ -126,9 +126,11 @@ func get_ideal_travel_points():
 	validPoints = parent.validpoints
 	
 	for i in validPoints:
-		if i.distance_to(floor(position) - floor(global_position)) <= choice_radius:
+		if i.distance_to((floor(global_position))) <= choice_radius:
 			travel_points.append(i)
-			#print("Ideal point " + str(i) + " added")
+			
+			
+	parent.get_dimensions(travel_points)
 	return travel_points
 
 func _physics_process(_delta):#State machine runs per frame
@@ -154,7 +156,7 @@ func _physics_process(_delta):#State machine runs per frame
 		CHOOSEPOINT:#CHOOSEPOINT is used to get a valid point to travel to, then state transitions to WANDER
 			if(frame > 2):#Give nav time to update
 				state = WANDER
-			chosenPoint = choose_point(travelPoints)
+			chosenPoint = choose_point()
 			animationPlayer.stop()
 			animationPlayer.play('enemy_walk')
 		WANDER:#Uses A* to navigate to a point, wander_state() is also used for pursuing the player (player position is supplied as an argument)
@@ -305,16 +307,17 @@ func idle_state(_delta):
 		animationPlayer.stop()
 		animationPlayer.play('enemy_walk')
 	
-func choose_point(travel_points):
+func choose_point():
 	
 	var randomPoint = RandomNumberGenerator.new()
 	var chosen_point = Vector2.ZERO
 	var newPoints = []
 	
-	chosen_point = travel_points[randomPoint.randi_range(0, travel_points.size() - 1)]
-	print("I am " + name + " and I chose the point " + str(chosen_point + floor(global_position)))
+	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
+	print("travel_points size in choose_point is " + str(travelPoints.size()))
+	print("I am " + name + " and I chose the point " + str(chosen_point))
 	
-	chosen_point += floor(global_position)
+	parent.get_dimensions(travelPoints)
 	if((chosen_point) not in validPoints):
 		
 		
@@ -331,8 +334,11 @@ func get_travel_points():
 	validPoints = parent.validpoints
 	
 	for i in validPoints:
-		if i.distance_to(floor(position)) <= choice_radius:
+		if i.distance_to((floor(global_position))) <= choice_radius:
 			travel_points.append(i)
+		print("Added " + str(i) + " to travel points")
+			
+	parent.get_dimensions(travel_points)
 	return travel_points
 
 func change_sprite(spriteName, chosen_point):

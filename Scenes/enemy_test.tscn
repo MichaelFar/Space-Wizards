@@ -331,6 +331,8 @@ max_speed = 125
 attackDist = 60
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 35.0
+target_desired_distance = 35.0
 
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")

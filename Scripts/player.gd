@@ -33,13 +33,17 @@ var attack_cool_down_frames = 0
 var attack_timer_on = false
 var hit_enemy = false 
 var parried_enemy = false
+var successfulHit = false
+var dummy_delta = 0
 
 var dodge_frames = 0
 var dodge_timer = 0
 var dodge_timer_on = false
-
+var parent = null
 var enemy_damage = 0
 var enemy_knockback = 0
+
+@export var accelerationCoef = 1.2
 
 var previous_velocity = Vector2.ZERO
 
@@ -53,6 +57,7 @@ var type = 'player'
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
 @onready var attackPointsContainer = $AttackPoints
+@onready var attackContainer = $attackContainer
 
 var listOfSprites = []
 
@@ -89,14 +94,16 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	set_collision_mask_value(2, true)
 	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
 	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
-	animationState.travel("MoveBlend")
+	animationState.travel("IdleBlend")
 	material.set_shader_parameter("texture_size", nakedWizardBase.texture.get_size())
 
 func post_initialize(animation_tree):
-	animationState = animation_tree.get("parameters/playback")
 	
-
+	animationState = animation_tree.get("parameters/playback")
+	parent = get_parent()
+	
 func populate_stats():
+	
 	var stat_sheet = $player_stat_sheet
 	max_health = stat_sheet.max_health
 	acceleration = stat_sheet.acceleration #Multiplied by delta
@@ -104,11 +111,15 @@ func populate_stats():
 	max_speed = stat_sheet.max_speed # NOT multiplied by delta
 	attack_movement = stat_sheet.attack_movement #Multiplied by delta
 	current_health = max_health
+	
+func connect_hit_signal():
+	if(parent.enemyChildren.size() > 0):
+		for i in parent.enemyChildren:
+			i.player_hit_me.connect(successful_hit)
 func _physics_process(_delta):#Runs per frame, contains starting player state machine
-	
-	
+	#successfulHit = false
 	s_attack_points.emit(attack_points)
-	
+	dummy_delta = _delta
 	frame += 1
 	match state:
 		
@@ -145,6 +156,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 	
 	
 func move_state(_delta):
+	
 	mouse_coordinates = get_local_mouse_position()
 	mouse_coordinates = mouse_coordinates.normalized()
 	
@@ -190,14 +202,16 @@ func move_state(_delta):
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			attackSpritePlayer.play("parry_whiff")
-			acceleration = prevAcceleration * 1.8
-			
+			acceleration = prevAcceleration * accelerationCoef
 			
 	if(!dodge_timer_on):
+		
 		if(InputBuffer.is_action_press_buffered("ui_select")):
+			
 			print("Dodge state entered")
 			state = DODGE
 			previous_velocity = input_vector * max_speed
+			
 	move_and_slide()
 
 
@@ -250,8 +264,6 @@ func take_hit_state(_delta):
 		state = MOVE
 		change_sprite("NakedWizard_base")
 		
-	
-		
 	move_and_slide()
 
 func dead_state(_delta):
@@ -262,10 +274,7 @@ func dead_state(_delta):
 		playerSpritePlayer.stop()
 		
 		queue_free()
-		
-		
 	
-
 func parry_state(_delta):
 	mouse_coordinates = get_local_mouse_position()
 	mouse_coordinates = mouse_coordinates.normalized()
@@ -276,13 +285,14 @@ func parry_state(_delta):
 	
 	if(parried_enemy):
 			print("Animation stopped was " + attackSpritePlayer.current_animation)
-			#attackSpritePlayer.stop()
+			
 			attackSpritePlayer.play("parry_hit")
 			parried_enemy = false
-			#state = MOVE
+			state = MOVE
+			attack_cool_down_frames = 0
+			attack_timer_on = false
 			#move_state(_delta)
-			
-	
+		
 	if(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length 
 	&& !parried_enemy):
 		
@@ -291,8 +301,8 @@ func parry_state(_delta):
 		state = MOVE
 		velocity = Vector2.ZERO
 		shader.set_shader_parameter("applied", false)
+		
 	move_and_slide()
-
 
 func _on_attack_hit_box_area_entered(area):
 	
@@ -367,7 +377,7 @@ func cool_down_state(_delta):
 	
 	if(hit_enemy):
 		cool_down_target = 15
-		acceleration = prevAcceleration * 1.8
+		acceleration = prevAcceleration * accelerationCoef
 		move_state(_delta)
 	if(parry_cool_down_frames == 0):
 		
@@ -378,7 +388,7 @@ func cool_down_state(_delta):
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			attackSpritePlayer.play("parry_whiff")
-			acceleration = prevAcceleration * 1.8
+			acceleration = prevAcceleration * accelerationCoef
 	
 	velocity = velocity.move_toward(Vector2.ZERO, friction  * _delta)
 	
@@ -426,6 +436,16 @@ func get_enemy_attack_stats(enemy_id):
 	enemy_knockback = enemy_sheet.knockback_strength
 
 func node_type():
-	type = 'enemy_test'
+	type = 'player'
+	
 func player_must_die():
 	shouldDie = true
+	
+func successful_hit():
+	attackContainer.play_hit()
+	
+func play_hit():
+	
+	if(successfulHit):
+		print("Hit the enemy")
+		

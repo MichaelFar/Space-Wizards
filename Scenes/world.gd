@@ -214,7 +214,8 @@ func simple_restart():
 		playerNode = spawn_scene(playerScene, playerStartPos)
 		playerNode.velocity = Vector2.ZERO
 	else:
+		playerNode.velocity = Vector2.ZERO
 		playerNode.global_position = playerStartPos
-		playerNode.update_healthbar(-10000)
+		playerNode.update_healthbar(-(playerNode.max_health))#Sets the health to max
 	for i in enemyStartPositions:
 		spawn_scene(enemyScene, i)

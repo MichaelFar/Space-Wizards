@@ -10,6 +10,8 @@ var currentKnockbackStrength = 0
 var currentStatNode = ''
 var smearChildren = []
 
+var soundChildren = []
+
 func _ready():
 	
 	playerNode = get_parent()
@@ -32,6 +34,11 @@ func _physics_process(delta):
 			animationState.travel("IdleBlend")
 	
 	
+func get_sound_children():
+	soundChildren = []
+	for i in get_children():
+		if i is AudioStreamPlayer:
+			soundChildren.append(i)
 func get_all_attack_specs():#Get attack spec scripts
 	
 	for i in get_children():
@@ -57,3 +64,5 @@ func abort_animation():
 		for j in i.get_node("AttackHitBox").get_children():
 			print("Hitbox " + j.name + " disabled")
 			j.disabled = true
+func play_hit():
+	soundChildren[0].get_children()[0].play()

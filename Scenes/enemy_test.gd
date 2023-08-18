@@ -55,8 +55,6 @@ var faceRight = true
 
 var animationPlayer = null
 
-
-
 @onready var playerNode = get_node("../Player")
 @onready var emoteContainer = $EmoteContainer
 @onready var smearContainer = $enemy_attack_container
@@ -78,6 +76,7 @@ var player_damage = 0
 
 signal enemy_attack_stats
 signal index_reserved
+signal player_hit_me
 
 enum {
 	WANDER,
@@ -363,6 +362,7 @@ func _on_hurtbox_area_entered(area):
 				state = TAKEHIT
 			update_healthbar(player_damage)
 			update_poise_bar(player_poise_damage)
+			player_hit_me.emit()
 			
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
 			

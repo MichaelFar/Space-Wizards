@@ -6,6 +6,7 @@ extends CharacterBody2D
 #All directions can be attacked
 var input_vector = Vector2.ZERO
 var shouldDie = false
+var parry_active = false
 
 var acceleration = 450 #Multiplied by delta
 var prevAcceleration = acceleration
@@ -56,10 +57,10 @@ var type = 'player'
 @onready var playerSpriteTree = $PlayerSpriteAnimTree
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
-@onready var attackPointsContainer = $AttackPoints
 @onready var attackContainer = $attackContainer
 
 var listOfSprites = []
+var enemyIDs = []
 
 var state = MOVE
 
@@ -96,6 +97,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
 	animationState.travel("IdleBlend")
 	material.set_shader_parameter("texture_size", nakedWizardBase.texture.get_size())
+	parent.spawned_enemy.connect(connect_hit_signal)
 
 func post_initialize(animation_tree):
 	
@@ -112,10 +114,9 @@ func populate_stats():
 	attack_movement = stat_sheet.attack_movement #Multiplied by delta
 	current_health = max_health
 	
-func connect_hit_signal():
-	if(parent.enemyChildren.size() > 0):
-		for i in parent.enemyChildren:
-			i.player_hit_me.connect(successful_hit)
+func connect_hit_signal(enemy_id):
+	
+	enemy_id.player_hit_me.connect(successful_hit)
 func _physics_process(_delta):#Runs per frame, contains starting player state machine
 	#successfulHit = false
 	#s_attack_points.emit(attack_points)
@@ -126,7 +127,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 		MOVE:
 			move_state(_delta)
 		DODGE:
-			dodge_state(input_vector, previous_velocity,_delta)
+			dodge_state(_delta)
 		ATTACK:
 			attack_state(_delta)
 		TAKEHIT:
@@ -204,6 +205,7 @@ func move_state(_delta):
 	if(!parry_timer_on):
 		if (InputBuffer.is_action_press_buffered('parry')):
 			state = PARRY
+			#toggle_parry_active(true)
 			parry_timer_on = true
 			attack_cool_down_frames = 0
 			attack_timer_on = false
@@ -306,8 +308,7 @@ func parry_state(_delta):
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			parried_enemy = false
-			#move_state(_delta)
-			#velocity = previous_velocity
+			
 		
 	if(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
 		
@@ -329,8 +330,6 @@ func _on_attack_hit_box_area_entered(area):
 		knockBackDirection = -1
 		velocity = Vector2.ZERO
 		hit_enemy = true
-		#attack_cool_down_frames = 0
-		#attack_timer_on = false
 		print("When hit enemy attack timer is " + str(attack_timer_on))
 		
 		acceleration = prevAcceleration * accelerationCoef
@@ -338,7 +337,7 @@ func _on_attack_hit_box_area_entered(area):
 
 func _on_player_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
-		if(area.name == 'enemy_attack_hitbox' && state != PARRY && state != DODGE && state != DEAD):
+		if(area.name == 'enemy_attack_hitbox' && !parry_active && state != DODGE && state != DEAD):
 			
 			state = TAKEHIT
 			assailantPosition = area.get_parent().get_parent().global_position
@@ -354,7 +353,7 @@ func _on_player_hurtbox_area_entered(area):
 			attackSpritePlayer.get_parent().abort_animation()#Hope this fixed the smear bug
 				
 			update_healthbar(enemy_damage)
-		elif(area.name == 'enemy_attack_hitbox' && state == PARRY):
+		elif(area.name == 'enemy_attack_hitbox' && parry_active):
 			s_parried.emit(area.get_enemy_id())
 			parry_timer_on = false
 			parried_enemy = true
@@ -417,7 +416,7 @@ func cool_down_state(_delta):
 		
 	move_and_slide()
 
-func dodge_state(direction, finalInput, _delta):#Candidate for player sheet
+func dodge_state(_delta):#Candidate for player sheet
 	
 	dodge_frames += 1
 	var dodge_max_speed = 800
@@ -459,9 +458,14 @@ func player_must_die():
 	
 func successful_hit():
 	attackContainer.play_hit()
-	
+	print("succesful_hit() has run")
 func play_hit():
 	
 	if(successfulHit):
 		print("Hit the enemy")
 		
+func toggle_parry_active(active):#Called in animation parry_whiff and parry_hit
+	parry_active = active
+
+
+

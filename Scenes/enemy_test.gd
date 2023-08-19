@@ -186,13 +186,7 @@ func _physics_process(_delta):#State machine runs per frame
 	#Other states must be interrupted so that the player may be noticed
 	#However certain states should not be interrupted, hence the state exclusion in the condition
 	#Creates a '?' above the head of an enemy that noticed the player
-		change_sprite(get_node('pirate_grunt_1'), chosenPoint)
-		animationPlayer.stop()
-		animationPlayer.play('enemy_idle')
-		idle_frames = 0
-		state = NOTICEPLAYER
-		velocity = Vector2.ZERO
-		emoteContainer.play_emote('question')
+		state_transition(NOTICEPLAYER)
 		
 	if(coolDownFrames / frameRate >= 1):
 		
@@ -240,13 +234,7 @@ func wander_state(target_point, _delta):
 	
 	if(state != PURSUE && self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
 		
-		change_sprite(get_node('pirate_grunt_1'), target_point)
-		animationPlayer.stop()
-		animationPlayer.play('enemy_idle')
-		stuckFrames = 0
-		emoteContainer.play_emote('')
-		state = IDLE
-		idle_frames = 0
+		state_transition(IDLE, target_point)
 	
 	if(position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):
@@ -266,15 +254,7 @@ func attack_state(_delta):
 	if(self.position.distance_to(attackPosition) > attackDist):
 		if(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 			print("Player out of range, pursuing")
-			playerPreviousPosition = parent.playerPosition
-			
-			change_sprite(get_node('pirate_grunt_1'), playerPreviousPosition)
-			animationPlayer.stop()
-			animationPlayer.play('enemy_walk')
-			state = PURSUE
-			idle_frames = 0
-			
-			emoteContainer.play_emote('startled')
+			state_transition(PURSUE)
 			animationPlayer.set("speed_scale", 1.0)
 	elif(!coolDownTimerOn):
 		print('CoolDownTimer is off and I tried to attack')
@@ -285,7 +265,6 @@ func attack_state(_delta):
 	elif(playerNode == null):
 		state = IDLE
 		
-
 func idle_state(_delta):
 
 	reserved_point = Vector2.ZERO
@@ -294,23 +273,18 @@ func idle_state(_delta):
 	var seconds = frameRate
 	@warning_ignore("integer_division")
 	if (idle_frames / seconds == 3):
-		state = CHOOSEPOINT
-		animationPlayer.stop()
-		animationPlayer.play('enemy_walk')
+		state_transition(CHOOSEPOINT)
 	
 func choose_point():
 	
 	var randomPoint = RandomNumberGenerator.new()
 	var chosen_point = Vector2.ZERO
-	var newPoints = []
 	
 	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
 	print("travel_points size in choose_point is " + str(travelPoints.size()))
 	print("I am " + name + " and I chose the point " + str(chosen_point))
-	
 	#parent.get_dimensions(travelPoints)
 	if((chosen_point) not in validPoints):
-		
 		
 		travelPoints = get_travel_points()
 		chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
@@ -368,7 +342,7 @@ func _on_hurtbox_area_entered(area):
 			
 			update_healthbar(player_damage)	
 			update_poise_bar(player_poise_damage)
-			
+			player_hit_me.emit()
 			if(state != STAGGERED):
 				animationPlayer.set("speed_scale", 0.5)
 			else:
@@ -390,19 +364,11 @@ func take_hit_state(_delta):
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
-		#print("Pushback acceleration is " + str(pushBackAcceleration))
 		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
-		change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
-		animationPlayer.stop()
-		animationPlayer.play('enemy_walk')
-		state = PURSUE
-		idle_frames = 0
-		playerPreviousPosition = parent.playerPosition
-		emoteContainer.play_emote('exclaim')
-		velocity = Vector2.ZERO
+		state_transition(PURSUE)
 		animationPlayer.set("speed_scale", 1.0)
 		if(poise <= 0.0):
 			update_poise_bar(max_poise)
@@ -421,21 +387,11 @@ func notice_player_state(_delta):#Probably where the collision bug is
 		&& position.distance_to(attackPosition) <= noticeDist 
 		|| position.distance_to(attackPosition) < pursueDist):
 			
-			playerPreviousPosition = parent.playerPosition
-			change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
-			animationPlayer.stop()
-			animationPlayer.play('enemy_walk')
-			state = PURSUE
-			idle_frames = 0
-			emoteContainer.play_emote('exclaim')
+			state_transition(PURSUE)
 			
 		elif(position.distance_to(parent.playerPosition) > noticeDist):
 			
-			idle_frames = 0
-			state = CHOOSEPOINT
-			animationPlayer.stop()
-			animationPlayer.play('enemy_walk')
-			emoteContainer.play_emote('')
+			state_transition(CHOOSEPOINT)
 		
 func pursue_state(_delta):
 	
@@ -551,14 +507,12 @@ func update_poise_bar(poise_change):
 				state = TAKEHIT
 		else:
 			poisebar.show()
-			
-		
 
 func node_type():
 	type = 'enemy_test'
 
 
-func state_transition(STATE):
+func state_transition(STATE, point = Vector2.ZERO):
 	
 	state = STATE
 	match STATE:
@@ -574,16 +528,29 @@ func state_transition(STATE):
 			coolDownTimerOn = true
 			smearContainer.supplied_player_position = parent.playerPosition
 		PURSUE:
-			pass
+			playerPreviousPosition = parent.playerPosition
+			change_sprite(get_node('pirate_grunt_1'), parent.playerPosition)
+			animationPlayer.stop()
+			animationPlayer.play('enemy_walk')
+			idle_frames = 0
+			emoteContainer.play_emote('exclaim')
 		IDLE:
-			pass
+			change_sprite(get_node('pirate_grunt_1'), point)
+			animationPlayer.stop()
+			animationPlayer.play('enemy_idle')
+			stuckFrames = 0
+			emoteContainer.play_emote('')
+			
+			idle_frames = 0
 		CHOOSEPOINT:
-			pass
-		TAKEHIT:
-			pass
+			idle_frames = 0
+			animationPlayer.stop()
+			animationPlayer.play('enemy_walk')
+			emoteContainer.play_emote('')
 		NOTICEPLAYER:
-			pass
-		DEAD:
-			pass
-		STAGGERED:
-			pass
+			change_sprite(get_node('pirate_grunt_1'), chosenPoint)
+			animationPlayer.stop()
+			animationPlayer.play('enemy_idle')
+			idle_frames = 0
+			velocity = Vector2.ZERO
+			emoteContainer.play_emote('question')

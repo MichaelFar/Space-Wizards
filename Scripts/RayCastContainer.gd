@@ -26,20 +26,9 @@ func _process(delta):
 		set_danger()
 	suggestedVector = get_suggested_vector()
 	debug = false
-#	if(Input.is_action_just_released("relevant_raycasts")):
-#		var index = 0
-#		print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
-#		for i in relevant_raycasts:
-#			print(i.name + ":" 
-#			+ str(i.position) 
-#			+ " " +str(rad_to_deg(i.position.angle_to(supplied_direction))) + ": ,")
-#		print("The interest array is set to: ")
-#		for i in interest_array:
-#			print(raycastChildren[index].name + ": " + str(final_interest[index]))
-#			index += 1
-#		print("And suggested vector is " + str(suggestedVector))
-#		debug = true
-#		index = 0
+	#Uncomment for debugging raycasts
+#	if(Input.is_action_just_pressed('relevant_raycasts')):
+#		debug_raycasts()
 	relevant_raycasts = []
 	frame +=1
 	
@@ -99,12 +88,10 @@ func set_danger():# Sets danger based on if the raycasts are colliding or not
 		#print("Result is " + str(result))
 		if(result):
 			collidingVectorsIndexes.append(raycastChildren.find(i))
-			#Uncomment for distance based danger weights
+			
 			var d = position.normalized().dot(i.global_position)
-			#print("Collider position is " + str(result.collider.get_children()[0].global_position))
-			#print(result.collider.name)
-			danger_array[raycastChildren.find(i)] = ((position.distance_to(i.position)) / (distance)) 
-			#danger_array[raycastChildren.find(i)] = 1.0
+			danger_array[raycastChildren.find(i)] = ((position.distance_to(i.position)) / (distance)) #Danger set to relative distance to collider (usually less than 1.0)
+			#danger_array[raycastChildren.find(i)] = 1.0 #All collisions set to danger 1.0 (max danger)
 			if(debug):
 				print((str(position.distance_to(result.collider.position)) + " is the distance between parent and target"))
 				print(raycastChildren[raycastChildren.find(i)].name + " now has danger value " + str(danger_array[raycastChildren.find(i)]))
@@ -135,3 +122,18 @@ func set_interest():
 		
 		index += 1
 
+func debug_raycasts():
+	
+	var index = 0
+	print("I am " + str(get_parent().name) + " and supplied_direction is " + str(supplied_direction) + " and relevant raycasts are ")
+	for i in relevant_raycasts:
+		print(i.name + ":" 
+		+ str(i.position) 
+		+ " " +str(rad_to_deg(i.position.angle_to(supplied_direction))) + ": ,")
+	print("The interest array is set to: ")
+	for i in interest_array:
+		print(raycastChildren[index].name + ": " + str(final_interest[index]))
+		index += 1
+	print("And suggested vector is " + str(suggestedVector))
+	debug = true
+	index = 0

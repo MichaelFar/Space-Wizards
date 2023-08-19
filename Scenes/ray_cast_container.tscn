@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdongig3hy7di"]
+
+[ext_resource type="Script" path="res://Scripts/RayCastContainer.gd" id="1_6gmkj"]
+
+[node name="RayCastContainer" type="CharacterBody2D"]
+position = Vector2(0, -1)
+script = ExtResource("1_6gmkj")
+
+[node name="RayTarget" type="Node2D" parent="."]
+position = Vector2(40, 0)
+
+[node name="RayTarget2" type="Node2D" parent="."]
+position = Vector2(-40, 0)
+
+[node name="RayTarget3" type="Node2D" parent="."]
+position = Vector2(0, 40)
+
+[node name="RayTarget4" type="Node2D" parent="."]
+position = Vector2(0, -40)
+
+[node name="RayTarget5" type="Node2D" parent="."]
+position = Vector2(25, -25)
+
+[node name="RayTarget6" type="Node2D" parent="."]
+position = Vector2(-25, -25)
+
+[node name="RayTarget7" type="Node2D" parent="."]
+position = Vector2(-25, 25)
+
+[node name="RayTarget8" type="Node2D" parent="."]
+position = Vector2(25, 25)

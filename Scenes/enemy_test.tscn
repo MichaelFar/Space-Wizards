@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="10_t608j"]
 [ext_resource type="PackedScene" uid="uid://cm86dt70rv4jm" path="res://UI/UI Scenes/poisebar.tscn" id="12_hgiek"]
 [ext_resource type="Texture2D" uid="uid://crw6lx2r1lcsq" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet.png" id="12_wnmyr"]
-[ext_resource type="Script" path="res://Scripts/RayCastContainer.gd" id="13_6082h"]
+[ext_resource type="PackedScene" uid="uid://cdongig3hy7di" path="res://Scenes/ray_cast_container.tscn" id="13_tu2dp"]
 
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
@@ -416,34 +416,9 @@ offset_bottom = 22.0
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_1aek4")
 
-[node name="RayCastContainer" type="CharacterBody2D" parent="."]
-position = Vector2(0, -1)
-script = ExtResource("13_6082h")
-
-[node name="RayTarget" type="Node2D" parent="RayCastContainer"]
-position = Vector2(40, 0)
-
-[node name="RayTarget2" type="Node2D" parent="RayCastContainer"]
-position = Vector2(-40, 0)
-
-[node name="RayTarget3" type="Node2D" parent="RayCastContainer"]
-position = Vector2(0, 40)
-
-[node name="RayTarget4" type="Node2D" parent="RayCastContainer"]
-position = Vector2(0, -40)
-
-[node name="RayTarget5" type="Node2D" parent="RayCastContainer"]
-position = Vector2(25, -25)
-
-[node name="RayTarget6" type="Node2D" parent="RayCastContainer"]
-position = Vector2(-25, -25)
-
-[node name="RayTarget7" type="Node2D" parent="RayCastContainer"]
-position = Vector2(-25, 25)
-
-[node name="RayTarget8" type="Node2D" parent="RayCastContainer"]
-position = Vector2(25, 25)
+[node name="RayCastContainer" parent="." instance=ExtResource("13_tu2dp")]
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 
 [editable path="Hurtbox"]
+[editable path="RayCastContainer"]

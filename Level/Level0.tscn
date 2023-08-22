@@ -13,7 +13,7 @@ frequency = 0.0655
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
 noise = SubResource("FastNoiseLite_iat87")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_dp8jb"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_01rcn"]
 resource_local_to_scene = true
 shader = ExtResource("7_2nqcc")
 shader_parameter/dissolve_value = 1.0
@@ -84,7 +84,7 @@ position = Vector2(-44.6466, -113.759)
 scale = Vector2(1.35235, 1.29954)
 
 [node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
-material = SubResource("ShaderMaterial_dp8jb")
+material = SubResource("ShaderMaterial_01rcn")
 position = Vector2(387, 210)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]

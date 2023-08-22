@@ -45,7 +45,7 @@ var enemy_damage = 0
 var enemy_knockback = 0
 
 @export var accelerationCoef = 1.8
-
+@export var knockBackHitStrength = 5 #Determines how strong the knockback is when hitting the enemy
 var previous_velocity = Vector2.ZERO
 
 var type = 'player'
@@ -197,9 +197,10 @@ func move_state(_delta):
 				attackSpritePlayer.play('melee_attack')
 			nakedWizardBase.switch_weapon_sprite("")
 			attack_timer_on = true
-			acceleration = prevAcceleration * accelerationCoef
+			#acceleration = prevAcceleration * accelerationCoef
+			#knockBackDirection = -1 * knockBackHitStrength
 		else:
-			knockBackDirection = 1
+			knockBackDirection = knockBackHitStrength
 		
 				
 	if(!parry_timer_on):
@@ -241,8 +242,8 @@ func attack_state(_delta):#State machine for attack combos will go here
 		nakedWizardBase.switch_weapon_sprite("")
 	
 	elif(attackSpritePlayer.current_animation_position < attackSpritePlayer.current_animation_length):
-		
-		velocity = velocity.move_toward(knockBackDirection * mouse_coordinates * attack_movement, knockBackDirection * attack_movement * _delta)
+		print(str(knockBackDirection))
+		velocity = velocity.move_toward(knockBackDirection * mouse_coordinates * attack_movement, abs(knockBackDirection) * attack_movement * _delta)
 	
 	elif(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
 		
@@ -327,12 +328,12 @@ func _on_attack_hit_box_area_entered(area):
 	
 	if (area.name == "Hurtbox"):
 		
-		knockBackDirection = -1
+		knockBackDirection = -1 * knockBackHitStrength
 		velocity = Vector2.ZERO
 		hit_enemy = true
 		print("When hit enemy attack timer is " + str(attack_timer_on))
 		
-		acceleration = prevAcceleration * accelerationCoef
+		#acceleration = prevAcceleration * accelerationCoef
 		
 
 func _on_player_hurtbox_area_entered(area):
@@ -391,8 +392,8 @@ func cool_down_state(_delta):
 	
 	if(hit_enemy):
 		cool_down_target = 15
-		acceleration = prevAcceleration * accelerationCoef
-		move_state(_delta)
+		#acceleration = prevAcceleration * accelerationCoef
+		#move_state(_delta)
 	if(parry_cool_down_frames == 0):
 		
 		if (InputBuffer.is_action_press_buffered('parry')):
@@ -446,19 +447,24 @@ func dodge_state(_delta):#Candidate for player sheet
 	move_and_slide()
 
 func get_enemy_attack_stats(enemy_id):
+	
 	var enemy_sheet = enemy_id.stat_sheet
 	enemy_damage = enemy_sheet.damage
 	enemy_knockback = enemy_sheet.knockback_strength
 
 func node_type():
+	
 	type = 'player'
 	
 func player_must_die():
+	
 	shouldDie = true
 	
 func successful_hit():
+	
 	attackContainer.play_hit()
 	print("succesful_hit() has run")
+	
 func play_hit():
 	
 	if(successfulHit):

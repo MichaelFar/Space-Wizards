@@ -540,7 +540,6 @@ func state_transition(STATE, point = Vector2.ZERO):
 			animationPlayer.play('enemy_idle')
 			stuckFrames = 0
 			emoteContainer.play_emote('')
-			
 			idle_frames = 0
 		CHOOSEPOINT:
 			idle_frames = 0

@@ -1639,6 +1639,7 @@ height = 34.0
 y_sort_enabled = true
 material = ExtResource("1_kkqpc")
 script = ExtResource("1_cdtsu")
+knockBackHitStrength = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = -1.5708
@@ -1736,7 +1737,7 @@ stream = ExtResource("16_5r0e1")
 [node name="NakedWizard02" type="Sprite2D" parent="."]
 material = ExtResource("1_kkqpc")
 use_parent_material = true
-position = Vector2(71, 1)
+position = Vector2(56, 6)
 texture = ExtResource("5_qw86e")
 offset = Vector2(0, -10)
 hframes = 16

@@ -310,7 +310,6 @@ func parry_state(_delta):
 			attack_timer_on = false
 			parried_enemy = false
 			
-		
 	if(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
 		
 		print("Animation stopped was " + attackSpritePlayer.current_animation)
@@ -320,8 +319,6 @@ func parry_state(_delta):
 			velocity = Vector2.ZERO
 		shader.set_shader_parameter("applied", false)
 	
-
-		
 	move_and_slide()
 
 func _on_attack_hit_box_area_entered(area):
@@ -332,8 +329,6 @@ func _on_attack_hit_box_area_entered(area):
 		velocity = Vector2.ZERO
 		hit_enemy = true
 		print("When hit enemy attack timer is " + str(attack_timer_on))
-		
-		#acceleration = prevAcceleration * accelerationCoef
 		
 
 func _on_player_hurtbox_area_entered(area):

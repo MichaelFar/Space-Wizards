@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dusbiv02x5l05"]
+[gd_scene load_steps=30 format=3 uid="uid://dusbiv02x5l05"]
 
 [ext_resource type="Material" uid="uid://cgf2rl34hpi83" path="res://Shaders/enemy_test.tres" id="1_dtlbr"]
 [ext_resource type="Script" path="res://Scenes/enemy_test.gd" id="1_qhvur"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://cm86dt70rv4jm" path="res://UI/UI Scenes/poisebar.tscn" id="12_hgiek"]
 [ext_resource type="Texture2D" uid="uid://crw6lx2r1lcsq" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet.png" id="12_wnmyr"]
 [ext_resource type="PackedScene" uid="uid://cdongig3hy7di" path="res://Scenes/ray_cast_container.tscn" id="13_tu2dp"]
+[ext_resource type="Texture2D" uid="uid://do8xtgfgtcyti" path="res://Sprites/pirate_greenalien/pirate_all_greenalien-Sheet_02.png" id="14_tnunh"]
 
 [sub_resource type="Animation" id="Animation_467ej"]
 length = 0.001
@@ -39,6 +40,30 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PirateAllGreenalien-sheet02:offset")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -12)]
 }
 
 [sub_resource type="Animation" id="Animation_upbel"]
@@ -102,11 +127,24 @@ tracks/1/keys = {
 "update": 1,
 "values": [6, 7, 7, 8, 9, 10]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.3, 0.35, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [30, 31, 31, 32, 33, 34]
+}
 
 [sub_resource type="Animation" id="Animation_dp4kl"]
 resource_name = "enemy_idle"
-length = 1.2
+length = 0.8
 loop_mode = 1
+step = 0.2
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -119,12 +157,23 @@ tracks/0/keys = {
 "update": 1,
 "values": [12, 13, 14, 15, 16, 17]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
 
 [sub_resource type="Animation" id="Animation_5wgrx"]
 resource_name = "enemy_walk"
 length = 0.6
 loop_mode = 1
-step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -136,6 +185,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [15, 16, 17, 18, 19, 20]
 }
 
 [sub_resource type="Animation" id="Animation_0wdms"]
@@ -173,6 +234,30 @@ tracks/1/keys = {
 "method": &"flip_h_in_animation"
 }]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [75, 60, 61, 62, 63]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PirateAllGreenalien-sheet02:offset")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.2, 0.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, -12), Vector2(0, -17)]
+}
 
 [sub_resource type="Animation" id="Animation_0shvd"]
 resource_name = "take_hit"
@@ -200,12 +285,40 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(),
 "values": []
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [75]
+}
+
+[sub_resource type="Animation" id="Animation_v04y4"]
+resource_name = "enemy_death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PirateAllGreenalien-sheet02:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [75, 76, 77, 78]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gnggo"]
 _data = {
 "RESET": SubResource("Animation_467ej"),
 "death": SubResource("Animation_upbel"),
 "enemy_attack": SubResource("Animation_6lhuj"),
+"enemy_death": SubResource("Animation_v04y4"),
 "enemy_idle": SubResource("Animation_dp4kl"),
 "enemy_walk": SubResource("Animation_5wgrx"),
 "parried": SubResource("Animation_0wdms"),
@@ -324,6 +437,7 @@ radius = 6.0
 material = ExtResource("1_dtlbr")
 collision_layer = 2
 motion_mode = 1
+platform_on_leave = 2
 script = ExtResource("1_qhvur")
 acceleration = 125
 max_speed = 125
@@ -417,6 +531,13 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_1aek4")
 
 [node name="RayCastContainer" parent="." instance=ExtResource("13_tu2dp")]
+
+[node name="PirateAllGreenalien-sheet02" type="Sprite2D" parent="."]
+use_parent_material = true
+texture = ExtResource("14_tnunh")
+offset = Vector2(0, -12)
+hframes = 15
+vframes = 6
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
 

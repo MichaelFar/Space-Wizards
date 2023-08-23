@@ -1,23 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://n2ilovmo80v4"]
+[gd_scene load_steps=6 format=3 uid="uid://n2ilovmo80v4"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_ehqt5"]
 [ext_resource type="PackedScene" uid="uid://dtfcmfx67ol1t" path="res://Level/combat_demo_arena.tscn" id="2_mhx6l"]
 [ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="3_54leo"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="3_e782x"]
-[ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="6_3gqdu"]
-[ext_resource type="Shader" path="res://Shaders/enemy_dissolve.gdshader" id="7_2nqcc"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_iat87"]
-frequency = 0.0655
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkxqt"]
-noise = SubResource("FastNoiseLite_iat87")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0as3r"]
-resource_local_to_scene = true
-shader = ExtResource("7_2nqcc")
-shader_parameter/dissolve_value = 1.0
-shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_wkxqt")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_4kerf"]
 vertices = PackedVector2Array(464, 279, 690, 219, 420, 374, 435, 316, 387.366, 26.4268, 408, 27, 492, 113, 430, 155, 366, 121, 321, 94, 550, 110, 520, 131, 578, 126, 605, 140, 587, 156, 554, 146, 74, 174, 336, 25, 287, 114, 319, 219, 622, 178, 690, 176, 433, 256, 362, 258, 292, 235, 353, 272, 344, 374, 74, 219, 335, 142, 470, 179, 641, 161, 230, 213, 244, 206, 207, 196, 207, 178, 229, 170, 512, 155)
@@ -82,10 +68,6 @@ scale = Vector2(1.13231, 1.2375)
 [node name="ExclusionPolygon" parent="ExclusionZone11" index="0"]
 position = Vector2(-44.6466, -113.759)
 scale = Vector2(1.35235, 1.29954)
-
-[node name="Enemy_Test" parent="." instance=ExtResource("6_3gqdu")]
-material = SubResource("ShaderMaterial_0as3r")
-position = Vector2(387, 210)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_4kerf")

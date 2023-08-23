@@ -164,7 +164,7 @@ func move_state(_delta):
 	
 	playerPosition = self.position
 	
-	if input_vector != Vector2.ZERO:#Movement
+	if (input_vector != Vector2.ZERO):#Movement
 		
 		if(input_vector.x != 0 && input_vector.y != 0):
 			if(input_vector.y > 0):
@@ -217,12 +217,12 @@ func move_state(_delta):
 			parried_enemy = false
 	if(!dodge_timer_on):
 		
-		if(InputBuffer.is_action_press_buffered("ui_select")):
+		if(InputBuffer.is_action_press_buffered('ui_select')):
 			
 			print("Dodge state entered")
 			state = DODGE
 			previous_velocity = input_vector * max_speed
-			
+			attackContainer.abort_animation()
 	move_and_slide()
 
 func attack_state(_delta):#State machine for attack combos will go here

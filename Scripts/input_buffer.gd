@@ -11,6 +11,7 @@ const JOY_DEADZONE: float = 0.2
 
 var keyboard_timestamps: Dictionary
 var joypad_timestamps: Dictionary
+var mouse_timestamps: Dictionary
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -19,12 +20,13 @@ func _ready() -> void:
 	# Initialize all dictionary entris.
 	keyboard_timestamps = {}
 	joypad_timestamps = {}
+	mouse_timestamps = {}
 	
 
 # Called whenever the player makes an input.
 func _input(event: InputEvent) -> void:
 	var scancode: int = 0
-	if event is InputEventKey || InputEventMouse && !(event is InputEventMouseMotion):
+	if event is InputEventKey:# || InputEventMouseButton && !(event is InputEventMouseMotion):
 		if !event.pressed or event.is_echo():
 				return
 		if event is InputEventKey:
@@ -41,10 +43,12 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadMotion:
 		if abs(event.axis_value) < JOY_DEADZONE:
 			return
-
 		var axis_code: String = str(event.axis) + "_" + str(sign(event.axis_value))
 		joypad_timestamps[axis_code] = Time.get_ticks_msec()
-
+	elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
+		
+		scancode = event.button_index
+		mouse_timestamps[scancode] = Time.get_ticks_msec()
 
 # Returns whether any of the keyboard keys or joypad buttons in the given action were pressed within the buffer window.
 func is_action_press_buffered(action: String) -> bool:
@@ -53,18 +57,17 @@ func is_action_press_buffered(action: String) -> bool:
 	var scancode: int = 0
 	for event in InputMap.action_get_events(action):
 		
-		if event is InputEventKey || InputEventMouseButton && !(event is InputEventMouseMotion):
+		if event is InputEventKey:#  || InputEventMouseButton && !(event is InputEventMouseMotion):
 			
 			if(event is InputEventKey):
 				scancode = event.keycode
-			else:
-				scancode = event.button_index
+			
 			if keyboard_timestamps.has(scancode):
 				if Time.get_ticks_msec() - keyboard_timestamps[scancode] <= BUFFER_WINDOW:
 					# Prevent this method from returning true repeatedly and registering duplicate actions.
 					_invalidate_action(action)
 					
-					return true;
+					return true;#Silly C programmer, we don't need semicolons
 		elif event is InputEventJoypadButton:
 			var button_index: int = event.button_index
 			if joypad_timestamps.has(button_index):
@@ -81,6 +84,15 @@ func is_action_press_buffered(action: String) -> bool:
 				if delta <= BUFFER_WINDOW:
 					_invalidate_action(action)
 					return true
+		elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
+			scancode = event.button_index
+			print("Event is " + str(event))
+			if mouse_timestamps.has(scancode):
+				if Time.get_ticks_msec() - mouse_timestamps[scancode] <= BUFFER_WINDOW:
+					# Prevent this method from returning true repeatedly and registering duplicate actions.
+					_invalidate_action(action)
+					
+					return true;#Silly C programmer, we don't need semicolons
 	# If there's ever a third type of buffer-able action (mouse clicks maybe?), it'd probably be worth it to generalize
 	# the repetitive keyboard/joypad code into something that works for any input method. Until then, by the YAGNI
 	# principle, the repetitive stuff stays >:)
@@ -93,11 +105,10 @@ func is_action_press_buffered(action: String) -> bool:
 func _invalidate_action(action: String) -> void:
 	var scancode: int = 0
 	for event in InputMap.action_get_events(action):
-		if event is InputEventKey || InputEventMouseButton && !(event is InputEventMouseMotion):
+		if event is InputEventKey:#  || InputEventMouseButton && !(event is InputEventMouseMotion):
 			if(event is InputEventKey):
 				scancode = event.keycode
-			else:
-				scancode = event.button_index
+			
 			if keyboard_timestamps.has(scancode):
 				keyboard_timestamps[scancode] = 0
 		elif event is InputEventJoypadButton:
@@ -108,3 +119,7 @@ func _invalidate_action(action: String) -> void:
 			var axis_code: String = str(event.axis) + "_" + str(sign(event.axis_value))
 			if joypad_timestamps.has(axis_code):
 				joypad_timestamps[axis_code] = 0
+		elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
+			scancode = event.button_index
+			if mouse_timestamps.has(scancode):
+				mouse_timestamps[scancode] = 0

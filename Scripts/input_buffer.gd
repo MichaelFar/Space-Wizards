@@ -29,10 +29,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey:# || InputEventMouseButton && !(event is InputEventMouseMotion):
 		if !event.pressed or event.is_echo():
 				return
-		if event is InputEventKey:
-			scancode = event.keycode
-		else:
-			scancode = event.button_index
+		scancode = event.keycode
+		
 		keyboard_timestamps[scancode] = Time.get_ticks_msec()
 	elif event is InputEventJoypadButton:
 		if !event.pressed or event.is_echo():
@@ -45,8 +43,9 @@ func _input(event: InputEvent) -> void:
 			return
 		var axis_code: String = str(event.axis) + "_" + str(sign(event.axis_value))
 		joypad_timestamps[axis_code] = Time.get_ticks_msec()
-	elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
-		
+	elif event is InputEventMouseButton:# && !(event is InputEventMouseMotion):
+		if !event.pressed or event.is_echo():
+			return
 		scancode = event.button_index
 		mouse_timestamps[scancode] = Time.get_ticks_msec()
 
@@ -59,8 +58,7 @@ func is_action_press_buffered(action: String) -> bool:
 		
 		if event is InputEventKey:#  || InputEventMouseButton && !(event is InputEventMouseMotion):
 			
-			if(event is InputEventKey):
-				scancode = event.keycode
+			scancode = event.keycode
 			
 			if keyboard_timestamps.has(scancode):
 				if Time.get_ticks_msec() - keyboard_timestamps[scancode] <= BUFFER_WINDOW:
@@ -84,7 +82,7 @@ func is_action_press_buffered(action: String) -> bool:
 				if delta <= BUFFER_WINDOW:
 					_invalidate_action(action)
 					return true
-		elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
+		elif event is InputEventMouseButton:# && !(event is InputEventMouseMotion):
 			scancode = event.button_index
 			
 			if mouse_timestamps.has(scancode):
@@ -119,7 +117,7 @@ func _invalidate_action(action: String) -> void:
 			var axis_code: String = str(event.axis) + "_" + str(sign(event.axis_value))
 			if joypad_timestamps.has(axis_code):
 				joypad_timestamps[axis_code] = 0
-		elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
+		elif event is InputEventMouseButton:# && !(event is InputEventMouseMotion):
 			scancode = event.button_index
-			if mouse_timestamps.has(scancode):
-				mouse_timestamps[scancode] = 0
+			if mouse_timestamps.has(event.button_index):
+				mouse_timestamps[event.button_index] = 0

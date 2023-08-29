@@ -191,7 +191,7 @@ func move_state(_delta):
 			#print("Player just attacked")
 			state = ATTACK
 			if('parry' in attackSpritePlayer.current_animation):
-				#print("Attack will play after parry")
+				print("Attack will play after parry")
 				attackSpritePlayer.queue("melee_attack")
 				attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 			else:
@@ -236,7 +236,6 @@ func attack_state(_delta):#State machine for attack combos will go here
 		attackSpritePlayer.queue("melee_attack")
 		attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 		
-	
 	if(attackSpritePlayer.current_animation_position == 0):
 		
 		attackSpritePlayer.play("melee_attack")
@@ -271,14 +270,15 @@ func take_hit_state(_delta):
 		attackSpritePlayer.clear_queue()
 		change_sprite("NakedWizard_hurt_armed")
 		playerSpritePlayer.play("take_hit")
-
+		print("I ran")
+		
 	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
 
 		velocity = velocity.move_toward(pushBackDirection * enemy_knockback, enemy_knockback)
 
 	elif(playerSpritePlayer.current_animation_position == playerSpritePlayer.current_animation_length):
-
 		playerSpritePlayer.stop()
+		attackContainer.abort_animation()
 		state = MOVE
 		change_sprite("NakedWizard_base")
 		
@@ -306,7 +306,7 @@ func parry_state(_delta):
 		
 		if(!parried_enemy):
 			attackSpritePlayer.queue("RESET")
-			print("I ran")
+			
 		#attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 		state = MOVE
 		
@@ -389,6 +389,7 @@ func cool_down_state(_delta):
 		cool_down_target = 15
 		#acceleration = prevAcceleration * accelerationCoef
 		#move_state(_delta)
+		
 #	if(parry_cool_down_frames == 0):
 #
 #		if (InputBuffer.is_action_press_buffered('parry')):

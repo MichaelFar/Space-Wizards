@@ -199,3 +199,4 @@ func simple_restart():
 		playerNode.update_healthbar(-(playerNode.max_health))#Sets the health to max
 	for i in enemyStartPositions:
 		spawn_scene(enemyScene, i)
+

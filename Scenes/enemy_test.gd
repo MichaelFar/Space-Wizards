@@ -34,6 +34,7 @@ var children = []
 var playerPreviousPosition = Vector2.ZERO
 var all_other_reserved_indexes = []
 var type = 'enemy_test'
+var other_enemies = []
 
 @export var noticeDist = 200
 @export var pursueDist = 130
@@ -62,6 +63,7 @@ var animationPlayer = null
 @onready var poisebar = $poisebar
 @onready var navAgent = $NavigationAgent2D
 @onready var rayCastContainer = $RayCastContainer
+@onready var body_sprite = get_node("PirateAllGreenalien-sheet02")
 @onready var parent = get_parent()
 
 @onready var stat_sheet = $pirate_grunt_stat_sheet
@@ -74,9 +76,10 @@ var attacks_dict = {}
 var player_state = null
 var player_damage = 0
 
-signal enemy_attack_stats
-signal index_reserved
-signal player_hit_me
+signal enemy_attack_stats #Sent to the player in various contexts, such as getting hit
+signal index_reserved #DEPRECATED REMOVE
+signal player_hit_me #Signal for audio hit noise
+signal noticed_player #Signal for alerting nearby enemies (not yet implemented as of 10:08 8/27)
 
 enum {
 	WANDER,
@@ -108,6 +111,7 @@ func _ready():
 		playerNode.s_parried.connect(get_parried)
 		playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
 		
+	parent.spawned_enemy.connect(update_enemy_list)
 	populate_stats()
 	shader = shader.get("material")
 	playerPreviousPosition = playerNode.position
@@ -117,6 +121,9 @@ func _ready():
 func post_initialize():
 	#playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)	
 	travelPoints = get_ideal_travel_points()
+	for i in parent.enemyChildren:
+		
+		update_enemy_list(i)
 
 func get_ideal_travel_points():
 	var travel_points = []
@@ -216,9 +223,9 @@ func wander_state(target_point, _delta):
 	navAgent.target_position = direction
 	rayCastContainer.supplied_direction = (navAgent.get_next_path_position()  - floor(global_position)).normalized()#A* next position
 	if(parent.compare_float_vectors((direction), target_point)):
-		change_sprite(get_node("PirateAllGreenalien-sheet02"), target_point)
+		change_sprite(body_sprite, target_point)
 	else:
-		change_sprite(get_node("PirateAllGreenalien-sheet02"), global_position)
+		change_sprite(body_sprite, global_position)
 	
 	if(frame % 20 == 0):
 		previousPosition = position
@@ -259,7 +266,7 @@ func attack_state(_delta):
 	elif(!coolDownTimerOn):
 		print('CoolDownTimer is off and I tried to attack')
 		state_transition(ATTACK)
-		change_sprite(get_node("PirateAllGreenalien-sheet02"),parent.playerPosition)
+		change_sprite(body_sprite,parent.playerPosition)
 		animationPlayer.set("speed_scale", 1.0)
 		
 	elif(playerNode == null):
@@ -330,7 +337,7 @@ func _on_hurtbox_area_entered(area):
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
 			playerPreviousPosition = parent.playerNode.position
-			change_sprite(get_node("PirateAllGreenalien-sheet02"), playerPreviousPosition)
+			change_sprite(body_sprite, playerPreviousPosition)
 			animationPlayer.play("take_hit")
 			if(state != STAGGERED):
 				state = TAKEHIT
@@ -380,7 +387,7 @@ func take_hit_state(_delta):
 func notice_player_state(_delta):#Probably where the collision bug is
 	
 	if(playerNode != null):
-		change_sprite(get_node("PirateAllGreenalien-sheet02"), playerNode.position)
+		change_sprite(body_sprite, playerNode.position)
 		idle_frames += 1
 		
 		if(idle_frames / frameRate == 2 
@@ -388,7 +395,7 @@ func notice_player_state(_delta):#Probably where the collision bug is
 		|| position.distance_to(attackPosition) < pursueDist):
 			
 			state_transition(PURSUE)
-			
+			noticed_player.emit(global_position)
 		elif(position.distance_to(parent.playerPosition) > noticeDist):
 			
 			state_transition(CHOOSEPOINT)
@@ -444,7 +451,7 @@ func dead_state(_delta):
 			
 func flip_h_in_animation():
 	
-	get_node("pirate_grunt_1").flip_h = !get_node("pirate_grunt_1").flip_h
+	body_sprite.flip_h = !body_sprite.flip_h
 
 func get_parried(enemy_id):#Function that is called when the player is in parry state and enemy has attacked
 	
@@ -457,7 +464,7 @@ func get_parried(enemy_id):#Function that is called when the player is in parry 
 		velocity = Vector2.ZERO
 		animationPlayer.stop()
 		playerPreviousPosition = parent.playerNode.position
-		change_sprite(get_node("PirateAllGreenalien-sheet02"), playerPreviousPosition)
+		change_sprite(body_sprite, playerPreviousPosition)
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
 		coolDownTimerOn = false
@@ -523,19 +530,19 @@ func state_transition(STATE, point = Vector2.ZERO):
 			emoteContainer.play_emote('')
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
-			change_sprite(get_node("PirateAllGreenalien-sheet02"), attackPosition)
+			change_sprite(body_sprite, attackPosition)
 			animationPlayer.play('enemy_attack')
 			coolDownTimerOn = true
 			smearContainer.supplied_player_position = parent.playerPosition
 		PURSUE:
 			playerPreviousPosition = parent.playerPosition
-			change_sprite(get_node("PirateAllGreenalien-sheet02"), parent.playerPosition)
+			change_sprite(body_sprite, parent.playerPosition)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_walk')
 			idle_frames = 0
 			emoteContainer.play_emote('exclaim')
 		IDLE:
-			change_sprite(get_node("PirateAllGreenalien-sheet02"), point)
+			change_sprite(body_sprite, point)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_idle')
 			stuckFrames = 0
@@ -547,9 +554,20 @@ func state_transition(STATE, point = Vector2.ZERO):
 			animationPlayer.play('enemy_walk')
 			emoteContainer.play_emote('')
 		NOTICEPLAYER:
-			change_sprite(get_node("PirateAllGreenalien-sheet02"), chosenPoint)
+			change_sprite(body_sprite, chosenPoint)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_idle')
 			idle_frames = 0
 			velocity = Vector2.ZERO
 			emoteContainer.play_emote('question')
+
+func update_enemy_list(enemy):
+
+	if enemy != self:
+		other_enemies.append(enemy)
+		enemy.noticed_player.connect(check_become_aggroed)
+
+func check_become_aggroed(sibling_position):
+	if(sibling_position.distance_to(self.global_position) <= noticeDist):
+		state_transition(PURSUE)
+

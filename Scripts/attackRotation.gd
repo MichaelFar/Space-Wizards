@@ -74,9 +74,10 @@ func abort_animation():
 	for i in smearChildren:
 		i.visible = false
 		print("Current smear child is " + i.name)
-		for j in i.get_node("AttackHitBox").get_children():
-			print("Hitbox " + j.name + " disabled")
-			j.disabled = true
+		if(i.get_children()):
+			for j in i.get_node("AttackHitBox").get_children():
+				print("Hitbox " + j.name + " disabled")
+				j.disabled = true
 			
 func play_hit():
 	#soundChildren[0].seek(soundChildren[0].stream.get_length())

@@ -86,7 +86,7 @@ func is_action_press_buffered(action: String) -> bool:
 					return true
 		elif event is InputEventMouseButton && !(event is InputEventMouseMotion):
 			scancode = event.button_index
-			print("Event is " + str(event))
+			
 			if mouse_timestamps.has(scancode):
 				if Time.get_ticks_msec() - mouse_timestamps[scancode] <= BUFFER_WINDOW:
 					# Prevent this method from returning true repeatedly and registering duplicate actions.

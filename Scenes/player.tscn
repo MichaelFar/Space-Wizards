@@ -1319,7 +1319,7 @@ tracks/4/keys = {
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("attackContainer/ParrySmear01:frame")
+tracks/5/path = NodePath("attackContainer/Parry_smear_1:frame")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -1331,7 +1331,7 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("attackContainer/ParrySmear01:visible")
+tracks/6/path = NodePath("attackContainer/Parry_smear_1:visible")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
@@ -1343,7 +1343,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("attackContainer/ParrySmear01:offset")
+tracks/7/path = NodePath("attackContainer/Parry_smear_1:offset")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -1363,6 +1363,20 @@ tracks/8/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath(".")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"toggle_parry_active"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_wm3dy"]
@@ -1439,7 +1453,7 @@ step = 0.03
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("attackContainer/ParrySmear01:frame")
+tracks/0/path = NodePath("attackContainer/Parry_smear_1:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -1451,7 +1465,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("attackContainer/ParrySmear01:visible")
+tracks/1/path = NodePath("attackContainer/Parry_smear_1:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -1463,7 +1477,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("attackContainer/ParrySmear01:offset")
+tracks/2/path = NodePath("attackContainer/Parry_smear_1:offset")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -1480,7 +1494,7 @@ step = 0.03
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("attackContainer/ParrySmear01:frame")
+tracks/0/path = NodePath("attackContainer/Parry_smear_1:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -1492,14 +1506,14 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("attackContainer/ParrySmear01:visible")
+tracks/1/path = NodePath("attackContainer/Parry_smear_1:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.27),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.27),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [false]
+"values": [true, false]
 }
 tracks/2/type = "method"
 tracks/2/imported = false
@@ -1508,9 +1522,12 @@ tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.27),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.27),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
+"args": [true],
+"method": &"toggle_parry_active"
+}, {
 "args": [false],
 "method": &"toggle_parry_active"
 }]
@@ -1552,7 +1569,7 @@ step = 0.03
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("attackContainer/ParrySmear01:frame")
+tracks/0/path = NodePath("attackContainer/Parry_smear_1:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -1564,14 +1581,14 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("attackContainer/ParrySmear01:visible")
+tracks/1/path = NodePath("attackContainer/Parry_smear_1:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.03),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.03, 0.21),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
-"values": [false, true]
+"values": [false, true, false]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -1588,7 +1605,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("attackContainer/ParrySmear01:offset")
+tracks/3/path = NodePath("attackContainer/Parry_smear_1:offset")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -1604,7 +1621,7 @@ tracks/4/path = NodePath(".")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0.03, 0.21),
+"times": PackedFloat32Array(0, 0.21),
 "transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [true],
@@ -1700,7 +1717,7 @@ libraries = {
 "": SubResource("AnimationLibrary_4uim7")
 }
 
-[node name="ParrySmear01" type="Sprite2D" parent="attackContainer"]
+[node name="Parry_smear_1" type="Sprite2D" parent="attackContainer"]
 visible = false
 position = Vector2(20, -4)
 texture = ExtResource("5_ky1x2")

@@ -187,10 +187,11 @@ func move_state(_delta):
 	
 	if(!attack_timer_on):
 		
-		if(InputBuffer.is_action_press_buffered('click')):#Attack state
+		if(InputBuffer.is_action_press_buffered('click') && !Input.is_action_just_released('click')):#Attack state
 			#print("Player just attacked")
 			state = ATTACK
 			if('parry' in attackSpritePlayer.current_animation):
+				#print("Attack will play after parry")
 				attackSpritePlayer.queue("melee_attack")
 				attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 			else:
@@ -204,7 +205,7 @@ func move_state(_delta):
 		
 				
 	if(!parry_timer_on):
-		if (InputBuffer.is_action_press_buffered('parry')):
+		if (InputBuffer.is_action_press_buffered('parry') && !Input.is_action_just_released('parry')):
 			state = PARRY
 			#toggle_parry_active(true)
 			parry_timer_on = true
@@ -213,11 +214,12 @@ func move_state(_delta):
 			attackSpritePlayer.play("parry_whiff")
 			acceleration = prevAcceleration * accelerationCoef
 			
+			
 		else:
 			parried_enemy = false
 	if(!dodge_timer_on):
 		
-		if(InputBuffer.is_action_press_buffered('ui_select')):
+		if(InputBuffer.is_action_press_buffered('ui_select') && !Input.is_action_just_released('ui_select')):
 			
 			print("Dodge state entered")
 			state = DODGE
@@ -250,11 +252,11 @@ func attack_state(_delta):#State machine for attack combos will go here
 		#hit_enemy = !attack_timer_on
 		print(" attack timer on is " + str(attack_timer_on))
 		print("Hit enemy is " + str(hit_enemy) + " and attack timer is set to " + str(attack_timer_on))
-		attackSpritePlayer.stop()
+		attackContainer.abort_animation()
 		state = COOLDOWN
 		change_sprite("NakedWizard_base")
 		nakedWizardBase.switch_weapon_sprite("NakedwizardBroom01")
-		
+		#velocity = Vector2.ZERO
 	move_and_slide()
 
 func take_hit_state(_delta):
@@ -266,7 +268,7 @@ func take_hit_state(_delta):
 	pushBackDirection = pushBackDirection.normalized()
 
 	if(playerSpritePlayer.current_animation_position == 0):
-
+		attackSpritePlayer.clear_queue()
 		change_sprite("NakedWizard_hurt_armed")
 		playerSpritePlayer.play("take_hit")
 
@@ -298,27 +300,21 @@ func parry_state(_delta):
 	if(attackSpritePlayer.current_animation_position == 0):
 		
 		shader.set_shader_parameter("applied", true)
-	
-	if(parried_enemy):
-			print("Animation stopped was " + attackSpritePlayer.current_animation)
-			#attackSpritePlayer.animation_set_next(attackSpritePlayer.current_animation, 'parry_hit')
-			
-			attackSpritePlayer.queue("parry_hit")
-			attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
-			state = MOVE
-			attack_cool_down_frames = 0
-			attack_timer_on = false
-			parried_enemy = false
-			
+	print("Current animation is " + attackSpritePlayer.current_animation)
+	queue_parry_hit()
 	if(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
 		
-		print("Animation stopped was " + attackSpritePlayer.current_animation)
-		attackSpritePlayer.stop()
+		if(!parried_enemy):
+			attackSpritePlayer.queue("RESET")
+			print("I ran")
+		#attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 		state = MOVE
+		
 		if(!parried_enemy):	
 			velocity = Vector2.ZERO
 		shader.set_shader_parameter("applied", false)
-	
+	if(attackSpritePlayer.get_queue().size() != 0):
+		print("Queued animation for attack player is " + str(attackSpritePlayer.get_queue()))
 	move_and_slide()
 
 func _on_attack_hit_box_area_entered(area):
@@ -336,26 +332,30 @@ func _on_player_hurtbox_area_entered(area):
 		if(area.name == 'enemy_attack_hitbox' && !parry_active && state != DODGE && state != DEAD):
 			
 			state = TAKEHIT
-			assailantPosition = area.get_parent().get_parent().global_position
+			assailantPosition = area.get_enemy_id().global_position
 			velocity = Vector2.ZERO
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			
 			get_enemy_attack_stats(area.get_enemy_id())
 			print("Player will take " + str(enemy_damage) + " damage")
+			
 			if(attackSpritePlayer.current_animation != ''):
 				
 				shader.set_shader_parameter("applied", false)
-			attackSpritePlayer.get_parent().abort_animation()#Hope this fixed the smear bug
+			
+			attackContainer.abort_animation()#Hope this fixed the smear bug (later michael edit: likely did fix)
 				
 			update_healthbar(enemy_damage)
 		elif(area.name == 'enemy_attack_hitbox' && parry_active):
-			s_parried.emit(area.get_enemy_id())
+			s_parried.emit(area.get_enemy_id())#Signal sent to appropriate enemy that they were parried
 			parry_timer_on = false
 			parried_enemy = true
 			parry_cool_down_frames = 0
 			attack_cool_down_frames = 0
 			attack_timer_on = false
+			print("Position of animation for " + attackSpritePlayer.current_animation + " is " + str(attackSpritePlayer.current_animation_position))
+			
 				
 func update_healthbar(health_change):#pass in negative values to increase health
 	
@@ -389,16 +389,16 @@ func cool_down_state(_delta):
 		cool_down_target = 15
 		#acceleration = prevAcceleration * accelerationCoef
 		#move_state(_delta)
-	if(parry_cool_down_frames == 0):
-		
-		if (InputBuffer.is_action_press_buffered('parry')):
-			
-			state = PARRY
-			parry_timer_on = true
-			attack_cool_down_frames = 0
-			attack_timer_on = false
-			attackSpritePlayer.play("parry_whiff")
-			acceleration = prevAcceleration * accelerationCoef
+#	if(parry_cool_down_frames == 0):
+#
+#		if (InputBuffer.is_action_press_buffered('parry')):
+#
+#			state = PARRY
+#			parry_timer_on = true
+#			attack_cool_down_frames = 0
+#			attack_timer_on = false
+#			attackSpritePlayer.play("parry_whiff")
+#			acceleration = prevAcceleration * accelerationCoef
 	
 	velocity = velocity.move_toward(Vector2.ZERO, friction  * _delta)
 	
@@ -467,6 +467,24 @@ func play_hit():
 		
 func toggle_parry_active(active):#Called in animation parry_whiff and parry_hit
 	parry_active = active
+	
+	if(active):
+		print("Parry is active " + str(frame))
+	else:
+		print("Parry is inactive" + str(frame))
+	print(" and current parry animation is " + attackSpritePlayer.current_animation)
 
-
-
+func queue_parry_hit():#Called in _on_player_hurtbox_area_entered()
+	
+	if(parried_enemy):
+		print("Animation stopped was " + attackSpritePlayer.current_animation)
+		#attackSpritePlayer.animation_set_next(attackSpritePlayer.current_animation, 'parry_hit')
+		
+		attackSpritePlayer.queue("parry_hit")
+		print("Queued animation for attack player is " + str(attackSpritePlayer.get_queue()))
+		#attackContainer.abort_animation()
+		attackSpritePlayer.seek(attackSpritePlayer.current_animation_length)
+		state = MOVE
+		attack_cool_down_frames = 0
+		attack_timer_on = false
+		#parried_enemy = false

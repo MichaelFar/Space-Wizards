@@ -46,6 +46,8 @@ var enemy_knockback = 0
 
 @export var accelerationCoef = 1.8
 @export var knockBackHitStrength = 5 #Determines how strong the knockback is when hitting the enemy
+
+@export 
 var previous_velocity = Vector2.ZERO
 
 var type = 'player'
@@ -89,14 +91,16 @@ func _ready():#Called when node loads into the scene, children ready functions r
 		if i is Sprite2D:
 			listOfSprites.append(i)
 	
-	shader = shader.get("material")
+	
+	shader = get("material")
+	
 	change_sprite("NakedWizard_base")
 	populate_stats()
 	set_collision_mask_value(2, true)
 	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
 	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
 	animationState.travel("IdleBlend")
-	material.set_shader_parameter("texture_size", nakedWizardBase.texture.get_size())
+	#material.set_shader_parameter("texture_size", nakedWizardBase.texture.get_size())
 	parent.spawned_enemy.connect(connect_hit_signal)
 
 func post_initialize(animation_tree):
@@ -237,7 +241,7 @@ func attack_state(_delta):#State machine for attack combos will go here
 		attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 		
 	if(attackSpritePlayer.current_animation_position == 0):
-		
+		velocity = Vector2.ZERO
 		attackSpritePlayer.play("melee_attack")
 		#change_sprite("NakedWizard_base")
 		nakedWizardBase.switch_weapon_sprite("")
@@ -270,7 +274,9 @@ func take_hit_state(_delta):
 		attackSpritePlayer.clear_queue()
 		change_sprite("NakedWizard_hurt_armed")
 		playerSpritePlayer.play("take_hit")
-		print("I ran")
+		shader.set_shader_parameter("applied", true)
+		set_shader_time()
+		
 		
 	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
 
@@ -281,6 +287,9 @@ func take_hit_state(_delta):
 		attackContainer.abort_animation()
 		state = MOVE
 		change_sprite("NakedWizard_base")
+		shader.set_shader_parameter("applied", false)
+		#Shader unapplies here in animation player
+		
 		
 	move_and_slide()
 
@@ -401,10 +410,10 @@ func cool_down_state(_delta):
 #			attackSpritePlayer.play("parry_whiff")
 #			acceleration = prevAcceleration * accelerationCoef
 	
-	velocity = velocity.move_toward(Vector2.ZERO, friction  * _delta)
+	velocity = velocity.move_toward(Vector2.ZERO, friction * 1.5 * _delta)
 	
 	if(attack_cool_down_frames / cool_down_target == 1):
-		
+		print("attack cool down is done")
 		attack_cool_down_frames = 0
 		attack_timer_on = false
 		state = MOVE
@@ -459,7 +468,7 @@ func player_must_die():
 func successful_hit():
 	
 	attackContainer.play_hit()
-	print("succesful_hit() has run")
+	print("play_hit() has run")
 	
 func play_hit():
 	
@@ -473,19 +482,21 @@ func toggle_parry_active(active):#Called in animation parry_whiff and parry_hit
 		print("Parry is active " + str(frame))
 	else:
 		print("Parry is inactive" + str(frame))
-	print(" and current parry animation is " + attackSpritePlayer.current_animation)
+	
 
 func queue_parry_hit():#Called in _on_player_hurtbox_area_entered()
 	
 	if(parried_enemy):
-		print("Animation stopped was " + attackSpritePlayer.current_animation)
-		#attackSpritePlayer.animation_set_next(attackSpritePlayer.current_animation, 'parry_hit')
 		
 		attackSpritePlayer.queue("parry_hit")
 		print("Queued animation for attack player is " + str(attackSpritePlayer.get_queue()))
-		#attackContainer.abort_animation()
+		
 		attackSpritePlayer.seek(attackSpritePlayer.current_animation_length)
 		state = MOVE
 		attack_cool_down_frames = 0
 		attack_timer_on = false
-		#parried_enemy = false
+
+
+func set_shader_time():
+	
+	shader.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)

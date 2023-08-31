@@ -1,31 +1,31 @@
-/**
-* Shadow 2D.
-* License: CC0
-* https://creativecommons.org/publicdomain/zero/1.0/
-*/
 shader_type canvas_item;
-render_mode blend_mix;
 
-uniform vec2 deform = vec2(2.0, 2.0);
-uniform vec2 offset = vec2(0.0, 0.0);
-uniform vec4 modulate : source_color;
+uniform float speed = 3.;
 
-uniform vec2 texture_size; //uncomment for GLES2
+uniform vec4 tint : source_color = vec4(1., 1., 0., 1.);
+
+uniform float span : hint_range(0.1, 1.) = .3;
+
+uniform float start_time = 0.0;
+//const float start_time = TIME;
+uniform bool applied = false;
+float luminance(vec4 colour) {
+	return 1.0 - sqrt(0.299*colour.r*colour.r + 0.587*colour.g*colour.g + 0.114*colour.b*colour.b);
+}
 
 void fragment() {
-	vec2 ps = TEXTURE_PIXEL_SIZE;
-	vec2 uv = UV;
-	//float sizex = float(textureSize(TEXTURE,int(ps.x)).x); //comment for GLES2
-	//float sizey = float(textureSize(TEXTURE,int(ps.y)).y); //comment for GLES2
-	float sizex = texture_size.x; //uncomment for GLES2
-	float sizey = texture_size.y; //uncomment for GLES2
-	uv.y+=offset.y*ps.y;
-	uv.x+=offset.x*ps.x;
-	float decalx=((uv.y-ps.x*sizex)*deform.x);
-	float decaly=((uv.y-ps.y*sizey)*deform.y);
-	uv.x += decalx;
-	uv.y += decaly;
-	vec4 shadow = vec4(modulate.rgb, texture(TEXTURE, uv).a * modulate.a);
-	vec4 col = texture(TEXTURE, UV);
-	COLOR = mix(shadow, col, col.a);
+	vec4 colour = texture(TEXTURE, UV);
+		if(applied)
+		{
+			float actual_time = start_time - TIME;
+			float target = abs(sin(actual_time * PI * speed) * (1. + span));
+			if(colour.a > 0.) 
+			{
+				float lum = luminance(colour);
+				float diff = abs(lum - target);
+				float mx = clamp(1. - diff / span, 0., 1.);
+				colour = mix(colour, tint, mx);
+			}
+		}
+	COLOR = colour;
 }

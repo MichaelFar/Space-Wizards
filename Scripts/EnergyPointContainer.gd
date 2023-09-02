@@ -13,11 +13,11 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
-	print("My position is " + str(global_position))
-	print("Parent position is " + str(get_parent().global_position))
+	print("Occupied list is " + str(occupied_list))
 
 func get_point_children():
 	point_children = []
+	occupied_list = []
 	for i in get_children():
 		point_children.append(i)
 		occupied_list.append(false)
@@ -31,18 +31,22 @@ func get_available_positions():
 func gain_energy(energyNum, enemy_position = Vector2.ZERO):
 	
 	get_available_positions()
-	
+	var iterator = 0
 	if(particle_children.size() - 1 + energyNum < point_children.size()):
-		for i in energyNum:
-			for j in available_list:
+		
+		for j in available_list:
+			iterator +=1
+			if(iterator <= energyNum):
 				var particle = energy_particle.instantiate()
 				add_child(particle)
 				particle_children.append(particle)
 				particle.point = j
 				if(enemy_position):
 					particle.global_position = enemy_position
+			
 				occupied_list[point_children.find(j)] = true
-				break
+				print("Found point children " + str(point_children.find(j)))
+				
 		return true
 	else:
 		return false
@@ -57,17 +61,32 @@ func lose_energy(energyNum):
 		
 	else:
 		
-		for i in energyNum:
+		
+		for j in particle_children:
+			iterator +=1
+			print("Freeing position " + str(occupied_list.find(true)))
 			
-			for j in particle_children:
-				
-				occupied_list[occupied_list.find(true)] = false
-				particle_children.pop_at(particle_children.find(j))
-				j.queue_free()
-				
+			if (iterator <= energyNum):
+				occupied_list[find_last_taken_spot()] = false
+				print("Index of last taken spot " + str(find_last_taken_spot()))
+				particle_children.pop_at(iterator - 1)
+				j.queue_free()#Replace with anim
+			else:
+				break
+		iterator = 0
+		for i in occupied_list:
+			i = false		
 		for i in particle_children:
-			
+			occupied_list[iterator] = true
 			i.point = point_children[iterator]
 			iterator+=1
 			
 		return true
+
+func find_last_taken_spot():
+	var iterator = 0
+	for i in occupied_list:
+		if !i:
+			return iterator - 1
+		iterator +=1
+			

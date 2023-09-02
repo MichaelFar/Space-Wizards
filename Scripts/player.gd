@@ -438,6 +438,9 @@ func dodge_state(_delta):#Candidate for player sheet
 	
 	velocity = velocity.move_toward(input_vector * dodge_max_speed, dodge_accel * _delta)
 	
+	if dodge_frames == 1:
+		EnergyPointContainer.lose_energy(1)
+		print("1 Energy for dodge used")
 	if(dodge_frames / 15 == 1):
 		
 		dodge_frames = 0

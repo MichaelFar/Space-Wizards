@@ -11,6 +11,7 @@ signal pirate_grunt_stats
 var current_attack = "attack1"
 var attacks_array = ["attack1"] 
 var next_attack = null
+var parry_energy = 0
 #A signal is emitted at the moment of attack to the player that will have: attack name, knockback strength, damage
 #An array of dictionary keys is necessary for accessing independent attacks (does not follow a combo)
 #The enemy may have multiple attacks, each attack's respective stats are in a dictionary
@@ -37,13 +38,15 @@ func set_attack(attack = "attack1"):
 						 {
 						  "knockback": knockback_strength, 
 						  "damage": damage,
-						  "followup": null#If an attack is part of a combo, the next attack is a key within the current attacks_dict
+						  "followup": null,#If an attack is part of a combo, the next attack is a key within the current attacks_dict
+						  "energy": 1#How many units of energy this gives on parry
 						 }
 						}
 	knockback_strength = attacks_dict[attack]["knockback"]
 	damage = attacks_dict[attack]["damage"]
 	next_attack = attacks_dict[attack]["followup"]
 	current_attack = attack
+	parry_energy = attacks_dict[attack]["energy"]
 	#pirate_grunt_stats.emit(knockback_strength, damage)
 #Holds values specific to one attack
 

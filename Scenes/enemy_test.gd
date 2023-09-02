@@ -172,7 +172,7 @@ func _physics_process(_delta):#State machine runs per frame
 		PURSUE:#Supplies a dynamic point (last seen(distance based) player position) to wander_state() function
 			pursue_state(_delta)
 		NOTICEPLAYER:#Checks how long the player is within noticing distance and determines state change based on this
-			notice_player_state(_delta)
+			notice_player_state(_delta, chosenPoint)
 		IDLE:#The AI will spend some time in this state if it has not noticed the player and has arrived at its destination
 			idle_state(_delta)
 		TAKEHIT:#Determines what happens when hit
@@ -193,7 +193,7 @@ func _physics_process(_delta):#State machine runs per frame
 	#Other states must be interrupted so that the player may be noticed
 	#However certain states should not be interrupted, hence the state exclusion in the condition
 	#Creates a '?' above the head of an enemy that noticed the player
-		state_transition(NOTICEPLAYER)
+		state_transition(NOTICEPLAYER,parent.playerPosition)
 		
 	if(coolDownFrames / frameRate >= 1):
 		
@@ -237,11 +237,12 @@ func wander_state(target_point, _delta):
 	
 	velocity = velocity.move_toward(rayCastContainer.suggestedVector * max_speed, acceleration * _delta)
 	
-	#print(name + " velocity while in wander_state() is " + str(velocity))
-	
 	if(state != PURSUE && self.position.distance_to(target_point) <= target_distance || stuckFrames > 300):
 		
 		state_transition(IDLE, target_point)
+	
+	elif(state == PURSUE && self.position.distance_to(target_point) <= target_distance):#Fix this
+		state_transition(NOTICEPLAYER, target_point)
 	
 	if(position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):
@@ -290,7 +291,7 @@ func choose_point():
 	chosen_point = travelPoints[randomPoint.randi_range(0, travelPoints.size() - 1)]
 	print("travel_points size in choose_point is " + str(travelPoints.size()))
 	print("I am " + name + " and I chose the point " + str(chosen_point))
-	#parent.get_dimensions(travelPoints)
+	
 	if((chosen_point) not in validPoints):
 		
 		travelPoints = get_travel_points()
@@ -384,10 +385,10 @@ func take_hit_state(_delta):
 		state = DEAD
 	move_and_slide()
 	
-func notice_player_state(_delta):#Probably where the collision bug is
+func notice_player_state(_delta, point):#Probably where the collision bug is
 	
 	if(playerNode != null):
-		change_sprite(body_sprite, playerNode.position)
+		change_sprite(body_sprite, point)
 		idle_frames += 1
 		
 		if(idle_frames / frameRate == 2 
@@ -444,7 +445,7 @@ func dead_state(_delta):
 		$"DeathEffect-sheet".show()
 		animationPlayer.play("death")
 			
-		if(shouldDie):
+		if(shouldDie):#Should die set in animation player
 			
 			animationPlayer.stop()
 			queue_free()
@@ -554,7 +555,7 @@ func state_transition(STATE, point = Vector2.ZERO):
 			animationPlayer.play('enemy_walk')
 			emoteContainer.play_emote('')
 		NOTICEPLAYER:
-			change_sprite(body_sprite, chosenPoint)
+			change_sprite(body_sprite, point)
 			animationPlayer.stop()
 			animationPlayer.play('enemy_idle')
 			idle_frames = 0

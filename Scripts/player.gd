@@ -43,11 +43,12 @@ var dodge_timer_on = false
 var parent = null
 var enemy_damage = 0
 var enemy_knockback = 0
+var parry_energy = 0
 
 @export var accelerationCoef = 1.8
 @export var knockBackHitStrength = 5 #Determines how strong the knockback is when hitting the enemy
 
-@export 
+
 var previous_velocity = Vector2.ZERO
 
 var type = 'player'
@@ -60,6 +61,7 @@ var type = 'player'
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
 @onready var attackContainer = $attackContainer
+@onready var EnergyPointContainer = $EnergyPointContainer
 
 var listOfSprites = []
 var enemyIDs = []
@@ -306,9 +308,7 @@ func parry_state(_delta):
 	mouse_coordinates = get_local_mouse_position()
 	mouse_coordinates = mouse_coordinates.normalized()
 	
-	if(attackSpritePlayer.current_animation_position == 0):
-		
-		shader.set_shader_parameter("applied", true)
+	
 	print("Current animation is " + attackSpritePlayer.current_animation)
 	queue_parry_hit()
 	if(attackSpritePlayer.current_animation_position == attackSpritePlayer.current_animation_length):
@@ -316,12 +316,12 @@ func parry_state(_delta):
 		if(!parried_enemy):
 			attackSpritePlayer.queue("RESET")
 			
-		#attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 		state = MOVE
 		
 		if(!parried_enemy):	
 			velocity = Vector2.ZERO
-		shader.set_shader_parameter("applied", false)
+		
+	
 	if(attackSpritePlayer.get_queue().size() != 0):
 		print("Queued animation for attack player is " + str(attackSpritePlayer.get_queue()))
 	move_and_slide()
@@ -364,6 +364,9 @@ func _on_player_hurtbox_area_entered(area):
 			attack_cool_down_frames = 0
 			attack_timer_on = false
 			print("Position of animation for " + attackSpritePlayer.current_animation + " is " + str(attackSpritePlayer.current_animation_position))
+			attackContainer.parryDirection = area.get_enemy_id().global_position
+			get_enemy_attack_stats(area.get_enemy_id())
+			EnergyPointContainer.gain_energy(parry_energy, area.get_enemy_id().global_position)
 			
 				
 func update_healthbar(health_change):#pass in negative values to increase health
@@ -456,6 +459,7 @@ func get_enemy_attack_stats(enemy_id):
 	var enemy_sheet = enemy_id.stat_sheet
 	enemy_damage = enemy_sheet.damage
 	enemy_knockback = enemy_sheet.knockback_strength
+	parry_energy = enemy_sheet.parry_energy # How much energy is gained from parry
 
 func node_type():
 	
@@ -495,8 +499,11 @@ func queue_parry_hit():#Called in _on_player_hurtbox_area_entered()
 		state = MOVE
 		attack_cool_down_frames = 0
 		attack_timer_on = false
-
+		
+		
 
 func set_shader_time():
 	
-	shader.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)
+	shader.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)#Give time in seconds since engine has started
+
+

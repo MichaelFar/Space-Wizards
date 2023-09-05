@@ -13,7 +13,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
-	print("Occupied list is " + str(occupied_list))
+	pass
 
 func get_point_children():
 	point_children = []
@@ -28,7 +28,8 @@ func get_available_positions():
 		if !occupied_list[i]:
 			available_list.append(point_children[i])
 			
-func gain_energy(energyNum, enemy_position = Vector2.ZERO):
+func gain_energy(energyNum, enemy_position = Vector2.ZERO):#Gain energy equal to energyNum
+	#enemy_position is where the particle will come from
 	
 	get_available_positions()
 	var iterator = 0
@@ -65,7 +66,7 @@ func lose_energy(energyNum):
 		for j in particle_children:
 			iterator +=1
 			print("Freeing position " + str(occupied_list.find(true)))
-			
+
 			if (iterator <= energyNum):
 				occupied_list[find_last_taken_spot()] = false
 				print("Index of last taken spot " + str(find_last_taken_spot()))
@@ -90,3 +91,4 @@ func find_last_taken_spot():
 			return iterator - 1
 		iterator +=1
 			
+	return point_children.size() - 1

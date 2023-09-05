@@ -73,7 +73,7 @@ func abort_animation():
 	
 	attackPlayer.stop()
 	print("Number of smear children is " + str(smearChildren.size()))
-	
+	playerNode.PlayerCam.shouldShake = false
 	for i in smearChildren:
 		i.visible = false
 		print("Current smear child is " + i.name)
@@ -87,6 +87,6 @@ func play_hit():
 	print("sound: " + soundChildren[0].name + " will be stopped" )
 	soundChildren[0].stop()
 	soundChildren[0].get_node('broom_hit_snd').play()
-
+	playerNode.PlayerCam.shouldShake = true
 func zero_parry_direction():
 	parryDirection = Vector2.ZERO

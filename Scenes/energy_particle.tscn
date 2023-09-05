@@ -1,11 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://bqtaa1imm3eoq"]
+[gd_scene load_steps=5 format=3 uid="uid://bqtaa1imm3eoq"]
 
 [ext_resource type="Script" path="res://Scripts/EnergyParticle.gd" id="1_mpq30"]
+[ext_resource type="Shader" path="res://Shaders/player.gdshader" id="1_u62rx"]
 [ext_resource type="Texture2D" uid="uid://t1batglj1syl" path="res://Sprites/UI Sprites/Energy UI/battery-pixel-art-isolated-free-vector.png" id="2_uquq0"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i5gwc"]
+shader = ExtResource("1_u62rx")
+shader_parameter/speed = 0.5
+shader_parameter/tint = Color(1, 1, 0.137255, 1)
+shader_parameter/span = 0.3
+shader_parameter/start_time = 0.0
+shader_parameter/applied = true
+
 [node name="EnergyParticle" type="CharacterBody2D"]
+material = SubResource("ShaderMaterial_i5gwc")
 script = ExtResource("1_mpq30")
 metadata/_edit_group_ = true
 
 [node name="Battery-pixel-art-isolated-free-vector" type="Sprite2D" parent="."]
+use_parent_material = true
 texture = ExtResource("2_uquq0")

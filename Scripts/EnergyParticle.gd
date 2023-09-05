@@ -15,9 +15,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	set_supplied_position(point.global_position - global_position)
-	print("Position of point is " + str(point.global_position))
-	print("Position of parent is " + str(get_parent().global_position))
-	print("I am located at " + str(global_position))
+	
 	frame +=1
 	
 	if frame % 3 == 0:

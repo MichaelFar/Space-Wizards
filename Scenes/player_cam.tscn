@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://1fa7yelaqc5d"]
+
+[ext_resource type="Script" path="res://Scripts/PlayerCam.gd" id="1_mj7g5"]
+
+[node name="PlayerCam" type="Camera2D"]
+script = ExtResource("1_mj7g5")
+shakeStrength = 2.0

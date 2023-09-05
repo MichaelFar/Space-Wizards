@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=73 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Material" uid="uid://dumxkcum8oy8r" path="res://Shaders/player.tres" id="1_kkqpc"]
@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://dpdlkwabtfqv5" path="res://Sprites/player sprite sheets/nakedwizard_broom_01.png" id="15_wnbpv"]
 [ext_resource type="AudioStream" uid="uid://dsidu55ds7722" path="res://Audio/Effects/Player/zapsplat_impacts_punch_body_fast_swipe_whoosh_into_punch_impact_clothing_005_72433.mp3" id="16_5r0e1"]
 [ext_resource type="PackedScene" uid="uid://bs8071ewrak5g" path="res://Scenes/energy_point_container.tscn" id="18_0bs8l"]
+[ext_resource type="PackedScene" uid="uid://1fa7yelaqc5d" path="res://Scenes/player_cam.tscn" id="19_o57sc"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hslqc"]
 radius = 3.0
@@ -1792,6 +1793,8 @@ offset_right = 16.0
 offset_bottom = 13.0
 
 [node name="EnergyPointContainer" parent="." instance=ExtResource("18_0bs8l")]
+
+[node name="PlayerCam" parent="." instance=ExtResource("19_o57sc")]
 
 [connection signal="area_entered" from="attackContainer/broom_smear_1/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]
 [connection signal="area_entered" from="player_hurtbox" to="." method="_on_player_hurtbox_area_entered"]

@@ -241,8 +241,7 @@ func wander_state(target_point, _delta):
 		
 		state_transition(IDLE, target_point)
 	
-	elif(state == PURSUE && self.position.distance_to(target_point) <= target_distance):#Fix this
-		state_transition(NOTICEPLAYER, target_point)
+	#Put better group aggro code here, when we last attempted this and removed it on 9/3/2023 it caused the state transition bug
 	
 	if(position.distance_to(attackPosition) <= attackDist
 	&& state == PURSUE):
@@ -570,5 +569,6 @@ func update_enemy_list(enemy):
 
 func check_become_aggroed(sibling_position):
 	if(sibling_position.distance_to(self.global_position) <= noticeDist):
+		print("I have become aggroed from sibling")
 		state_transition(PURSUE)
 

@@ -48,9 +48,6 @@ polygon = PackedVector2Array(604, 140, 587, 156, 622, 178, 640, 161)
 position = Vector2(-220.682, -183.427)
 scale = Vector2(1.33898, 1.47866)
 
-[node name="combat_demo_arena" parent="." instance=ExtResource("2_mhx6l")]
-position = Vector2(281, 108)
-
 [node name="ExclusionZone8" parent="." instance=ExtResource("3_54leo")]
 
 [node name="ExclusionPolygon" parent="ExclusionZone8" index="0"]
@@ -71,6 +68,9 @@ scale = Vector2(1.35235, 1.29954)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_4kerf")
+
+[node name="combat_demo_arena" parent="." instance=ExtResource("2_mhx6l")]
+position = Vector2(281, 108)
 
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]

@@ -1,0 +1,174 @@
+[gd_scene load_steps=9 format=3 uid="uid://bolae2xcgoyvh"]
+
+[ext_resource type="Script" path="res://Scenes/SpellScenes/zap_spell.gd" id="1_q2xng"]
+[ext_resource type="Texture2D" uid="uid://cs22du8ly5el7" path="res://Sprites/Sprite Effects/Thunder projectile1 wo blur.png" id="2_7ltrn"]
+[ext_resource type="Texture2D" uid="uid://d34y634rsmd7c" path="res://Sprites/Sprite Effects/Thunderstrike wo blur.png" id="3_x6pgy"]
+
+[sub_resource type="Animation" id="Animation_kojhg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ThunderProjectile1WoBlur:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitBox/ThunderstrikeWoBlur:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AttackHitBox/ThunderstrikeWoBlur:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ThunderProjectile1WoBlur:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_1hue7"]
+resource_name = "hit"
+length = 0.780003
+step = 0.03
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackHitBox/ThunderstrikeWoBlur:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0600001, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.48, 0.540001, 0.600001, 0.660001, 0.720001),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitBox/ThunderstrikeWoBlur:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ThunderProjectile1WoBlur:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_77udq"]
+resource_name = "travel"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ThunderProjectile1WoBlur:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitBox/ThunderstrikeWoBlur:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ThunderProjectile1WoBlur:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1hijt"]
+_data = {
+"RESET": SubResource("Animation_kojhg"),
+"hit": SubResource("Animation_1hue7"),
+"travel": SubResource("Animation_77udq")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dr5v5"]
+radius = 4.0
+
+[node name="zap_spell" type="CharacterBody2D"]
+motion_mode = 1
+script = ExtResource("1_q2xng")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1hijt")
+}
+
+[node name="ThunderProjectile1WoBlur" type="Sprite2D" parent="."]
+texture = ExtResource("2_7ltrn")
+hframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_dr5v5")
+
+[node name="AttackHitBox" type="Area2D" parent="."]
+rotation = 1.5708
+
+[node name="ThunderstrikeWoBlur" type="Sprite2D" parent="AttackHitBox"]
+visible = false
+rotation = -1.5708
+texture = ExtResource("3_x6pgy")
+offset = Vector2(0, -26)
+hframes = 13

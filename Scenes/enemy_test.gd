@@ -331,7 +331,7 @@ func change_sprite(spriteName, chosen_point):
 func _on_hurtbox_area_entered(area):
 	#Sets the appropriate values and sets the state to TAKEHIT
 	#Enemies can be hit during any state
-	if(area.get_children()[0].disabled == false):
+	if(area.get_children()[0].disabled == false && state != DEAD):
 		if(area.name == 'AttackHitBox' && state != TAKEHIT && state != ATTACK):
 			
 			velocity = Vector2.ZERO
@@ -354,7 +354,17 @@ func _on_hurtbox_area_entered(area):
 				animationPlayer.set("speed_scale", 0.5)
 			else:
 				animationPlayer.stop()
-
+		elif(area.name == 'SpellHitBox' && state != TAKEHIT):
+			update_poise_bar(area.get_parent().spell_stat_sheet.get_stats()[0])
+			update_healthbar(area.get_parent().spell_stat_sheet.get_stats()[1])
+			velocity = Vector2.ZERO
+			animationPlayer.stop()
+			playerPreviousPosition = parent.playerNode.position
+			change_sprite(body_sprite, playerPreviousPosition)
+			animationPlayer.play("take_hit")
+			if(state != STAGGERED):
+				state = TAKEHIT
+			#area.get_parent().shouldHit = true
 func take_hit_state(_delta):
 	var pushBackDirection = position - playerPreviousPosition
 	

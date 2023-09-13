@@ -28,8 +28,8 @@ func get_available_positions():
 		if !occupied_list[i]:
 			available_list.append(point_children[i])
 			
-func gain_energy(energyNum, enemy_position = Vector2.ZERO):#Gain energy equal to energyNum
-	#enemy_position is where the particle will come from
+func gain_energy(energyNum, enemy_position = Vector2.ZERO):
+
 	
 	get_available_positions()
 	var iterator = 0
@@ -49,10 +49,11 @@ func gain_energy(energyNum, enemy_position = Vector2.ZERO):#Gain energy equal to
 				print("Found point children " + str(point_children.find(j)))
 				
 		return true
-	else:
-		return false
+	
+	return false
 			
-func lose_energy(energyNum):
+func lose_energy(energyNum): #Use this as a condition to ensure that energy is lost when the condition runs
+	#Ensure it is the only condition that is checked unless exclusively using the && operator
 	
 	var iterator = 0
 	

@@ -5,31 +5,39 @@ extends Camera2D
 
 @export var shakeStrength = 10.0
 
-@export var cameraThreshold = 200
+@export var cameraThreshold = 150
 
-@export var maxCameraVelocity = 500
+@export var maxCameraVelocity = 800
+
+@onready var MouseCursor = $MouseCursor
 
 var mouseRatio = 0.0
-
+var input_vector = Vector2.ZERO #Keep track of player input vector
 var parent = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	parent = get_parent()
-
+	MouseCursor = $MouseCursor
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	var cameraVelocity = maxCameraVelocity
-	var maxMousePosition = Vector2.ZERO.distance_to(Vector2(get_viewport_rect().end.x , get_viewport_rect().end.y))
 	
-	print(str(maxMousePosition))
-	mouseRatio = clamp(Vector2.ZERO.distance_to(get_local_mouse_position()) / maxMousePosition, 0.0, 1.0)
-	print("Mouse ratio is " + str(mouseRatio) + " and " + str(Vector2.ZERO.distance_to(get_local_mouse_position()) / maxMousePosition) + " and " + str(get_local_mouse_position()))
+	var cameraVelocity = maxCameraVelocity
+	var dimensionsRatio = get_viewport_rect().size.x/get_viewport_rect().size.y
+	var maxMousePosition = position.distance_to(Vector2(get_viewport_rect().size.x, get_viewport_rect().size.y))
+	var maxMousePositionX = abs(get_viewport_rect().size.x * (dimensionsRatio) - position.x)
+	var maxMousePositionY = abs(get_viewport_rect().size.y * (dimensionsRatio) - position.y)
+	input_vector = parent.input_vector
+	
+	#Vector2.ZERO.distance_to(MouseCursor.position), numerator for later
+	mouseRatio = clamp(Vector2.ZERO.distance_to(MouseCursor.position) / maxMousePosition, 0.0, 1.0)
+	var mouseRatioX = clamp(Vector2.ZERO.distance_to(MouseCursor.position) / maxMousePositionX, 0.0, 1.0)
+	var mouseRatioY = clamp(Vector2.ZERO.distance_to(MouseCursor.position) / maxMousePositionY, 0.0, 1.0)
 	
 	cameraVelocity = maxCameraVelocity * mouseRatio
 	
 	offset = offset.move_toward(
-	Vector2((get_local_mouse_position().normalized() * cameraThreshold).x * mouseRatio, 
-	(get_local_mouse_position().normalized() * cameraThreshold).y) * mouseRatio, 
+	Vector2((MouseCursor.position.normalized() * cameraThreshold).x * mouseRatioX , 
+	(MouseCursor.position.normalized() * cameraThreshold).y * mouseRatioY), 
 	delta * cameraVelocity)
 	
 	if(Input.is_action_just_released("CameraToggle")):

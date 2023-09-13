@@ -1,23 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://cm0jt1sasbsb7"]
+[gd_scene load_steps=6 format=3 uid="uid://cm0jt1sasbsb7"]
 
 [ext_resource type="Script" path="res://Scenes/world.gd" id="1_t3thx"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_v3kjr"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="3_guai8"]
-[ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="4_4rvvw"]
-[ext_resource type="Shader" path="res://Shaders/enemy_dissolve.gdshader" id="5_3okix"]
 [ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="6_5yegy"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_pbir3"]
-frequency = 0.0655
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hrhps"]
-noise = SubResource("FastNoiseLite_pbir3")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ooupp"]
-resource_local_to_scene = true
-shader = ExtResource("5_3okix")
-shader_parameter/dissolve_value = 1.0
-shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_hrhps")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_7rxtp"]
 vertices = PackedVector2Array(353, 286, 365, 291, 202, 295, 612, 73, 612, 332, 556, 306, 552, 195, 377, 287, 506, 251, 509, 314, 377, 141, 493, 196, 505, 142, 201, 190, 353, 141, 532, 185, 550, 147, 550, 116, 115, 80, 524, 117, 180, 176, 153, 192, 115, 332, 154, 289, 179, 313, 533, 320)
@@ -29,10 +15,6 @@ script = ExtResource("1_t3thx")
 
 [node name="Level1Tiles" parent="." instance=ExtResource("2_v3kjr")]
 position = Vector2(52, 40)
-
-[node name="Enemy_Test" parent="." instance=ExtResource("4_4rvvw")]
-material = SubResource("ShaderMaterial_ooupp")
-position = Vector2(277, 190)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_7rxtp")
@@ -55,17 +37,6 @@ polygon = PackedVector2Array(353, 141, 353, 286, 365, 291, 377, 287, 377, 141)
 [node name="ExclusionPolygon" parent="ExclusionZone3" index="0"]
 polygon = PackedVector2Array(524, 117, 505, 142, 493, 196, 506, 251, 509, 314, 533, 320, 556, 306, 552, 195, 532, 185, 550, 147, 550, 116)
 
-[node name="ExclusionZone4" parent="." instance=ExtResource("6_5yegy")]
-
-[node name="ExclusionPolygon" parent="ExclusionZone4" index="0"]
-position = Vector2(4.33746, 2.05396)
-polygon = PackedVector2Array(372.663, 15.946, 372.663, 42.946, 89.6625, 50.946, 86.6625, 354.946, 380.663, 362.946, 380.663, 396.946, 49.6625, 395.946, 51.6625, 15.946)
-
-[node name="ExclusionZone5" parent="." instance=ExtResource("6_5yegy")]
-
-[node name="ExclusionPolygon" parent="ExclusionZone5" index="0"]
-polygon = PackedVector2Array(377, 18, 691, 18, 691, 401, 385, 399, 385, 365, 653, 360, 653, 39, 377, 45)
-
 [node name="ExclusionZone6" parent="." instance=ExtResource("6_5yegy")]
 
 [node name="ExclusionZone7" parent="." instance=ExtResource("6_5yegy")]
@@ -73,7 +44,5 @@ polygon = PackedVector2Array(377, 18, 691, 18, 691, 401, 385, 399, 385, 365, 653
 [editable path="ExclusionZone"]
 [editable path="ExclusionZone2"]
 [editable path="ExclusionZone3"]
-[editable path="ExclusionZone4"]
-[editable path="ExclusionZone5"]
 [editable path="ExclusionZone6"]
 [editable path="ExclusionZone7"]

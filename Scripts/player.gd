@@ -1,7 +1,7 @@
 extends CharacterBody2D
 #Player code
 #Has no depencies on parent nodes
-#Can move and attack
+#Can move, attack, parry, dodge, and soon cast spells
 #8 directional movement
 #All directions can be attacked
 var input_vector = Vector2.ZERO
@@ -61,8 +61,8 @@ var type = 'player'
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
 @onready var attackContainer = $attackContainer
-@onready var EnergyPointContainer = $EnergyPointContainer
-@onready var PlayerCam = $PlayerCam
+var EnergyPointContainer = null
+var PlayerCam = null
 var listOfSprites = []
 var enemyIDs = []
 
@@ -109,7 +109,8 @@ func post_initialize(animation_tree):
 	
 	animationState = animation_tree.get("parameters/playback")
 	parent = get_parent()
-	
+	EnergyPointContainer = $EnergyPointContainer
+	PlayerCam = $PlayerCam
 func populate_stats():
 	
 	var stat_sheet = $player_stat_sheet
@@ -204,8 +205,7 @@ func move_state(_delta):
 				attackSpritePlayer.play('melee_attack')
 			nakedWizardBase.switch_weapon_sprite("")
 			attack_timer_on = true
-			#acceleration = prevAcceleration * accelerationCoef
-			#knockBackDirection = -1 * knockBackHitStrength
+			
 		else:
 			knockBackDirection = knockBackHitStrength
 		
@@ -236,7 +236,7 @@ func move_state(_delta):
 
 func attack_state(_delta):#State machine for attack combos will go here
 	
-	mouse_coordinates = get_local_mouse_position()
+	mouse_coordinates = PlayerCam.MouseCursor.position
 	mouse_coordinates = mouse_coordinates.normalized()
 	
 	if('parry' in attackSpritePlayer.current_animation):
@@ -366,7 +366,7 @@ func _on_player_hurtbox_area_entered(area):
 			attackContainer.parryDirection = area.get_enemy_id().global_position
 			get_enemy_attack_stats(area.get_enemy_id())
 			EnergyPointContainer.gain_energy(parry_energy, area.get_enemy_id().global_position)
-			
+		
 				
 func update_healthbar(health_change):#pass in negative values to increase health
 	
@@ -448,8 +448,8 @@ func get_enemy_attack_stats(enemy_id):
 	parry_energy = enemy_sheet.parry_energy # How much energy is gained from parry
 
 func node_type():
+	return 'player'
 	
-	type = 'player'
 	
 func player_must_die():
 	

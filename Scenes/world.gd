@@ -38,7 +38,7 @@ func _ready():
 	
 	navOutline = navRegion.navigation_polygon.get_outline(0)
 	var inclusion_area = get_dimensions(navOutline)
-	
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	#print(" min " + str(inclusionZone.shape.get_rect().position + inclusionZone.global_position) + "; max : " + str(inclusionZone.shape.get_rect().size + inclusionZone.global_position))
 	get_exclusion_children()
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
@@ -70,6 +70,11 @@ func _process(_delta):
 	if(Input.is_action_just_pressed("Hard")):
 		currentDifficulty = HARD
 		apply_difficulty()
+	if(Input.is_action_just_released("fullscreen")):
+		if(DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_FULLSCREEN):
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)	
 	if(playerNode != null):
 		playerPosition = playerNode.position
 	if(Input.is_action_just_pressed("SpawnEnemyDemo")):

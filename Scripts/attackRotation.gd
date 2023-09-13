@@ -36,10 +36,10 @@ func _physics_process(delta):
 		
 		if(attackPlayer.current_animation_position == 0 && attackPlayer.current_animation_length != 0):
 			
-			self.look_at(get_global_mouse_position())
+			self.look_at(get_parent().PlayerCam.MouseCursor.global_position)
 			if(parryDirection != Vector2.ZERO):
 				self.look_at(parryDirection)
-			playerSpriteTree.set("parameters/IdleBlend/blend_position", playerNode.get_local_mouse_position())
+			playerSpriteTree.set("parameters/IdleBlend/blend_position", get_parent().PlayerCam.MouseCursor.position)
 			animationState.travel("IdleBlend")
 	
 	
@@ -87,6 +87,6 @@ func play_hit():
 	print("sound: " + soundChildren[0].name + " will be stopped" )
 	soundChildren[0].stop()
 	soundChildren[0].get_node('broom_hit_snd').play()
-	playerNode.PlayerCam.shouldShake = true
+	#playerNode.PlayerCam.shouldShake = true
 func zero_parry_direction():
 	parryDirection = Vector2.ZERO

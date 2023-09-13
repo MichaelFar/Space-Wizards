@@ -35,7 +35,7 @@ func set_equipped_weapon(weapon = "broom"):
 	#player_stats.emit(knockback_strength, damage)
 #Holds values specific to one attack
 func set_equipped_spell(spell = 'zap'):
-	var spells_dict = {"zap": 
+	var spells_dict = {"zap_spell": 
 							 {
 							  "knockback": knockback_strength, 
 							  "damage": damage,

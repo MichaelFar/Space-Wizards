@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://6kx1sxy8dl1k"]
+
+[ext_resource type="Script" path="res://Scripts/MouseCursor.gd" id="1_dcx47"]
+[ext_resource type="Material" uid="uid://dgwytsmwcbxr5" path="res://Shaders/cursorMaterial.tres" id="1_qwf0s"]
+[ext_resource type="Texture2D" uid="uid://c5ixwdshhson1" path="res://Sprites/UI Sprites/Crosshair/crosshairs_tilesheet_black.png" id="2_fffb2"]
+
+[node name="MouseCursor" type="Node2D"]
+z_index = 10
+z_as_relative = false
+script = ExtResource("1_dcx47")
+
+[node name="CrosshairsTilesheetBlack" type="Sprite2D" parent="."]
+material = ExtResource("1_qwf0s")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_fffb2")
+offset = Vector2(2.4, 1.8)
+hframes = 20
+vframes = 10
+frame = 20

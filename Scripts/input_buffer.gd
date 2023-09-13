@@ -13,6 +13,8 @@ var keyboard_timestamps: Dictionary
 var joypad_timestamps: Dictionary
 var mouse_timestamps: Dictionary
 
+var MouseMotionEvent = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -48,7 +50,8 @@ func _input(event: InputEvent) -> void:
 			return
 		scancode = event.button_index
 		mouse_timestamps[scancode] = Time.get_ticks_msec()
-
+	
+	MouseMotionEvent = event is InputEventMouseMotion #Will be true if the player is moving the mouse
 # Returns whether any of the keyboard keys or joypad buttons in the given action were pressed within the buffer window.
 func is_action_press_buffered(action: String) -> bool:
 	# Get the inputs associated with the action. If any one of them was pressed in the last BUFFER_WINDOW milliseconds,

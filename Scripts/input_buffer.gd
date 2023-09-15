@@ -5,7 +5,7 @@ extends Node
 
 # How many milliseconds ahead of time the player can make an input and have it still be recognized.
 # I chose the value 150 because it imitates the 9-frame buffer window in the Super Smash Bros. Ultimate game.
-const BUFFER_WINDOW: int = 350
+const BUFFER_WINDOW: int = 500
 # The godot default deadzone is 0.2 so I chose to have it the same
 const JOY_DEADZONE: float = 0.2
 
@@ -31,7 +31,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey:# || InputEventMouseButton && !(event is InputEventMouseMotion):
 		if !event.pressed or event.is_echo():
 				return
-		scancode = event.keycode
+		scancode = event.physical_keycode
 		
 		keyboard_timestamps[scancode] = Time.get_ticks_msec()
 	elif event is InputEventJoypadButton:
@@ -56,18 +56,21 @@ func _input(event: InputEvent) -> void:
 func is_action_press_buffered(action: String) -> bool:
 	# Get the inputs associated with the action. If any one of them was pressed in the last BUFFER_WINDOW milliseconds,
 	# the action is buffered.
-	var scancode: int = 0
+	
+	var scancode = 0
 	for event in InputMap.action_get_events(action):
 		
 		if event is InputEventKey:#  || InputEventMouseButton && !(event is InputEventMouseMotion):
 			
-			scancode = event.keycode
+			scancode = event.physical_keycode
+			
+			print("Scancode of " + str(event) + " is " + str(scancode))
 			
 			if keyboard_timestamps.has(scancode):
 				if Time.get_ticks_msec() - keyboard_timestamps[scancode] <= BUFFER_WINDOW:
 					# Prevent this method from returning true repeatedly and registering duplicate actions.
 					_invalidate_action(action)
-					
+					print(str(event))
 					return true;#Silly C programmer, we don't need semicolons
 		elif event is InputEventJoypadButton:
 			var button_index: int = event.button_index
@@ -108,7 +111,7 @@ func _invalidate_action(action: String) -> void:
 	for event in InputMap.action_get_events(action):
 		if event is InputEventKey:#  || InputEventMouseButton && !(event is InputEventMouseMotion):
 			if(event is InputEventKey):
-				scancode = event.keycode
+				scancode = event.physical_keycode
 			
 			if keyboard_timestamps.has(scancode):
 				keyboard_timestamps[scancode] = 0

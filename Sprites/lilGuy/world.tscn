@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqpsi0j5a867"]
+
+[ext_resource type="Script" path="res://Sprites/lilGuy/world.gd" id="1_2s4t6"]
+[ext_resource type="PackedScene" uid="uid://yqrelumgumkm" path="res://Level/Level0_1Layout.tscn" id="1_yiaa6"]
+[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Sprites/lilGuy/player.tscn" id="2_cxsm1"]
+
+[node name="World" type="Node2D"]
+y_sort_enabled = true
+rotation = -0.00190693
+script = ExtResource("1_2s4t6")
+
+[node name="Player" parent="." instance=ExtResource("2_cxsm1")]
+z_index = 1
+position = Vector2(434.595, 212.829)
+
+[node name="Level1Tiles" parent="." instance=ExtResource("1_yiaa6")]
+position = Vector2(0.98665, 7.00189)
+scale = Vector2(1e-05, 1e-05)

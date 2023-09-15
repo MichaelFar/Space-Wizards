@@ -211,7 +211,8 @@ func move_state(_delta):
 		
 				
 	if(!parry_timer_on):
-		if (InputBuffer.is_action_press_buffered('parry') && !Input.is_action_just_released('parry')):
+		if (InputBuffer.is_action_press_buffered('parry') 
+		&& !Input.is_action_just_released('parry')):
 			state = PARRY
 			#toggle_parry_active(true)
 			parry_timer_on = true
@@ -225,7 +226,8 @@ func move_state(_delta):
 			parried_enemy = false
 	if(!dodge_timer_on):
 		
-		if(InputBuffer.is_action_press_buffered('ui_select') && !Input.is_action_just_released('ui_select')):
+		if(InputBuffer.is_action_press_buffered('dodge') 
+		&& !Input.is_action_just_released('dodge')):
 			
 			print("Dodge state entered")
 			state = DODGE
@@ -489,4 +491,5 @@ func set_shader_time():
 	
 	shader.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)#Give time in seconds since engine has started
 
-
+func reset_knockback_direction():#Called in attack animations
+	knockBackDirection = 1

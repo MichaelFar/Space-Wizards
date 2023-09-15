@@ -4,8 +4,13 @@ extends CharacterBody2D
 #Preloads spells and keeps track of which one is selected
 #Will eventually have the control of RAM, which controls how spells are selected
 #Needs to speak to player_cam for visual effects and UI
+#Note: Spells must always queue_free() themselves when they are done, this can be accomplished in an animation node
 
+
+#All spells should handle all behavior within its own scene, this allows for infinite scalability
 @onready var SpellLoader = $SpellLoader
+@onready var spawn_point = $spawn_point
+
 var parent = null
 
 var PlayerCam = null
@@ -17,6 +22,11 @@ var MouseCursor = null
 var all_possible_spell_resources = [] 
 
 var spell_name_list = []
+
+var spell_cooldown_target = 0
+
+var spell_cooldown_frames = 0
+
 func _ready():
 	
 	all_possible_spell_resources = SpellLoader.get_resource_list()
@@ -34,11 +44,21 @@ func post_initialize():
 	MouseCursor = PlayerCam.get_node("MouseCursor")
 	global_position = MouseCursor.global_position
 func _physics_process(delta):
-	
+	var frame_rate = 1/delta
 	#global_position = MouseCursor.global_position
-	if(Input.is_action_just_pressed("RAM")):
-		#if(EnergyContainer.lose_energy(1)):
-		spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), MouseCursor.global_position, get_parent().global_position)
+	if(InputBuffer.is_action_press_buffered("RAM")):
+		if(!spell_cooldown_target):
+			if(EnergyContainer.lose_energy(1)):#Have this condition occur in the spell spawned
+				spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), 
+						MouseCursor.global_position, 
+						spawn_point.global_position)
+	if(spell_cooldown_target):
+		if(spell_cooldown_frames / spell_cooldown_target == 1):
+			spell_cooldown_target = 0
+			spell_cooldown_frames = 0
+		else:
+			
+			spell_cooldown_frames += 1
 
 func get_spell_children():
 	
@@ -61,8 +81,10 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 		spellNode.global_destination = destination
 	if(origin):
 		spellNode.originPoint = origin
-		
-		get_node('/root').add_child(spellNode)#Sets the child to be of the game root
-	global_position = MouseCursor.global_position
+	
+	get_node('/root').add_child(spellNode)#Sets the child to be of the game root
+	if(spellNode.cooldown_begin):
+		spell_cooldown_target = spellNode.spell_cooldown
+	#global_position = MouseCursor.global_position
 
 

@@ -1,10 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://csti3s5ve4j0r"]
+[gd_scene load_steps=5 format=3 uid="uid://csti3s5ve4j0r"]
 
 [ext_resource type="Script" path="res://Scripts/SpellContainer.gd" id="1_j5o2g"]
 [ext_resource type="PackedScene" uid="uid://bolae2xcgoyvh" path="res://Scenes/SpellScenes/zap_spell.tscn" id="2_ohlyt"]
+[ext_resource type="Script" path="res://Scripts/spawn_point.gd" id="3_jkimt"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gtgv3"]
+radius = 4.0
+height = 8.0
 
 [node name="SpellContainer" type="CharacterBody2D"]
 script = ExtResource("1_j5o2g")
 
 [node name="SpellLoader" type="ResourcePreloader" parent="."]
 resources = [PackedStringArray("zap_spell"), [ExtResource("2_ohlyt")]]
+
+[node name="spawn_point" type="Node2D" parent="."]
+script = ExtResource("3_jkimt")
+distance_from_origin = 25
+
+[node name="Area2D" type="Area2D" parent="spawn_point"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="spawn_point/Area2D"]
+shape = SubResource("CapsuleShape2D_gtgv3")

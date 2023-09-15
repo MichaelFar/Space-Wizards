@@ -10,7 +10,7 @@ var speed = 150
 var max_health = 1000.0
 var current_health = max_health
 var damage_taken = 0.0
-var pushBackStrength = 250
+var pushBackStrength = 0
 var pushBackAcceleration = 0
 var poise = 100.0
 var max_poise = 0.0
@@ -77,7 +77,6 @@ var player_state = null
 var player_damage = 0
 
 signal enemy_attack_stats #Sent to the player in various contexts, such as getting hit
-signal index_reserved #DEPRECATED REMOVE
 signal player_hit_me #Signal for audio hit noise
 signal noticed_player #Signal for alerting nearby enemies (not yet implemented as of 10:08 8/27)
 
@@ -140,6 +139,7 @@ func get_ideal_travel_points():
 	return travel_points
 
 func _physics_process(_delta):#State machine runs per frame
+	
 	if(playerNode != null):
 		attackPosition = playerNode.position
 	frameRate = (1/_delta)
@@ -365,10 +365,9 @@ func _on_hurtbox_area_entered(area):
 			if(state != STAGGERED):
 				state = TAKEHIT
 			#area.get_parent().shouldHit = true
-func take_hit_state(_delta):
-	var pushBackDirection = position - playerPreviousPosition
+func take_hit_state(_delta, origin = position - playerPreviousPosition):
 	
-	pushBackDirection = pushBackDirection.normalized()
+	origin = origin.normalized()
 	
 	animationPlayer.set("speed_scale", 1.0 + stun_modifier)
 	
@@ -381,7 +380,7 @@ func take_hit_state(_delta):
 	
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
-		velocity = velocity.move_toward(pushBackDirection * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
+		velocity = velocity.move_toward(origin * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
 		
@@ -392,6 +391,7 @@ func take_hit_state(_delta):
 	
 	if(current_health <= 0):
 		state = DEAD
+	reset_player_stats()
 	move_and_slide()
 	
 func notice_player_state(_delta, point):#Probably where the collision bug is
@@ -480,14 +480,21 @@ func get_parried(enemy_id):#Function that is called when the player is in parry 
 		coolDownTimerOn = false
 		coolDownFrames = 0
 		
-func get_player_stats(knock_back_strength, damage, poise_damage, parryPoiseDamage):
+func get_player_stats(knock_back_strength, damage, poise_damage, parryPoiseDamage):#Signal emitted from player attack animation
 	
 	pushBackStrength = knock_back_strength / 2
 	pushBackAcceleration = pushBackStrength + knockback_modifier - knockback_resistance
 	player_damage = damage
 	player_poise_damage = poise_damage
 	parry_poise_damage = parryPoiseDamage
-	
+
+func reset_player_stats():#Runs at end of frame to reset stats
+	pushBackStrength = 0
+	pushBackAcceleration = 0
+	player_damage = 0
+	player_poise_damage = 0
+	parry_poise_damage = 0
+
 func populate_stats():
 	
 	attacks_dict = stat_sheet.attacks_dict

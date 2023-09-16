@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Sprites/lilGuy/world.gd" id="1_ph1ox"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_iopc2"]
-[ext_resource type="PackedScene" path="res://Tiles/64x64plane.tscn" id="3_tenns"]
+[ext_resource type="PackedScene" uid="uid://bm1oapd04iuuh" path="res://Tiles/64x64plane.tscn" id="3_tenns"]
 
 [node name="World" type="Node2D"]
 y_sort_enabled = true

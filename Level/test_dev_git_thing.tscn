@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://kji2r37la1ae"]
 
-[ext_resource type="Script" path="res://Scenes/world.gd" id="1_ucx5p"]
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_ucx5p"]
 [ext_resource type="PackedScene" uid="uid://c71c1pnj2lb1" path="res://Level/test_dev_layout(debug).tscn" id="2_38p6r"]
-[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_rau2v"]
+[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Sprites/lilGuy/player.tscn" id="2_rau2v"]
 [ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="4_jeds5"]
 
 [node name="testDevGitThing" type="Node2D"]

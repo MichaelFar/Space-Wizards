@@ -144,6 +144,7 @@ func _physics_process(_delta):#State machine runs per frame
 		attackPosition = playerNode.position
 	frameRate = (1/_delta)
 	
+	
 	if frame == 0:
 		post_initialize()
 	
@@ -450,14 +451,18 @@ func dead_state(_delta):
 		parent.enemyChildren.pop_at(parent.enemyChildren.find(self))
 		$CollisionShape2D.disabled = true
 	
-	if(deadframes / framerate >= 2):
-		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
+	if(deadframes / framerate == 2):
+		
 		
 		$"DeathEffect-sheet".show()
-		animationPlayer.play("death")
-			
 		
-			
+		#$"DeathEffect-sheet".reparent(get_parent(), true)
+		#animationPlayer.reparent(get_parent(),true)
+		animationPlayer.play("death")
+	elif(deadframes / framerate >= 2):
+		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
+		if(shader.get_shader_parameter("dissolve_value") == 0.0):
+			queue_free()
 func flip_h_in_animation():
 	
 	body_sprite.flip_h = !body_sprite.flip_h

@@ -110,7 +110,7 @@ func _ready():
 		playerNode.s_parried.connect(get_parried)
 		playerNode.get_node("player_stat_sheet").player_stats.connect(get_player_stats)
 		
-	parent.spawned_enemy.connect(update_enemy_list)
+	parent.spawned_enemy.connect(update_enemy_list)#Signal in parent
 	populate_stats()
 	shader = shader.get("material")
 	playerPreviousPosition = playerNode.position
@@ -372,7 +372,7 @@ func take_hit_state(_delta, origin = position - playerPreviousPosition):
 	animationPlayer.set("speed_scale", 1.0 + stun_modifier)
 	
 	if(animationPlayer.current_animation_position == 0):
-		
+		reset_player_stats()
 		if(state == TAKEHIT):
 			animationPlayer.play('take_hit')
 		elif(state == STAGGERED):
@@ -388,10 +388,10 @@ func take_hit_state(_delta, origin = position - playerPreviousPosition):
 		animationPlayer.set("speed_scale", 1.0)
 		if(poise <= 0.0):
 			update_poise_bar(max_poise)
-	
+		
 	if(current_health <= 0):
 		state = DEAD
-	reset_player_stats()
+	
 	move_and_slide()
 	
 func notice_player_state(_delta, point):#Probably where the collision bug is
@@ -445,8 +445,10 @@ func dead_state(_delta):
 		animationPlayer.stop()
 		animationPlayer.play('enemy_death')
 		poisebar.queue_free()
-		
-	$CollisionShape2D.disabled = true
+		if self == parent.enemyChildren[parent.enemyChildren.find(self)]:
+			print("Popped self from enemy list")
+		parent.enemyChildren.pop_at(parent.enemyChildren.find(self))
+		$CollisionShape2D.disabled = true
 	
 	if(deadframes / framerate >= 2):
 		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
@@ -454,10 +456,7 @@ func dead_state(_delta):
 		$"DeathEffect-sheet".show()
 		animationPlayer.play("death")
 			
-		if(shouldDie):#Should die set in animation player
-			
-			animationPlayer.stop()
-			queue_free()
+		
 			
 func flip_h_in_animation():
 	
@@ -588,4 +587,7 @@ func check_become_aggroed(sibling_position):
 	if(sibling_position.distance_to(self.global_position) <= noticeDist):
 		print("I have become aggroed from sibling")
 		state_transition(PURSUE)
-
+func remove_from_tree():
+	
+	animationPlayer.stop()
+	queue_free()

@@ -64,13 +64,13 @@ func is_action_press_buffered(action: String) -> bool:
 			
 			scancode = event.physical_keycode
 			
-			print("Scancode of " + str(event) + " is " + str(scancode))
+			#print("Scancode of " + str(event) + " is " + str(scancode))
 			
 			if keyboard_timestamps.has(scancode):
 				if Time.get_ticks_msec() - keyboard_timestamps[scancode] <= BUFFER_WINDOW:
 					# Prevent this method from returning true repeatedly and registering duplicate actions.
 					_invalidate_action(action)
-					print(str(event))
+					#print(str(event))
 					return true;#Silly C programmer, we don't need semicolons
 		elif event is InputEventJoypadButton:
 			var button_index: int = event.button_index

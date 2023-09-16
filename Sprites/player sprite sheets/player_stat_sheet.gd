@@ -44,12 +44,6 @@ func set_equipped_spell(spell = 'zap'):
 							}
 	return spells_dict[spell]
 
-func spell_behavior_router():
-	#Certain spells are attacks while others are not, meaning spell behavior has to be selected for
-	#I imagine that spells cannot fit into a 1 size fits all format like attacks theoretically can be, so we need a driver for spell behavior
-	pass
-
-
-
 func send_stats():
 	player_stats.emit(knockback_strength, damage, poise_damage, parry_poise_damage)
+	print("Sent stats to enemy")

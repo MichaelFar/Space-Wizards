@@ -79,8 +79,8 @@ tracks/1/keys = {
 "times": PackedFloat32Array(1.4),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [&"shouldDie", true],
-"method": &"set"
+"args": [],
+"method": &"remove_from_tree"
 }]
 }
 

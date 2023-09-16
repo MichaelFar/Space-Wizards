@@ -1725,6 +1725,7 @@ shape = SubResource("CapsuleShape2D_hslqc")
 
 [node name="player_stat_sheet" type="Node" parent="."]
 script = ExtResource("3_7wyvt")
+damage = 100000.0
 knockback_strength = 150.0
 poise_damage = -45.0
 

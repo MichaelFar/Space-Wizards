@@ -148,31 +148,33 @@ func get_exclusion_children():
 		print("Exclusion polygon vertices for " + i.name + " are " + str(i.get_children()[0].polygon))
 
 func spawn_scene(scene, randompoint = Vector2.ZERO):
-	
+	print("Random point is " + str(randompoint))
 	var random = RandomNumberGenerator.new()
 	var node = scene.instantiate()
+	print("Node spawned is " + str(node))
+	
 	if(!randompoint):
 		node.global_position = validpoints[random.randi_range(0, validpoints.size() - 1)]
+		print("Spawned at " + str(node.global_position))
 	else:
 		node.global_position = randompoint
+	
 	add_child(node)
-	get_enemy_children()
+	enemyChildren.append(node)
 	
 	return node
 	
 func get_enemy_children():
 	
-	enemyChildren = []
-	
 	for i in get_children():
 		if i.has_method('node_type'):
-			if(i.type == 'enemy_test'):
+			if i.type == 'enemy_test':
 				enemyChildren.append(i)
 				spawned_enemy.emit(i)
 				
 func apply_difficulty():
 	
-	get_enemy_children()
+	
 	for i in enemyChildren:
 		match currentDifficulty:
 			EASY:
@@ -191,10 +193,10 @@ func apply_difficulty():
 				i.stat_sheet.knockback_resistance = 50.0
 
 func simple_restart():
-	get_enemy_children()
+	
 	for i in enemyChildren:
 		i.queue_free()
-	
+	enemyChildren = []
 	if(playerNode == null):
 		playerNode = spawn_scene(playerScene, playerStartPos)
 		playerNode.velocity = Vector2.ZERO

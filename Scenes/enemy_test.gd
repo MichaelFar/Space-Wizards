@@ -356,7 +356,8 @@ func _on_hurtbox_area_entered(area):
 			else:
 				animationPlayer.stop()
 		elif(area.name == 'SpellHitBox' && state != TAKEHIT):
-			update_poise_bar(area.get_parent().spell_stat_sheet.get_stats()[0])
+			update_poise_bar(area.get_parent().spell_stat_sheet.get_stats()[2])
+			print("Poise value passed from spell is " + str(area.get_parent().spell_stat_sheet.get_stats()[2]))
 			update_healthbar(area.get_parent().spell_stat_sheet.get_stats()[1])
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
@@ -456,8 +457,7 @@ func dead_state(_delta):
 		
 		$"DeathEffect-sheet".show()
 		
-		#$"DeathEffect-sheet".reparent(get_parent(), true)
-		#animationPlayer.reparent(get_parent(),true)
+		
 		animationPlayer.play("death")
 	elif(deadframes / framerate >= 2):
 		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
@@ -509,7 +509,7 @@ func populate_stats():
 	pushBackStrength = stat_sheet.knockback_strength
 	max_poise = poise
 		
-func update_poise_bar(poise_change):
+func update_poise_bar(poise_change):#update_poise_bar and update_healthbar could be changed in future enemies to have specific behavior occur at certain values
 	
 	if(poisebar != null):
 		

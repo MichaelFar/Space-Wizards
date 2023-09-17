@@ -1,0 +1,515 @@
+[gd_scene load_steps=18 format=3 uid="uid://b267d86bs3b4e"]
+
+[ext_resource type="Script" path="res://Scripts/attackRotation.gd" id="1_hgekt"]
+[ext_resource type="Texture2D" uid="uid://cshty2waq1eof" path="res://Sprites/player sprite sheets/parry_smear_01.png" id="2_4o6a5"]
+[ext_resource type="Shader" path="res://Shaders/forcefield.gdshader" id="3_bk0oc"]
+[ext_resource type="Texture2D" uid="uid://107krosy7tvj" path="res://Sprites/Sprite Effects/pipo-btleffect207_192.png" id="4_n4g3h"]
+[ext_resource type="Texture2D" uid="uid://b13ydspxd8yli" path="res://Sprites/player sprite sheets/broom_smear_01.png" id="5_j1gc0"]
+[ext_resource type="PackedScene" uid="uid://0aa1ygtgydm4" path="res://Scenes/hitbox.tscn" id="6_gdlkk"]
+[ext_resource type="AudioStream" uid="uid://cownt3i1ku7fd" path="res://Audio/Effects/Player/zapsplat_foley_wood_bambo_swoosh_through_air_001.mp3" id="7_ognkx"]
+[ext_resource type="AudioStream" uid="uid://dsidu55ds7722" path="res://Audio/Effects/Player/zapsplat_impacts_punch_body_fast_swipe_whoosh_into_punch_impact_clothing_005_72433.mp3" id="8_nb00o"]
+
+[sub_resource type="Animation" id="Animation_hj3a2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/broom_smear_1/AttackHitBox/CollisionShape2D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Pipo-btleffect208192:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attackContainer/Pipo-btleffect208192:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attackContainer/broom_smear_1:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("attackContainer/broom_smear_1:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("attackContainer/Parry_smear_1:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("attackContainer/Parry_smear_1:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("attackContainer/Parry_smear_1:offset")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2(0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("attackContainer/broom_whoosh_snd:playing")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath(".")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"toggle_parry_active"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_wm3dy"]
+resource_name = "melee_attack"
+length = 0.15
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/broom_smear_1/AttackHitBox/CollisionShape2D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.01, 0.05, 0.09, 0.13),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [true, false, false, true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/broom_smear_1:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.01, 0.05, 0.09, 0.13),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attackContainer/broom_smear_1:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.01, 0.15),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attackContainer/broom_whoosh_snd:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.05),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.12),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_hit"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.15),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"reset_knockback_direction"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("player_stat_sheet")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"send_stats"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_s1crv"]
+resource_name = "parry_default"
+length = 0.09
+step = 0.03
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Parry_smear_1:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.03, 0.06),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Parry_smear_1:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.01),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attackContainer/Parry_smear_1:offset")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_6b8eu"]
+resource_name = "parry_hit"
+length = 0.3
+step = 0.03
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Parry_smear_1:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.06, 0.12, 0.18, 0.24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [8, 9, 10, 11, 7]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Parry_smear_1:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.27),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.27),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [true],
+"method": &"toggle_parry_active"
+}, {
+"args": [false],
+"method": &"toggle_parry_active"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attackContainer")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.27),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"zero_parry_direction"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_htesc"]
+resource_name = "parry_shield"
+length = 0.15
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Pipo-btleffect208192:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Pipo-btleffect208192:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.02),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_nvlxf"]
+resource_name = "parry_whiff"
+length = 0.21
+step = 0.03
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attackContainer/Parry_smear_1:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.03, 0.06, 0.09, 0.12, 0.15, 0.18),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 4, 5, 6, 11]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attackContainer/Parry_smear_1:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.03, 0.21),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attackContainer/Pipo-btleffect208192:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attackContainer/Parry_smear_1:offset")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.15),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2(-6, 0)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.21),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [true],
+"method": &"toggle_parry_active"
+}, {
+"args": [false],
+"method": &"toggle_parry_active"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("player_stat_sheet")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"send_stats"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4uim7"]
+_data = {
+"RESET": SubResource("Animation_hj3a2"),
+"melee_attack": SubResource("Animation_wm3dy"),
+"parry_default": SubResource("Animation_s1crv"),
+"parry_hit": SubResource("Animation_6b8eu"),
+"parry_shield": SubResource("Animation_htesc"),
+"parry_whiff": SubResource("Animation_nvlxf")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_40x45"]
+shader = ExtResource("3_bk0oc")
+shader_parameter/blue = 1.0
+shader_parameter/red = 0.75
+shader_parameter/amount = 200
+shader_parameter/applied = true
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x5gnt"]
+radius = 8.0
+height = 34.0
+
+[node name="attackContainer" type="CharacterBody2D"]
+z_index = 10
+position = Vector2(0, -4)
+script = ExtResource("1_hgekt")
+
+[node name="AttackSpritePlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_4uim7")
+}
+
+[node name="Parry_smear_1" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(20, -4)
+texture = ExtResource("2_4o6a5")
+hframes = 4
+vframes = 3
+
+[node name="Pipo-btleffect208192" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_40x45")
+rotation = 1.5708
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("4_n4g3h")
+offset = Vector2(0, -33)
+hframes = 5
+vframes = 4
+
+[node name="broom_smear_1" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(29, -4)
+texture = ExtResource("5_j1gc0")
+hframes = 4
+
+[node name="AttackHitBox" parent="broom_smear_1" instance=ExtResource("6_gdlkk")]
+position = Vector2(-24, 4)
+
+[node name="CollisionShape2D" parent="broom_smear_1/AttackHitBox" index="0"]
+position = Vector2(31, -3)
+rotation = 2.27591
+shape = SubResource("CapsuleShape2D_x5gnt")
+
+[node name="broom_whoosh_snd" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_ognkx")
+
+[node name="broom_hit_snd" type="AudioStreamPlayer" parent="broom_whoosh_snd"]
+stream = ExtResource("8_nb00o")
+
+[editable path="broom_smear_1/AttackHitBox"]

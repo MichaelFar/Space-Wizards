@@ -335,6 +335,7 @@ func _on_attack_hit_box_area_entered(area):
 		velocity = Vector2.ZERO
 		hit_enemy = true
 		print("When hit enemy attack timer is " + str(attack_timer_on))
+		attackContainer.play_hit()
 		
 
 func _on_player_hurtbox_area_entered(area):
@@ -395,11 +396,11 @@ func change_sprite(spriteName):
 	
 func cool_down_state(_delta):
 		
-	var cool_down_target = 20
+	var cool_down_target = 25
 	attack_cool_down_frames += 1
 	
 	if(hit_enemy):
-		cool_down_target = 15
+		cool_down_target = 20
 		
 	velocity = velocity.move_toward(Vector2.ZERO, friction * 1.5 * _delta)
 	
@@ -458,8 +459,8 @@ func player_must_die():
 	shouldDie = true
 	
 func successful_hit():
-	
 	attackContainer.play_hit()
+	#successfulHit = true
 	print("play_hit() has run")
 	
 func play_hit():

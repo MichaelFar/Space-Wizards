@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://bs8071ewrak5g"]
+
+[ext_resource type="Script" path="res://Scripts/EnergyPointContainer.gd" id="1_1bcod"]
+
+[node name="EnergyPointContainer" type="Node2D"]
+script = ExtResource("1_1bcod")
+
+[node name="Node2D4" type="Node2D" parent="."]
+position = Vector2(-20, -20)
+
+[node name="Node2D3" type="Node2D" parent="."]
+position = Vector2(0, -30)
+
+[node name="Node2D2" type="Node2D" parent="."]
+position = Vector2(20, -20)
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(20, 20)
+
+[node name="Node2D6" type="Node2D" parent="."]
+position = Vector2(0, 30)
+
+[node name="Node2D5" type="Node2D" parent="."]
+position = Vector2(-20, 20)

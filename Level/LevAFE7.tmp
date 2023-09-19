@@ -1,0 +1,83 @@
+[gd_scene load_steps=6 format=3 uid="uid://n2ilovmo80v4"]
+
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_ehqt5"]
+[ext_resource type="PackedScene" uid="uid://dtfcmfx67ol1t" path="res://Level/combat_demo_arena.tscn" id="2_mhx6l"]
+[ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="3_54leo"]
+[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="3_e782x"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_4kerf"]
+vertices = PackedVector2Array(464, 279, 690, 219, 420, 374, 435, 316, 387.366, 26.4268, 408, 27, 492, 113, 430, 155, 366, 121, 321, 94, 550, 110, 520, 131, 578, 126, 605, 140, 587, 156, 554, 146, 74, 174, 336, 25, 287, 114, 319, 219, 622, 178, 690, 176, 433, 256, 362, 258, 292, 235, 353, 272, 344, 374, 74, 219, 335, 142, 470, 179, 641, 161, 230, 213, 244, 206, 207, 196, 207, 178, 229, 170, 512, 155)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7, 8, 9), PackedInt32Array(5, 10, 11, 6), PackedInt32Array(12, 13, 14, 15), PackedInt32Array(16, 17, 4, 9, 18), PackedInt32Array(19, 20, 21, 1, 22, 23, 24), PackedInt32Array(25, 3, 2, 26, 27, 16), PackedInt32Array(23, 25, 16, 24), PackedInt32Array(19, 28, 8, 7, 29), PackedInt32Array(20, 30, 21), PackedInt32Array(14, 20, 19, 29), PackedInt32Array(31, 32, 24), PackedInt32Array(1, 0, 22), PackedInt32Array(31, 24, 16), PackedInt32Array(33, 31, 16), PackedInt32Array(34, 33, 16), PackedInt32Array(34, 16, 18, 35), PackedInt32Array(19, 35, 18, 28), PackedInt32Array(14, 29, 36, 15)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(74, 174, 74, 219, 344, 374, 420, 374, 690, 219, 690, 176, 641, 161, 622, 178, 587, 156, 605, 140, 578, 126, 554, 146, 512, 155, 470, 179, 430, 155, 492, 113, 520, 131, 550, 110, 408, 27, 387.366, 26.4268, 336, 25), PackedVector2Array(244, 206, 292, 235, 319, 219, 229, 170, 207, 178, 207, 196, 230, 213), PackedVector2Array(353, 272, 435, 316, 464, 279, 433, 256, 362, 258), PackedVector2Array(335, 142, 366, 121, 321, 94, 287, 114)])
+
+[node name="Level0" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_ehqt5")
+
+[node name="Player" parent="." instance=ExtResource("3_e782x")]
+position = Vector2(171, 168)
+
+[node name="ExclusionZone" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone" index="0"]
+polygon = PackedVector2Array(231, 171, 219, 163, 207, 178, 207, 196, 230, 213, 244, 206, 293, 235, 319, 219)
+
+[node name="ExclusionZone2" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone2" index="0"]
+polygon = PackedVector2Array(353, 272, 357, 262, 372, 256, 395, 258, 433, 254, 464, 279, 435, 316)
+
+[node name="ExclusionZone3" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone3" index="0"]
+polygon = PackedVector2Array(287, 114, 321, 91, 366, 121, 335, 142)
+
+[node name="ExclusionZone4" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone4" index="0"]
+polygon = PackedVector2Array(494, 112, 430, 155, 470, 179, 511, 155, 554, 146, 578, 126, 550, 110, 520, 131)
+
+[node name="ExclusionZone5" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone5" index="0"]
+polygon = PackedVector2Array(604, 140, 587, 156, 622, 178, 640, 161)
+
+[node name="ExclusionZone7" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone7" index="0"]
+position = Vector2(-220.682, -183.427)
+scale = Vector2(1.33898, 1.47866)
+
+[node name="ExclusionZone8" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone8" index="0"]
+position = Vector2(-85.4692, 19.725)
+scale = Vector2(1.3332, 1.37358)
+
+[node name="ExclusionZone9" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone9" index="0"]
+position = Vector2(-70.9156, 12.4688)
+scale = Vector2(1.13231, 1.2375)
+
+[node name="ExclusionZone11" parent="." instance=ExtResource("3_54leo")]
+
+[node name="ExclusionPolygon" parent="ExclusionZone11" index="0"]
+position = Vector2(-44.6466, -113.759)
+scale = Vector2(1.35235, 1.29954)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_4kerf")
+
+[node name="combat_demo_arena" parent="." instance=ExtResource("2_mhx6l")]
+position = Vector2(281, 108)
+
+[editable path="ExclusionZone"]
+[editable path="ExclusionZone2"]
+[editable path="ExclusionZone3"]
+[editable path="ExclusionZone4"]
+[editable path="ExclusionZone5"]
+[editable path="ExclusionZone7"]
+[editable path="ExclusionZone8"]
+[editable path="ExclusionZone9"]
+[editable path="ExclusionZone11"]

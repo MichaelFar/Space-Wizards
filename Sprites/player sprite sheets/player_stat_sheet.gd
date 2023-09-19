@@ -22,7 +22,7 @@ func _ready():
 func post_initialize():
 	set_equipped_weapon("broom")
 	
-func set_equipped_weapon(weapon = "broom"):
+func set_equipped_weapon(weapon = "broom"): #
 	var weapons_dict = {"broom": 
 							 {
 							  "knockback": knockback_strength, 
@@ -34,16 +34,7 @@ func set_equipped_weapon(weapon = "broom"):
 	damage = weapons_dict[weapon]["damage"]
 	#player_stats.emit(knockback_strength, damage)
 #Holds values specific to one attack
-func set_equipped_spell(spell = 'zap'):
-	var spells_dict = {"zap_spell": 
-							 {
-							  "knockback": knockback_strength, 
-							  "damage": damage,
-							  "poise_damage": poise_damage
-							 }
-							}
-	return spells_dict[spell]
 
-func send_stats():
+func send_stats():#Called when the melee_attack animation plays 
 	player_stats.emit(knockback_strength, damage, poise_damage, parry_poise_damage)
 	print("Sent stats to enemy")

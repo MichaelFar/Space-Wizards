@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 InputBuffer="*res://Scripts/input_buffer.gd"
+EnergyPointContainer="*res://Scenes/energy_point_container.tscn"
+globals="*res://globals.gd"
 
 [debug]
 
@@ -135,6 +137,11 @@ fullscreen={
 RAM={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":114,"echo":false,"script":null)
+]
+}
+SelectNextSpell={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194306,"key_label":0,"unicode":0,"echo":false,"script":null)
 ]
 }
 

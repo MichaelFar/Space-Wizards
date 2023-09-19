@@ -218,7 +218,7 @@ script = ExtResource("1_lrpfm")
 
 [node name="spell_stat_sheet" type="Node2D" parent="."]
 script = ExtResource("2_5a4xv")
-knockback_strength = 0
+poise_damage = 20.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

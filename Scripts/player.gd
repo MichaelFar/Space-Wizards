@@ -61,7 +61,7 @@ var type = 'player'
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
 @onready var attackContainer = $attackContainer
-var EnergyPointContainer = null
+
 var PlayerCam = null
 var listOfSprites = []
 var enemyIDs = []
@@ -109,7 +109,7 @@ func post_initialize(animation_tree):
 	
 	animationState = animation_tree.get("parameters/playback")
 	parent = get_parent()
-	EnergyPointContainer = $EnergyPointContainer
+	#EnergyPointContainer = $EnergyPointContainer
 	PlayerCam = $PlayerCam
 func populate_stats():
 	
@@ -368,6 +368,7 @@ func _on_player_hurtbox_area_entered(area):
 			print("Position of animation for " + attackSpritePlayer.current_animation + " is " + str(attackSpritePlayer.current_animation_position))
 			attackContainer.parryDirection = area.get_enemy_id().global_position
 			get_enemy_attack_stats(area.get_enemy_id())
+			print(str(EnergyPointContainer))
 			EnergyPointContainer.gain_energy(parry_energy, area.get_enemy_id().global_position)
 		
 				

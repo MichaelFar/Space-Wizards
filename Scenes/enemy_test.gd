@@ -361,11 +361,13 @@ func _on_hurtbox_area_entered(area):
 			update_healthbar(area.get_parent().spell_stat_sheet.get_stats()[1])
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
+			player_poise_damage = area.get_parent().spell_stat_sheet.get_stats()[1]
 			playerPreviousPosition = parent.playerNode.position
 			change_sprite(body_sprite, playerPreviousPosition)
 			animationPlayer.play("take_hit")
 			if(state != STAGGERED):
 				state = TAKEHIT
+			player_hit_me.emit()
 			#area.get_parent().shouldHit = true
 func take_hit_state(_delta, origin = position - playerPreviousPosition):
 	
@@ -377,10 +379,13 @@ func take_hit_state(_delta, origin = position - playerPreviousPosition):
 		reset_player_stats()
 		if(state == TAKEHIT):
 			animationPlayer.play('take_hit')
+			print("State is " + str(state))
+			print("In take hit state on frame" + str(frame))
 		elif(state == STAGGERED):
 			animationPlayer.play('parried')
-	
+		
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
+		print("pushback acceleration is " + str(pushBackAcceleration))
 		
 		velocity = velocity.move_toward(origin * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
@@ -516,7 +521,7 @@ func update_poise_bar(poise_change):#update_poise_bar and update_healthbar could
 		poise += poise_change
 		
 		if(poise <= 0.0):
-			stun_modifier = poise / 180.0 #Increases the length of the animation based on how overkill the poise damage was
+			stun_modifier = clampf(poise / 180.0, 0.0, 1.0) #Increases the length of the animation based on how overkill the poise damage was
 			print("Stun modifier is " + str(stun_modifier))
 			knockback_modifier = absf(poise)#How far the enemy is knocked back when poise overkill occurs (currently no effect)
 			

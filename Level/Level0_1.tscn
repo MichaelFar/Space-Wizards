@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cqpsi0j5a867"]
 
-[ext_resource type="Script" path="res://Sprites/lilGuy/world.gd" id="1_ph1ox"]
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_ph1ox"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_iopc2"]
 [ext_resource type="PackedScene" uid="uid://bm1oapd04iuuh" path="res://Tiles/64x64plane.tscn" id="3_tenns"]
 

@@ -44,7 +44,7 @@ func _ready():
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
 	enemyScene = preload("res://Scenes/enemy_test.tscn")
 	playerScene = preload("res://Scenes/player.tscn")
-	
+	globals.player = playerNode
 	
 	get_enemy_children()
 	for i in enemyChildren:

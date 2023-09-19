@@ -13,6 +13,11 @@ var parryDirection = Vector2.ZERO
 
 var soundChildren = []
 
+#Consider making attackContainer behave more like spell container, where 'attacks' are actually scene instances
+#whose behavior is self determined on instantiate
+#This would allow for infinite scalability similar to spells 
+
+
 func _ready():
 	
 	playerNode = get_parent()

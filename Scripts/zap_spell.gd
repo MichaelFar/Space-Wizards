@@ -7,7 +7,7 @@ extends CharacterBody2D
 @export var target_distance = 20 #As the speed of the projectile increases, so too will this need to increase
 
 var spell_cooldown = 20
-@export var cool_down_denominator = 2
+@export var cool_down_denominator = 2 #Divided by frame rate to determine cooldown length. 2 = half second, 3 = 1/3rd second, etc
 var cooldown_begin = false
 
 @onready var spell_stat_sheet = $spell_stat_sheet
@@ -17,7 +17,7 @@ var vectorDifference = Vector2.ZERO
 var previousGlobalVector = Vector2.ZERO
 var destination = Vector2.ZERO#In global reference
 var frame = 0
-var EnergyPointContainer = null
+
 @export var shouldHit = false
 # Called when the node enters the scene tree for the first time.
 
@@ -33,16 +33,18 @@ func post_initialize():
 	global_position = originPoint 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
+	
 	frame +=1
 	var frame_rate = 1/delta
 	spell_cooldown = frame_rate / cool_down_denominator
+	
 	if(frame/1 == 1 || $AnimationPlayer.current_animation != 'hit'):
 		
 		$AnimationPlayer.play("travel")
 		
 	destination = global_destination - global_position
 	
-	if(global_position.distance_to(destination + global_position) < target_distance || shouldHit):
+	if(global_position.distance_to(global_destination) < target_distance || shouldHit):
 	
 		$AnimationPlayer.play('hit')
 		rotation = 0
@@ -54,16 +56,17 @@ func _physics_process(delta):
 		look_at(global_destination)
 		position = position.move_toward(destination * max_speed, delta * acceleration)
 	
-
 func _on_spell_hit_box_body_entered(body):
 	if(body is TileMap):
 		shouldHit = true
-
 
 func _on_spell_hit_box_area_entered(area):
 	var areaParent = area.get_parent()
 	if(area.name == 'Hurtbox'):
 		if(areaParent.has_method('node_type')):
-			if !(areaParent.node_type() == 'player'):
+			if (areaParent.node_type() != 'player'):
 				shouldHit = true
 	
+func cost():#This is used in spell_container to tell if the player has enough energy to cast the spell
+	#All spells must have this function, regardless of cost. If the cost is nothing, return true
+	return EnergyPointContainer.lose_energy(1)

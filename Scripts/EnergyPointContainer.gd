@@ -6,15 +6,24 @@ var available_list = []#Contains only available points, is not parallel with poi
 var energy_particle = null
 var particle_children = []#List of energy_particle nodes, not parallel with point children
 
+var player = null
+
+var frame = 0
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
+	post_initialize()
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+
+func post_initialize():
 	get_point_children()
 	energy_particle = preload("res://Scenes/energy_particle.tscn")
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
-	pass
-
+	frame +=1
+	global_position = globals.player.global_position
+	
+	#global_position = 
 func get_point_children():
 	point_children = []
 	occupied_list = []

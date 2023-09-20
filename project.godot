@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 InputBuffer="*res://Scripts/input_buffer.gd"
 EnergyPointContainer="*res://Scenes/energy_point_container.tscn"
 globals="*res://globals.gd"
+GlobalCameraValues="*res://global_camera_values.gd"
 
 [debug]
 
@@ -33,6 +34,7 @@ window/size/viewport_height=360
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="ignore"
 window/vsync/vsync_mode=0
 
 [editor_plugins]

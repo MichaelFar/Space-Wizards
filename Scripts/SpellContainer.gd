@@ -10,7 +10,8 @@ extends CharacterBody2D
 #All spells should handle all behavior within its own scene, this allows for infinite scalability
 @onready var SpellLoader = $SpellLoader
 @onready var spawn_point = $spawn_point
-
+var camera = null
+#@onready var spell_book = $BookUi02
 var parent = null
 
 var PlayerCam = null
@@ -30,7 +31,7 @@ var spell_cooldown_frames = 0
 var selected_spell_index = 0#Index of spell_name_list that represents the current one selected
 
 var current_spell = null#Holds resource for selected spell scene
-
+var is_open = false
 func _ready():
 	
 	all_possible_spell_resources = SpellLoader.get_resource_list()
@@ -48,17 +49,22 @@ func post_initialize():
 	MouseCursor = PlayerCam.get_node("MouseCursor")
 	
 	global_position = MouseCursor.global_position
+	
 	randomize_list()
+	
 	current_spell = SpellLoader.get_resource(all_possible_spell_resources[0])
+	
+	
 func _physics_process(delta):
 	var frame_rate = 1/delta
-	#global_position = MouseCursor.global_position
-	if(InputBuffer.is_action_press_buffered("RAM")):
-		if(!spell_cooldown_target):
-
-			spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), 
-					MouseCursor.global_position, 
-					spawn_point.global_position)
+	
+	
+	#This now lives in player.gd, except for cooldown as of 9/20/23
+#		if(!spell_cooldown_target):
+#
+#			spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), 
+#					MouseCursor.global_position, 
+#					spawn_point.global_position)
 						
 	if(spell_cooldown_target):
 		if(spell_cooldown_frames / spell_cooldown_target == 1):
@@ -66,7 +72,7 @@ func _physics_process(delta):
 			spell_cooldown_frames = 0
 		else:
 			spell_cooldown_frames += 1
-
+	
 func load_spell_children():
 	spell_name_list = []
 	for i in all_possible_spell_resources:
@@ -87,7 +93,7 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 			spell_cooldown_target = spellNode.spell_cooldown
 			
 	else:
-		print("Could not cast the spell " + spell_name_list[selected_spell_index])
+		camera.SpellBook.shouldShake = true
 	#global_position = MouseCursor.global_position
 
 func randomize_list():
@@ -100,8 +106,20 @@ func cycle_spells(direction):
 	if(selected_spell_index + direction < 0): 
 		selected_spell_index = all_possible_spell_resources.size() - 1
 	elif(selected_spell_index + direction 
-	> all_possible_spell_resources.size() - 1):
-		selected_spell_index = 0
+		> all_possible_spell_resources.size() - 1):
+			selected_spell_index = 0
 	
 	current_spell = all_possible_spell_resources[selected_spell_index]
 	
+	
+func toggle_book_open():
+	if(!is_open):
+		PlayerCam.SpellBook.animationPlayer.queue("open_book")
+		is_open = true
+		
+	else:
+		PlayerCam.SpellBook.animationPlayer.queue("close_book")
+		is_open = false
+		
+	PlayerCam.SpellBook.material.set_shader_parameter("enabled", is_open)
+	return is_open

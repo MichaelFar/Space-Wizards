@@ -12,6 +12,7 @@ var acceleration = 450 #Multiplied by delta
 var prevAcceleration = acceleration
 var friction = 250 #Multiplied by delta
 var max_speed = 150 # NOT multiplied by delta
+var previous_max_speed = max_speed
 var attack_movement = 400 #Multiplied by delta
 
 var max_health = 1000
@@ -61,6 +62,7 @@ var type = 'player'
 @onready var attackSpritePlayer = $attackContainer/AttackSpritePlayer
 @onready var nakedWizardBase = $NakedWizard_base
 @onready var attackContainer = $attackContainer
+@onready var spellContainer = $SpellContainer
 
 var PlayerCam = null
 var listOfSprites = []
@@ -78,7 +80,8 @@ enum {
 	TAKEHIT,
 	DEAD,
 	PARRY,
-	COOLDOWN
+	COOLDOWN,
+	BOOKOPEN
 }
 
 func _ready():#Called when node loads into the scene, children ready functions run first
@@ -92,7 +95,6 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	for i in get_children():
 		if i is Sprite2D:
 			listOfSprites.append(i)
-	
 	
 	shader = get("material")
 	
@@ -145,6 +147,8 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			dead_state(_delta)
 		COOLDOWN:
 			cool_down_state(_delta)
+		BOOKOPEN:
+			RAM_state(_delta)
 	
 	if(dodge_timer_on):
 		dodge_timer += 1
@@ -161,7 +165,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			parry_timer_on = false
 	
 func move_state(_delta):
-	
+	var camera = GlobalCameraValues.cameraNode
 	mouse_coordinates = get_local_mouse_position()
 	mouse_coordinates = mouse_coordinates.normalized()
 	
@@ -192,48 +196,56 @@ func move_state(_delta):
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 	
-	if(!attack_timer_on):
-		
-		if(InputBuffer.is_action_press_buffered('click') && !Input.is_action_just_released('click')):#Attack state
-			#print("Player just attacked")
-			state = ATTACK
-			if('parry' in attackSpritePlayer.current_animation):
-				print("Attack will play after parry")
-				attackSpritePlayer.queue("melee_attack")
-				attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
-			else:
-				attackSpritePlayer.play('melee_attack')
-			nakedWizardBase.switch_weapon_sprite("")
-			attack_timer_on = true
+	if(state != BOOKOPEN):
+		if(!attack_timer_on):
 			
-		else:
-			knockBackDirection = knockBackHitStrength
-		
+			if(InputBuffer.is_action_press_buffered('click') && !Input.is_action_just_released('click')):#Attack state
+				#print("Player just attacked")
+				state = ATTACK
+				if('parry' in attackSpritePlayer.current_animation):
+					print("Attack will play after parry")
+					attackSpritePlayer.queue("melee_attack")
+					attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
+				else:
+					attackSpritePlayer.play('melee_attack')
+				nakedWizardBase.switch_weapon_sprite("")
+				attack_timer_on = true
 				
-	if(!parry_timer_on):
-		if (InputBuffer.is_action_press_buffered('parry') 
-		&& !Input.is_action_just_released('parry')):
-			state = PARRY
-			#toggle_parry_active(true)
-			parry_timer_on = true
-			attack_cool_down_frames = 0
-			attack_timer_on = false
-			attackSpritePlayer.play("parry_whiff")
-			acceleration = prevAcceleration * accelerationCoef
+			else:
+				knockBackDirection = knockBackHitStrength
 			
-			
-		else:
-			parried_enemy = false
-	if(!dodge_timer_on):
+		if(!parry_timer_on):
+			if (InputBuffer.is_action_press_buffered('parry') 
+			&& !Input.is_action_just_released('parry')):
+				state = PARRY
+				#toggle_parry_active(true)
+				parry_timer_on = true
+				attack_cool_down_frames = 0
+				attack_timer_on = false
+				attackSpritePlayer.play("parry_whiff")
+				acceleration = prevAcceleration * accelerationCoef
+				
+			else:
+				parried_enemy = false
+		if(!dodge_timer_on):
+			if(state == BOOKOPEN):
+				print("Book is open and tried to dodge")
+			if(InputBuffer.is_action_press_buffered('dodge') 
+			&& !Input.is_action_just_released('dodge')):
+				
+				print("Dodge state entered")
+				state = DODGE
+				previous_velocity = input_vector * max_speed
+				attackContainer.abort_animation()
+				
+	if(InputBuffer.is_action_press_buffered("RAM")):
 		
-		if(InputBuffer.is_action_press_buffered('dodge') 
-		&& !Input.is_action_just_released('dodge')):
-			
-			print("Dodge state entered")
-			state = DODGE
-			previous_velocity = input_vector * max_speed
-			attackContainer.abort_animation()
-			EnergyPointContainer.lose_energy(1)
+		if(spellContainer.toggle_book_open()):
+			state = BOOKOPEN
+		else:
+			state = MOVE
+			max_speed = previous_max_speed
+	
 	move_and_slide()
 
 func attack_state(_delta):#State machine for attack combos will go here
@@ -251,7 +263,6 @@ func attack_state(_delta):#State machine for attack combos will go here
 		#change_sprite("NakedWizard_base")
 		nakedWizardBase.switch_weapon_sprite("")
 		
-	
 	elif(attackSpritePlayer.current_animation_position < attackSpritePlayer.current_animation_length):
 		print(str(knockBackDirection))
 		velocity = velocity.move_toward(knockBackDirection * mouse_coordinates * attack_movement, abs(knockBackDirection) * attack_movement * _delta)
@@ -327,6 +338,59 @@ func parry_state(_delta):
 		print("Queued animation for attack player is " + str(attackSpritePlayer.get_queue()))
 	move_and_slide()
 
+func cool_down_state(_delta):
+		
+	var cool_down_target = 25
+	attack_cool_down_frames += 1
+	
+	if(hit_enemy):
+		cool_down_target = 20
+		
+	velocity = velocity.move_toward(Vector2.ZERO, friction * 1.5 * _delta)
+	
+	if(attack_cool_down_frames / cool_down_target == 1):
+		
+		attack_cool_down_frames = 0
+		attack_timer_on = false
+		state = MOVE
+		hit_enemy = false
+		acceleration = prevAcceleration
+		
+	move_and_slide()
+
+func dodge_state(_delta):#Candidate for player sheet
+	
+	dodge_frames += 1
+	var dodge_max_speed = 800
+	var dodge_accel = dodge_max_speed * 2
+	attack_cool_down_frames = 0
+	attack_timer_on = false
+	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
+	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
+	animationState.travel("MoveBlend")
+	
+	velocity = velocity.move_toward(input_vector * dodge_max_speed, dodge_accel * _delta)
+	
+	if(dodge_frames / 15 == 1):
+		
+		dodge_frames = 0
+		state = MOVE
+		velocity = previous_velocity
+		hit_box.disabled = false
+		dodge_timer_on = true
+		dodge_timer = 0
+		
+	else:
+		
+		hit_box.disabled = true
+		
+	set_collision_mask_value(2, !hit_box.disabled) #Changes the collision mask when dodging to go through enemies
+	move_and_slide()
+
+func RAM_state(_delta):
+	max_speed = previous_max_speed / 2
+	move_state(_delta)
+
 func _on_attack_hit_box_area_entered(area):
 	
 	if (area.name == "Hurtbox"):
@@ -395,54 +459,6 @@ func change_sprite(spriteName):
 		else:
 			i.show()
 	
-func cool_down_state(_delta):
-		
-	var cool_down_target = 25
-	attack_cool_down_frames += 1
-	
-	if(hit_enemy):
-		cool_down_target = 20
-		
-	velocity = velocity.move_toward(Vector2.ZERO, friction * 1.5 * _delta)
-	
-	if(attack_cool_down_frames / cool_down_target == 1):
-		
-		attack_cool_down_frames = 0
-		attack_timer_on = false
-		state = MOVE
-		hit_enemy = false
-		acceleration = prevAcceleration
-		
-	move_and_slide()
-
-func dodge_state(_delta):#Candidate for player sheet
-	
-	dodge_frames += 1
-	var dodge_max_speed = 800
-	var dodge_accel = dodge_max_speed * 2
-	attack_cool_down_frames = 0
-	attack_timer_on = false
-	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
-	playerSpriteTree.set("parameters/MoveBlend/blend_position", input_vector)
-	animationState.travel("MoveBlend")
-	
-	velocity = velocity.move_toward(input_vector * dodge_max_speed, dodge_accel * _delta)
-	
-	if(dodge_frames / 15 == 1):
-		
-		dodge_frames = 0
-		state = MOVE
-		velocity = previous_velocity
-		hit_box.disabled = false
-		dodge_timer_on = true
-		dodge_timer = 0
-		
-	else:
-		
-		hit_box.disabled = true
-		
-	set_collision_mask_value(2, !hit_box.disabled) #Changes the collision mask when dodging to go through enemies
-	move_and_slide()
 
 func get_enemy_attack_stats(enemy_id):
 	

@@ -1,10 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://1fa7yelaqc5d"]
+[gd_scene load_steps=5 format=3 uid="uid://1fa7yelaqc5d"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerCam.gd" id="1_mj7g5"]
 [ext_resource type="PackedScene" uid="uid://6kx1sxy8dl1k" path="res://UI/UI Scenes/mouse_cursor.tscn" id="2_u8fgp"]
+[ext_resource type="PackedScene" uid="uid://ccftd7obe8afk" path="res://UI/UI Scenes/spell_book.tscn" id="3_io3mh"]
+[ext_resource type="Texture2D" uid="uid://ba48fg7qocp1d" path="res://Sprites/UI Sprites/Book UI/tile_0015.png" id="4_6etac"]
 
 [node name="PlayerCam" type="Camera2D"]
 script = ExtResource("1_mj7g5")
 shakeStrength = 2.0
 
 [node name="MouseCursor" parent="." instance=ExtResource("2_u8fgp")]
+
+[node name="spell_book" parent="." instance=ExtResource("3_io3mh")]
+
+[node name="Tile0015" type="Sprite2D" parent="spell_book"]
+position = Vector2(96, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("4_6etac")

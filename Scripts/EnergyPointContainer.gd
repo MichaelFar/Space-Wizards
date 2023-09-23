@@ -23,7 +23,6 @@ func _physics_process(delta):
 	frame +=1
 	global_position = globals.player.global_position
 	
-	#global_position = 
 func get_point_children():
 	point_children = []
 	occupied_list = []
@@ -72,14 +71,13 @@ func lose_energy(energyNum): #Use this as a condition to ensure that energy is l
 		
 	else:
 		
-		
 		for j in particle_children:
 			iterator +=1
 			print("Freeing position " + str(occupied_list.find(true)))
 
 			if (iterator <= energyNum):
 				occupied_list[find_last_taken_spot()] = false
-				print("Index of last taken spot " + str(find_last_taken_spot()))
+				
 				particle_children.pop_at(iterator - 1)
 				j.queue_free()#Replace with anim
 			else:

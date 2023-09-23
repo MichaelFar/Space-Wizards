@@ -14,8 +14,6 @@ var camera = null
 #@onready var spell_book = $BookUi02
 var parent = null
 
-var PlayerCam = null
-
 var EnergyContainer = null
 
 var MouseCursor = null
@@ -31,7 +29,21 @@ var spell_cooldown_frames = 0
 var selected_spell_index = 0#Index of spell_name_list that represents the current one selected
 
 var current_spell = null#Holds resource for selected spell scene
+
 var is_open = false
+
+var book_icon_frame = 0
+
+var spells_dict = {"zap_spell": #Holds information for proper icon frames
+							 {
+							  "frame": 8, 
+							 },
+				   "dummy_spell":
+							 {
+							 "frame": 9,	
+							 }
+					}
+
 func _ready():
 	
 	all_possible_spell_resources = SpellLoader.get_resource_list()
@@ -42,11 +54,11 @@ func post_initialize():
 	
 	parent = get_parent()
 	
-	PlayerCam = parent.get_node("PlayerCam")
+	camera = parent.get_node("PlayerCam")
 	
 	EnergyContainer = parent.get_node("EnergyPointContainer")
 	
-	MouseCursor = PlayerCam.get_node("MouseCursor")
+	MouseCursor = camera.get_node("MouseCursor")
 	
 	global_position = MouseCursor.global_position
 	
@@ -54,11 +66,8 @@ func post_initialize():
 	
 	current_spell = SpellLoader.get_resource(all_possible_spell_resources[0])
 	
-	
 func _physics_process(delta):
 	var frame_rate = 1/delta
-	
-	
 	#This now lives in player.gd, except for cooldown as of 9/20/23
 #		if(!spell_cooldown_target):
 #
@@ -102,24 +111,37 @@ func randomize_list():
 
 func cycle_spells(direction):
 	#Direction is direction that the player will traverse the list, i.e -1 and 1
+	if(direction < 0):
+		camera.SpellBook.animationPlayer.play("page_left")
+	else:
+		camera.SpellBook.animationPlayer.play("page_right")
+		
+	var previous_spell_index = selected_spell_index
+	
 	selected_spell_index += direction
+	
 	if(selected_spell_index + direction < 0): 
 		selected_spell_index = all_possible_spell_resources.size() - 1
-	elif(selected_spell_index + direction 
-		> all_possible_spell_resources.size() - 1):
-			selected_spell_index = 0
+		
+	elif(selected_spell_index + direction > all_possible_spell_resources.size() - 1):
+		selected_spell_index = 0
 	
 	current_spell = all_possible_spell_resources[selected_spell_index]
 	
 	
+	book_icon_frame = spells_dict[current_spell]["frame"]
+	
+	camera.SpellBook.IconInBook.frame = book_icon_frame
+	camera.SpellBook.Icons.frame = book_icon_frame
 func toggle_book_open():
+	
 	if(!is_open):
-		PlayerCam.SpellBook.animationPlayer.queue("open_book")
+		camera.SpellBook.animationPlayer.queue("open_book")
 		is_open = true
 		
 	else:
-		PlayerCam.SpellBook.animationPlayer.queue("close_book")
+		camera.SpellBook.animationPlayer.queue("close_book")
 		is_open = false
 		
-	PlayerCam.SpellBook.material.set_shader_parameter("enabled", is_open)
+	camera.SpellBook.material.set_shader_parameter("enabled", is_open)
 	return is_open

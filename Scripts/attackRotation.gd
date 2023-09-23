@@ -41,7 +41,7 @@ func _physics_process(delta):
 		
 		if(attackPlayer.current_animation_position == 0 && attackPlayer.current_animation_length != 0):
 			
-			self.look_at(get_parent().PlayerCam.MouseCursor.global_position)
+			look_at(get_parent().PlayerCam.MouseCursor.global_position)
 			if(parryDirection != Vector2.ZERO):
 				self.look_at(parryDirection)
 			playerSpriteTree.set("parameters/IdleBlend/blend_position", get_parent().PlayerCam.MouseCursor.position)

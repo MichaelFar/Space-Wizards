@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://csti3s5ve4j0r"]
+[gd_scene load_steps=6 format=3 uid="uid://csti3s5ve4j0r"]
 
 [ext_resource type="Script" path="res://Scripts/SpellContainer.gd" id="1_j5o2g"]
+[ext_resource type="PackedScene" uid="uid://bjntwb2lu6fbp" path="res://Scenes/SpellScenes/dummy_spell.tscn" id="2_fwod0"]
 [ext_resource type="PackedScene" uid="uid://bolae2xcgoyvh" path="res://Scenes/SpellScenes/zap_spell.tscn" id="2_ohlyt"]
 [ext_resource type="Script" path="res://Scripts/spawn_point.gd" id="3_jkimt"]
 
@@ -12,7 +13,7 @@ height = 8.0
 script = ExtResource("1_j5o2g")
 
 [node name="SpellLoader" type="ResourcePreloader" parent="."]
-resources = [PackedStringArray("zap_spell"), [ExtResource("2_ohlyt")]]
+resources = [PackedStringArray("dummy_spell", "zap_spell"), [ExtResource("2_fwod0"), ExtResource("2_ohlyt")]]
 
 [node name="spawn_point" type="Node2D" parent="."]
 script = ExtResource("3_jkimt")

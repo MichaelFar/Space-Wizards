@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://bolae2xcgoyvh"]
+[gd_scene load_steps=12 format=3 uid="uid://bolae2xcgoyvh"]
 
 [ext_resource type="Script" path="res://Scripts/zap_spell.gd" id="1_lrpfm"]
 [ext_resource type="Script" path="res://Scenes/SpellScenes/spell_stat_sheet.gd" id="2_5a4xv"]
 [ext_resource type="Texture2D" uid="uid://cs22du8ly5el7" path="res://Sprites/Sprite Effects/Thunder projectile1 wo blur.png" id="2_7ltrn"]
 [ext_resource type="Texture2D" uid="uid://d34y634rsmd7c" path="res://Sprites/Sprite Effects/Thunderstrike wo blur.png" id="3_x6pgy"]
+[ext_resource type="Texture2D" uid="uid://drqljihxcinaf" path="res://Sprites/UI Sprites/Book UI/#1 - Transparent Icons.png" id="5_fegss"]
 
 [sub_resource type="Animation" id="Animation_kojhg"]
 length = 0.001
@@ -247,6 +248,14 @@ position = Vector2(-11, 3.98199e-05)
 rotation = 3.14159
 shape = SubResource("CapsuleShape2D_a0aqs")
 disabled = true
+
+[node name="IconReference" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, 27)
+texture = ExtResource("5_fegss")
+hframes = 16
+vframes = 28
+frame = 8
 
 [connection signal="area_entered" from="SpellHitBox" to="." method="_on_spell_hit_box_area_entered"]
 [connection signal="body_entered" from="SpellHitBox" to="." method="_on_spell_hit_box_body_entered"]

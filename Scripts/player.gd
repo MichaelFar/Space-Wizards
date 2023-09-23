@@ -196,18 +196,20 @@ func move_state(_delta):
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 	
-	if(state != BOOKOPEN):
+	if(state != BOOKOPEN):#When in the BOOKOPEN state, the player is unactionable until they close the book
 		if(!attack_timer_on):
 			
 			if(InputBuffer.is_action_press_buffered('click') && !Input.is_action_just_released('click')):#Attack state
 				#print("Player just attacked")
 				state = ATTACK
+				
 				if('parry' in attackSpritePlayer.current_animation):
 					print("Attack will play after parry")
 					attackSpritePlayer.queue("melee_attack")
 					attackSpritePlayer.seek(attackSpritePlayer.current_animation_length, true)
 				else:
 					attackSpritePlayer.play('melee_attack')
+				
 				nakedWizardBase.switch_weapon_sprite("")
 				attack_timer_on = true
 				
@@ -228,10 +230,9 @@ func move_state(_delta):
 			else:
 				parried_enemy = false
 		if(!dodge_timer_on):
-			if(state == BOOKOPEN):
-				print("Book is open and tried to dodge")
+			
 			if(InputBuffer.is_action_press_buffered('dodge') 
-			&& !Input.is_action_just_released('dodge')):
+					&& !Input.is_action_just_released('dodge')):
 				
 				print("Dodge state entered")
 				state = DODGE
@@ -245,6 +246,7 @@ func move_state(_delta):
 		else:
 			state = MOVE
 			max_speed = previous_max_speed
+	
 	
 	move_and_slide()
 
@@ -389,6 +391,12 @@ func dodge_state(_delta):#Candidate for player sheet
 
 func RAM_state(_delta):
 	max_speed = previous_max_speed / 2
+	
+	if(InputBuffer.is_action_press_buffered("page_left")):
+		spellContainer.cycle_spells(-1)
+	elif(InputBuffer.is_action_press_buffered("page_right")):
+		spellContainer.cycle_spells(1)
+	
 	move_state(_delta)
 
 func _on_attack_hit_box_area_entered(area):
@@ -401,7 +409,6 @@ func _on_attack_hit_box_area_entered(area):
 		print("When hit enemy attack timer is " + str(attack_timer_on))
 		attackContainer.play_hit()
 		
-
 func _on_player_hurtbox_area_entered(area):
 	if(area.get_children()[0].disabled == false):
 		if(area.name == 'enemy_attack_hitbox' && !parry_active && state != DODGE && state != DEAD):

@@ -11,12 +11,18 @@ var spell_cooldown = 20
 var cooldown_begin = false
 
 @onready var spell_stat_sheet = $spell_stat_sheet
+@onready var icon_reference = $IconReference
 var originPoint = Vector2.ZERO
 var currentGlobalVector = Vector2.ZERO
 var vectorDifference = Vector2.ZERO
 var previousGlobalVector = Vector2.ZERO
 var destination = Vector2.ZERO#In global reference
 var frame = 0
+
+#Frame coords for the spell icon
+var hframes = 16
+var vframes = 28
+var current_frame = 8
 
 @export var shouldHit = false
 # Called when the node enters the scene tree for the first time.
@@ -70,3 +76,10 @@ func _on_spell_hit_box_area_entered(area):
 func cost():#This is used in spell_container to tell if the player has enough energy to cast the spell
 	#All spells must have this function, regardless of cost. If the cost is nothing, return true
 	return EnergyPointContainer.lose_energy(1)
+
+func get_icon_reference():
+	#Returns resource, hframes, vframes, and current frame of icon sheet
+	#This is then loaded into spell_container, this is to ensure that the proper icons are displayed on the ui and within the book
+	#Continuing with the philosophy of all spells containing their own functionality, the spells will self determine icons
+	return [icon_reference, icon_reference.hframes, icon_reference.vframes, icon_reference.frame]
+	

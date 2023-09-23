@@ -6,10 +6,15 @@ var parameter_iterator = 0.2
 var shakeFrames = 0
 
 @onready var animationPlayer = $AnimationPlayer#So that spell container can reference book animations
-# Called when the node enters the scene tree for the first time.
+@onready var IconContainer = $IconContainer#Box that contains spell icons
+@onready var Icons = $Icons #Icon that represents currently selected spell
+@onready var IconInBook = $IconInBook #Icon that changes depending on the page
+
+
+
 func _ready():
 	
-	global_position = Vector2(-50.0, get_viewport_rect().size.y * 3/4)#Placed in bottom left corner, based on viewport
+	global_position = Vector2(-50.0, get_viewport_rect().size.y * 16.5/20)#Placed in bottom left corner, based on viewport
 	animationPlayer.play("initial_state")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -26,7 +31,9 @@ func _process(delta):
 	if(shakeFrames / frame_rate >= 0.5):
 		shakeFrames = 0
 		shouldShake = false
+		
 	outline_pulse()
+	
 func shake_book():
 	var rObj = RandomNumberGenerator.new() 
 	

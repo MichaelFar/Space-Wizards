@@ -1,11 +1,3 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dgwytsmwcbxr5"]
-
-[ext_resource type="Shader" path="res://Shaders/player.gdshader" id="1_ci6ee"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dgwytsmwcbxr5"]
 
 [resource]
-shader = ExtResource("1_ci6ee")
-shader_parameter/speed = 0.5
-shader_parameter/tint = Color(1, 0, 1, 1)
-shader_parameter/span = 1.0
-shader_parameter/start_time = 0.0
-shader_parameter/applied = true

@@ -10,13 +10,9 @@ extends CharacterBody2D
 #All spells should handle all behavior within its own scene, this allows for infinite scalability
 @onready var SpellLoader = $SpellLoader
 @onready var spawn_point = $spawn_point
-var camera = null
+
 #@onready var spell_book = $BookUi02
-var parent = null
 
-var EnergyContainer = null
-
-var MouseCursor = null
 
 var all_possible_spell_resources = [] 
 
@@ -36,15 +32,28 @@ var book_icon_frame = 0
 
 var frame = 0
 
-var shouldCast = false#God help me if this is the solution
+var updated_mouse_coordinate = Vector2.ZERO
+var updated_spawn_point = Vector2.ZERO
 
-var spells_dict = {"zap_spell": #Holds information for proper icon frames
+@onready var parent = get_parent()
+		
+@onready var camera = parent.get_node("PlayerCam")
+
+@onready var MouseCursor = camera.get_node("MouseCursor")
+
+
+
+var shouldCast = false#God help me if this is the solution
+#Holds information for proper icon frames and other spell specifics
+#If I can help it, this will be the only spell information that lives in spell_container
+var spells_dict = {"zap_spell": 
 							 {
-							  "frame": 8, 
+							 "frame": 8,
 							 },
 				   "dummy_spell":
 							 {
 							 "frame": 9,	
+							 
 							 }
 					}
 
@@ -56,14 +65,6 @@ func _ready():
 	
 func post_initialize():
 	
-	parent = get_parent()
-	
-	camera = parent.get_node("PlayerCam")
-	
-	EnergyContainer = parent.get_node("EnergyPointContainer")
-	
-	MouseCursor = camera.get_node("MouseCursor")
-	
 	global_position = MouseCursor.global_position
 	
 	randomize_list()
@@ -73,6 +74,8 @@ func post_initialize():
 func _physics_process(delta):
 	var frame_rate = 1/delta
 	frame += 1
+	updated_mouse_coordinate = MouseCursor.global_position
+	updated_spawn_point = spawn_point.global_position
 	#This now lives in player.gd, except for cooldown as of 9/20/23
 #		if(!spell_cooldown_target):
 #
@@ -178,3 +181,7 @@ func cast_spell():
 		spawn_spell(SpellLoader.get_resource(current_spell), 
 				MouseCursor.global_position, 
 				spawn_point.global_position)
+
+
+func update_point_values():
+	return [updated_mouse_coordinate, updated_spawn_point]

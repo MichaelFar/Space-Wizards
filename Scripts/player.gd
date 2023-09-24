@@ -394,12 +394,14 @@ func dodge_state(_delta):#Candidate for player sheet
 	move_and_slide()
 
 func RAM_state(_delta):
+	
 	max_speed = previous_max_speed / 2
 	
-	if(InputBuffer.is_action_press_buffered("page_left")):
-		spellContainer.cycle_spells(-1)
-	elif(InputBuffer.is_action_press_buffered("page_right")):
-		spellContainer.cycle_spells(1)
+	if(PlayerCam.SpellBook.animationPlayer.current_animation_position == PlayerCam.SpellBook.animationPlayer.current_animation_length):
+		if(InputBuffer.is_action_press_buffered("page_left")):
+			spellContainer.cycle_spells(-1)
+		elif(InputBuffer.is_action_press_buffered("page_right")):
+			spellContainer.cycle_spells(1)
 	
 	move_state(_delta)
 

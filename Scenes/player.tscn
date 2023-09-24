@@ -1337,3 +1337,5 @@ offset_bottom = 13.0
 
 [editable path="attackContainer"]
 [editable path="attackContainer/broom_smear_1/AttackHitBox"]
+[editable path="PlayerCam"]
+[editable path="PlayerCam/spell_book"]

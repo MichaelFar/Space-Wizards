@@ -34,6 +34,10 @@ var is_open = false
 
 var book_icon_frame = 0
 
+var frame = 0
+
+var shouldCast = false#God help me if this is the solution
+
 var spells_dict = {"zap_spell": #Holds information for proper icon frames
 							 {
 							  "frame": 8, 
@@ -64,23 +68,36 @@ func post_initialize():
 	
 	randomize_list()
 	
-	current_spell = SpellLoader.get_resource(all_possible_spell_resources[0])
+	current_spell = "zap_spell"
 	
 func _physics_process(delta):
 	var frame_rate = 1/delta
+	frame += 1
 	#This now lives in player.gd, except for cooldown as of 9/20/23
 #		if(!spell_cooldown_target):
 #
 #			spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), 
 #					MouseCursor.global_position, 
 #					spawn_point.global_position)
-						
+	if(frame == 1):
+		book_icon_frame = spells_dict["zap_spell"]["frame"]
+	
+		camera.SpellBook.IconInBook.frame = book_icon_frame
+		camera.SpellBook.Icons.frame = book_icon_frame
+		
 	if(spell_cooldown_target):
 		if(spell_cooldown_frames / spell_cooldown_target == 1):
 			spell_cooldown_target = 0
 			spell_cooldown_frames = 0
 		else:
 			spell_cooldown_frames += 1
+	if(camera.SpellBook.should_change_icon):
+		trigger_icon_change()
+		camera.SpellBook.should_change_icon = false
+	
+	if(shouldCast):
+		cast_spell()
+		shouldCast = false
 	
 func load_spell_children():
 	spell_name_list = []
@@ -91,6 +108,8 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 	#Some spells do not have a @destination, others will need to be provided with one
 	#@origin is where the spawned spell will appear from, the spell's parent is actually the scene root
 	var spellNode = selectedSpell.instantiate()
+	print("Parameters for spawn_spell are:")
+	print(str(selectedSpell) +" "+ str(destination) + " "+str(origin))
 	if(spellNode.cost()):
 		if(destination):
 			spellNode.global_destination = destination
@@ -103,6 +122,7 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 			
 	else:
 		camera.SpellBook.shouldShake = true
+		spellNode.queue_free()
 	#global_position = MouseCursor.global_position
 
 func randomize_list():
@@ -128,11 +148,11 @@ func cycle_spells(direction):
 	
 	current_spell = all_possible_spell_resources[selected_spell_index]
 	
-	
-	book_icon_frame = spells_dict[current_spell]["frame"]
-	
-	camera.SpellBook.IconInBook.frame = book_icon_frame
-	camera.SpellBook.Icons.frame = book_icon_frame
+	print("Selected spell " + current_spell)
+#	book_icon_frame = spells_dict[current_spell]["frame"]
+#
+#	camera.SpellBook.IconInBook.frame = book_icon_frame
+#	camera.SpellBook.Icons.frame = book_icon_frame
 func toggle_book_open():
 	
 	if(!is_open):
@@ -145,3 +165,16 @@ func toggle_book_open():
 		
 	camera.SpellBook.material.set_shader_parameter("enabled", is_open)
 	return is_open
+
+func trigger_icon_change():
+	book_icon_frame = spells_dict[current_spell]["frame"]
+	
+	camera.SpellBook.IconInBook.frame = book_icon_frame
+	camera.SpellBook.Icons.frame = book_icon_frame
+
+func cast_spell():
+	if(!spell_cooldown_target):
+		print("Arguments before spawning the spell scene are " + str(current_spell) + " " + str(MouseCursor.global_position) + " " + str(spawn_point.global_position))
+		spawn_spell(SpellLoader.get_resource(current_spell), 
+				MouseCursor.global_position, 
+				spawn_point.global_position)

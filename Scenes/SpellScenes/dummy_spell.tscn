@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://bjntwb2lu6fbp"]
+[gd_scene load_steps=2 format=3 uid="uid://bjntwb2lu6fbp"]
+
+[ext_resource type="Script" path="res://Scenes/SpellScenes/dummy_spell.gd" id="1_8ayvh"]
 
 [node name="dummy_spell" type="Node2D"]
+script = ExtResource("1_8ayvh")

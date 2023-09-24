@@ -238,7 +238,8 @@ func move_state(_delta):
 				state = DODGE
 				previous_velocity = input_vector * max_speed
 				attackContainer.abort_animation()
-				
+		if(InputBuffer.is_action_press_buffered('cast_spell')):
+			spellContainer.shouldCast = true
 	if(InputBuffer.is_action_press_buffered("RAM")):
 		
 		if(spellContainer.toggle_book_open()):
@@ -296,6 +297,8 @@ func take_hit_state(_delta):
 		playerSpritePlayer.play("take_hit")
 		shader.set_shader_parameter("applied", true)
 		set_shader_time()
+		if(spellContainer.is_open):
+			spellContainer.toggle_book_open()
 		
 	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
 
@@ -305,6 +308,7 @@ func take_hit_state(_delta):
 		playerSpritePlayer.stop()
 		attackContainer.abort_animation()
 		state = MOVE
+		
 		change_sprite("NakedWizard_base")
 		shader.set_shader_parameter("applied", false)
 		#Shader unapplies here in animation player

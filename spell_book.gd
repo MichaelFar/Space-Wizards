@@ -10,7 +10,7 @@ var shakeFrames = 0
 @onready var Icons = $Icons #Icon that represents currently selected spell
 @onready var IconInBook = $IconInBook #Icon that changes depending on the page
 
-
+var should_change_icon = false
 
 func _ready():
 	
@@ -46,3 +46,5 @@ func outline_pulse():
 		parameter_iterator *= -1
 	material.set_shader_parameter('width', next_value)
 	
+func trigger_icon_change(shouldChange):
+	should_change_icon = shouldChange

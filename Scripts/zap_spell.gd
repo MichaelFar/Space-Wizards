@@ -75,7 +75,12 @@ func _on_spell_hit_box_area_entered(area):
 	
 func cost():#This is used in spell_container to tell if the player has enough energy to cast the spell
 	#All spells must have this function, regardless of cost. If the cost is nothing, return true
-	return EnergyPointContainer.lose_energy(1)
+	var paid = EnergyPointContainer.lose_energy(1)
+	print("paid is " + str(paid))
+	if(paid):
+		
+		print("Player able to pay for " + self.name)
+	return paid 
 
 func get_icon_reference():
 	#Returns resource, hframes, vframes, and current frame of icon sheet

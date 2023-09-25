@@ -54,7 +54,18 @@ var spells_dict = {"zap_spell":
 							 {
 							 "frame": 9,	
 							 
+							 },
+				   "dummy_spell 2":
+							 {
+							 "frame": 57,	
+							 
+							 },
+				   "dummy_spell 3":
+							 {
+							 "frame": 38,	
+							 
 							 }
+							
 					}
 
 func _ready():
@@ -70,7 +81,7 @@ func post_initialize():
 	randomize_list()
 	
 	current_spell = "zap_spell"
-	
+	selected_spell_index = spell_name_list.find(current_spell)
 func _physics_process(delta):
 	var frame_rate = 1/delta
 	frame += 1
@@ -134,28 +145,18 @@ func randomize_list():
 
 func cycle_spells(direction):
 	#Direction is direction that the player will traverse the list, i.e -1 and 1
-	if(direction < 0):
-		camera.SpellBook.animationPlayer.play("page_left")
-	else:
-		camera.SpellBook.animationPlayer.play("page_right")
-		
 	var previous_spell_index = selected_spell_index
-	
-	selected_spell_index += direction
-	
-	if(selected_spell_index + direction < 0): 
-		selected_spell_index = all_possible_spell_resources.size() - 1
-		
-	elif(selected_spell_index + direction > all_possible_spell_resources.size() - 1):
-		selected_spell_index = 0
-	
+	selected_spell_index = clamp(selected_spell_index + direction, 0, all_possible_spell_resources.size() - 1)
+	if(previous_spell_index != selected_spell_index):
+		if(direction < 0):
+			camera.SpellBook.animationPlayer.play("page_left")
+		else:
+			camera.SpellBook.animationPlayer.play("page_right")
+			
 	current_spell = all_possible_spell_resources[selected_spell_index]
 	
 	print("Selected spell " + current_spell)
-#	book_icon_frame = spells_dict[current_spell]["frame"]
-#
-#	camera.SpellBook.IconInBook.frame = book_icon_frame
-#	camera.SpellBook.Icons.frame = book_icon_frame
+
 func toggle_book_open():
 	
 	if(!is_open):

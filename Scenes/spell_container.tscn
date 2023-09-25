@@ -13,7 +13,7 @@ height = 8.0
 script = ExtResource("1_j5o2g")
 
 [node name="SpellLoader" type="ResourcePreloader" parent="."]
-resources = [PackedStringArray("dummy_spell", "zap_spell"), [ExtResource("2_fwod0"), ExtResource("2_ohlyt")]]
+resources = [PackedStringArray("dummy_spell", "dummy_spell 2", "dummy_spell 3", "zap_spell"), [ExtResource("2_fwod0"), ExtResource("2_fwod0"), ExtResource("2_fwod0"), ExtResource("2_ohlyt")]]
 
 [node name="spawn_point" type="Node2D" parent="."]
 script = ExtResource("3_jkimt")

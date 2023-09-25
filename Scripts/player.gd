@@ -45,7 +45,7 @@ var parent = null
 var enemy_damage = 0
 var enemy_knockback = 0
 var parry_energy = 0
-
+var store_state = 0 #Certain actions have multiple potential final states they can transition to, such as dodging with the book open
 @export var accelerationCoef = 1.8
 @export var knockBackHitStrength = 5 #Determines how strong the knockback is when hitting the enemy
 
@@ -196,7 +196,7 @@ func move_state(_delta):
 		animationState.travel("IdleBlend")
 		velocity = velocity.move_toward(Vector2.ZERO, friction * _delta)
 	
-	if(state != BOOKOPEN):#When in the BOOKOPEN state, the player is unactionable until they close the book
+	if(state != BOOKOPEN):#When in the BOOKOPEN state, certain actions are forbidden
 		if(!attack_timer_on):
 			
 			if(InputBuffer.is_action_press_buffered('click') && !Input.is_action_just_released('click')):#Attack state
@@ -229,7 +229,20 @@ func move_state(_delta):
 				
 			else:
 				parried_enemy = false
-		if(!dodge_timer_on):
+		
+		if(InputBuffer.is_action_press_buffered('cast_spell')):
+			if(!spellContainer.spell_cooldown_target):
+				spellContainer.shouldCast = true
+			
+	if(InputBuffer.is_action_press_buffered("RAM")):
+		
+		if(spellContainer.toggle_book_open()):
+			state = BOOKOPEN
+			store_state = BOOKOPEN
+		else:
+			state = MOVE
+			#max_speed = previous_max_speed
+	if(!dodge_timer_on):
 			
 			if(InputBuffer.is_action_press_buffered('dodge') 
 					&& !Input.is_action_just_released('dodge')):
@@ -238,17 +251,8 @@ func move_state(_delta):
 				state = DODGE
 				previous_velocity = input_vector * max_speed
 				attackContainer.abort_animation()
-		if(InputBuffer.is_action_press_buffered('cast_spell')):
-			spellContainer.shouldCast = true
-	if(InputBuffer.is_action_press_buffered("RAM")):
-		
-		if(spellContainer.toggle_book_open()):
-			state = BOOKOPEN
-		else:
-			state = MOVE
-			max_speed = previous_max_speed
-	
-	
+	max_speed = previous_max_speed
+	store_state = MOVE
 	move_and_slide()
 
 func attack_state(_delta):#State machine for attack combos will go here
@@ -380,7 +384,8 @@ func dodge_state(_delta):#Candidate for player sheet
 	if(dodge_frames / 15 == 1):
 		
 		dodge_frames = 0
-		state = MOVE
+		state = store_state
+		store_state = MOVE
 		velocity = previous_velocity
 		hit_box.disabled = false
 		dodge_timer_on = true
@@ -442,10 +447,10 @@ func _on_player_hurtbox_area_entered(area):
 			parry_cool_down_frames = 0
 			attack_cool_down_frames = 0
 			attack_timer_on = false
-			print("Position of animation for " + attackSpritePlayer.current_animation + " is " + str(attackSpritePlayer.current_animation_position))
+			
 			attackContainer.parryDirection = area.get_enemy_id().global_position
 			get_enemy_attack_stats(area.get_enemy_id())
-			print(str(EnergyPointContainer))
+			
 			EnergyPointContainer.gain_energy(parry_energy, area.get_enemy_id().global_position)
 		
 				
@@ -453,9 +458,7 @@ func update_healthbar(health_change):#pass in negative values to increase health
 	
 	current_health = clamp(current_health - health_change, -1, max_health)
 	
-	print("Health percentage is " + str((current_health / max_health) * 100.0))
 	healthbar.value = (current_health / max_health) * 100.0
-	print("Health bar value is " + str(healthbar.value))
 	
 	if(current_health <= 0):
 		state = DEAD

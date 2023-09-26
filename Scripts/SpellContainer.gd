@@ -64,6 +64,11 @@ var spells_dict = {"zap_spell":
 							 {
 							 "frame": 38,	
 							 
+							 },
+				   "lesser_heal":
+							 {
+							 "frame": 53,	
+							 
 							 }
 							
 					}

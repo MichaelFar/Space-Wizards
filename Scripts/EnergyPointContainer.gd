@@ -37,7 +37,7 @@ func get_available_positions():
 			available_list.append(point_children[i])
 			
 func gain_energy(energyNum, enemy_position = Vector2.ZERO):
-
+	print("Particle children before gaining energy is " + str(particle_children))
 	
 	get_available_positions()
 	var iterator = 0
@@ -55,33 +55,31 @@ func gain_energy(energyNum, enemy_position = Vector2.ZERO):
 			
 				occupied_list[point_children.find(j)] = true
 				print("Found point children " + str(point_children.find(j)))
-				
+		print("Particle children after gaining energy is " + str(particle_children))
 		return true
-	
+	print("Particle children after gaining energy is " + str(particle_children))
 	return false
 			
 func lose_energy(energyNum): #Use this as a condition to ensure that energy is lost when the condition runs
 	#Ensure it is the only condition that is checked unless exclusively using the && operator
 	
 	var iterator = 0
-	
+	print("Energy to lose is " + str(energyNum) + " and particle children is size " + str(particle_children.size()))
 	if(energyNum > particle_children.size()):
 		
 		return false
 		
 	else:
 		
-		for j in particle_children:
-			iterator +=1
-			print("Freeing position " + str(occupied_list.find(true)))
-
-			if (iterator <= energyNum):
-				occupied_list[find_last_taken_spot()] = false
-				
-				particle_children.pop_at(iterator - 1)
-				j.queue_free()#Replace with anim
-			else:
-				break
+		for i in energyNum:
+			
+			print("Freeing position " + str(i))
+			occupied_list[find_last_taken_spot()] = false
+			particle_children[0].queue_free()#Replace with anim
+			print("Particle children before freeing " + str(0) + " is " + str(particle_children))
+			particle_children.pop_front()
+			print("Particle children after freeing " + str(0) + " is " + str(particle_children))
+			
 		iterator = 0
 		for i in occupied_list:
 			i = false		
@@ -96,7 +94,8 @@ func find_last_taken_spot():
 	var iterator = 0
 	for i in occupied_list:
 		if !i:
+			print("The last taken spot is " + str(iterator - 1))
 			return iterator - 1
 		iterator +=1
-			
+		
 	return point_children.size() - 1

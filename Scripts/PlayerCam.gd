@@ -20,7 +20,7 @@ func _ready():
 	MouseCursor = $MouseCursor
 	GlobalCameraValues.cameraNode = self
 	SpellBook = get_node("spell_book")
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+
 func _process(delta):
 	GlobalCameraValues.BOFoffset = offset
 	var viewPortRect = get_viewport_rect()

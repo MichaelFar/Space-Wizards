@@ -106,6 +106,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	animationState.travel("IdleBlend")
 	#material.set_shader_parameter("texture_size", nakedWizardBase.texture.get_size())
 	parent.spawned_enemy.connect(connect_hit_signal)
+	globals.playerHealthBar = healthbar
 
 func post_initialize(animation_tree):
 	

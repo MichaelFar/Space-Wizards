@@ -335,7 +335,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("5_5ri6y")
 hframes = 16
 vframes = 27
-frame = 38
+frame = 53
 
 [node name="IconInBook" type="Sprite2D" parent="."]
 z_index = 10

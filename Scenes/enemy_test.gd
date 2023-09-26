@@ -385,7 +385,7 @@ func take_hit_state(_delta, origin = position - playerPreviousPosition):
 			animationPlayer.play('parried')
 		
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
-		print("pushback acceleration is " + str(pushBackAcceleration))
+		
 		
 		velocity = velocity.move_toward(origin * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		

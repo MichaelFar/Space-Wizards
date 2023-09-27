@@ -41,8 +41,6 @@ var updated_spawn_point = Vector2.ZERO
 
 @onready var MouseCursor = camera.get_node("MouseCursor")
 
-
-
 var shouldCast = false#God help me if this is the solution
 #Holds information for proper icon frames and other spell specifics
 #If I can help it, this will be the only spell information that lives in spell_container

@@ -1,10 +1,9 @@
-extends Node2D
+extends Control
 
 #Root container node script
 #Navigation Area and the Exclusion zone MUST be located at (0,0) or the points will not be correct and the ai will choose erroneous coordinates
 #Calculates a list of valid points once as well as player position and delivers to the ai
 #Also contains debug commands like escaping
-
 
 @onready var exclusion_zone = $ExclusionZone
 

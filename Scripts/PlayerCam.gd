@@ -1,6 +1,5 @@
 extends Camera2D
 
-
 @export var shouldShake = false
 
 @export var shakeStrength = 10.0
@@ -25,7 +24,7 @@ func _process(delta):
 	GlobalCameraValues.BOFoffset = offset
 	var viewPortRect = get_viewport_rect()
 	var cameraVelocity = maxCameraVelocity
-	var dimensionsRatio = viewPortRect.size.x/viewPortRect.size.y
+	var dimensionsRatio = viewPortRect.size.x / viewPortRect.size.y
 	var maxMousePosition = position.distance_to(Vector2(viewPortRect.size.x, viewPortRect.size.y))
 	var maxMousePositionX = abs(viewPortRect.size.x * (dimensionsRatio) - position.x)
 	var maxMousePositionY = abs(viewPortRect.size.y * (dimensionsRatio) - position.y)

@@ -12,7 +12,7 @@ extends CharacterBody2D
 @onready var spawn_point = $spawn_point
 
 #@onready var spell_book = $BookUi02
-
+var shouldChangeIcon = true
 
 var all_possible_spell_resources = [] 
 
@@ -32,6 +32,8 @@ var book_icon_frame = 0
 
 var frame = 0
 
+var duplicate_resource_list = []
+
 var updated_mouse_coordinate = Vector2.ZERO
 var updated_spawn_point = Vector2.ZERO
 
@@ -50,25 +52,20 @@ var spells_dict = {"zap_spell":
 							 },
 				   "dummy_spell":
 							 {
-							 "frame": 9,	
-							 
+							 "frame": 9,
 							 },
 				   "dummy_spell 2":
 							 {
-							 "frame": 57,	
-							 
+							 "frame": 57,
 							 },
 				   "dummy_spell 3":
 							 {
-							 "frame": 38,	
-							 
+							 "frame": 38,
 							 },
 				   "lesser_heal":
 							 {
-							 "frame": 53,	
-							 
+							 "frame": 53,
 							 }
-							
 					}
 
 func _ready():
@@ -76,15 +73,22 @@ func _ready():
 	all_possible_spell_resources = SpellLoader.get_resource_list()
 	load_spell_children()
 	post_initialize()
-	
+	duplicate_resource_list = convert_to_unpacked_array(all_possible_spell_resources)
 func post_initialize():
 	
 	global_position = MouseCursor.global_position
 	
-	randomize_list()
+	#randomize_list()
 	
 	current_spell = "zap_spell"
 	selected_spell_index = spell_name_list.find(current_spell)
+	
+func convert_to_unpacked_array(packedArray):
+	var unpacked_array = []
+	for i in packedArray:
+		unpacked_array.append(i)
+	return unpacked_array
+	
 func _physics_process(delta):
 	var frame_rate = 1/delta
 	frame += 1
@@ -96,12 +100,12 @@ func _physics_process(delta):
 #			spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), 
 #					MouseCursor.global_position, 
 #					spawn_point.global_position)
-	if(frame == 1):
-		book_icon_frame = spells_dict["zap_spell"]["frame"]
+	if(shouldChangeIcon):
+		book_icon_frame = spells_dict[current_spell]["frame"]
 	
 		camera.SpellBook.IconInBook.frame = book_icon_frame
 		camera.SpellBook.Icons.frame = book_icon_frame
-		
+		shouldChangeIcon = false
 	if(spell_cooldown_target):
 		if(spell_cooldown_frames / spell_cooldown_target == 1):
 			spell_cooldown_target = 0
@@ -119,7 +123,7 @@ func _physics_process(delta):
 func load_spell_children():
 	spell_name_list = []
 	for i in all_possible_spell_resources:
-		spell_name_list.append(i) 
+		spell_name_list.append(i)
 
 func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = Vector2.ZERO): 
 	#Some spells do not have a @destination, others will need to be provided with one
@@ -144,19 +148,24 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 
 func randomize_list():
 	#Wrapping this in a function cause I doubt we want to keep the default shuffle() functionality
-	spell_name_list.shuffle()
+	print("Spell name list before shuffle is " + str(duplicate_resource_list))
+	duplicate_resource_list.shuffle()
+	print("Spell name list after shuffle is " + str(duplicate_resource_list))
+	current_spell = duplicate_resource_list[duplicate_resource_list.size() - 1]
+	selected_spell_index = duplicate_resource_list.size() - 1
+	shouldChangeIcon = true
 
 func cycle_spells(direction):
 	#Direction is direction that the player will traverse the list, i.e -1 and 1
 	var previous_spell_index = selected_spell_index
-	selected_spell_index = clamp(selected_spell_index + direction, 0, all_possible_spell_resources.size() - 1)
+	selected_spell_index = clamp(selected_spell_index + direction, 0, duplicate_resource_list.size() - 1)
 	if(previous_spell_index != selected_spell_index):
 		if(direction < 0):
 			camera.SpellBook.animationPlayer.play("page_left")
 		else:
 			camera.SpellBook.animationPlayer.play("page_right")
 			
-	current_spell = all_possible_spell_resources[selected_spell_index]
+	current_spell = duplicate_resource_list[selected_spell_index]
 	
 	print("Selected spell " + current_spell)
 
@@ -185,7 +194,6 @@ func cast_spell():
 		spawn_spell(SpellLoader.get_resource(current_spell), 
 				MouseCursor.global_position, 
 				spawn_point.global_position)
-
 
 func update_point_values():
 	return [updated_mouse_coordinate, updated_spawn_point]

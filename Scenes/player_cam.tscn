@@ -11,4 +11,3 @@ shakeStrength = 2.0
 [node name="MouseCursor" parent="." instance=ExtResource("2_u8fgp")]
 
 [node name="spell_book" parent="." instance=ExtResource("3_io3mh")]
-position = Vector2(-62, -34)

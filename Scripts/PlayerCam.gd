@@ -4,7 +4,7 @@ extends Camera2D
 
 @export var shakeStrength = 10.0
 
-@export var cameraThreshold = 150
+@export var cameraThreshold = 100
 
 @export var maxCameraVelocity = 800
 
@@ -26,8 +26,8 @@ func _process(delta):
 	var cameraVelocity = maxCameraVelocity
 	var dimensionsRatio = viewPortRect.size.x / viewPortRect.size.y
 	var maxMousePosition = position.distance_to(Vector2(viewPortRect.size.x, viewPortRect.size.y))
-	var maxMousePositionX = abs(viewPortRect.size.x * (dimensionsRatio) - position.x)
-	var maxMousePositionY = abs(viewPortRect.size.y * (dimensionsRatio) - position.y)
+	var maxMousePositionX = abs(viewPortRect.size.x * (dimensionsRatio) - parent.position.x)
+	var maxMousePositionY = abs(viewPortRect.size.y * (dimensionsRatio) - parent.position.y)
 	input_vector = parent.input_vector
 	
 	mouseRatio = clamp(Vector2.ZERO.distance_to(MouseCursor.position) / maxMousePosition, 0.0, 1.0)
@@ -40,6 +40,7 @@ func _process(delta):
 	Vector2((MouseCursor.position.normalized() * cameraThreshold).x * mouseRatioX , 
 	(MouseCursor.position.normalized() * cameraThreshold).y * mouseRatioY), 
 	delta * cameraVelocity)
+	
 	#Applies a dynamic velocity to the offset to achieve the 'look around' effect
 	#cameraThreshold is how far before maximum look has been reached, mouseRationX and Y represent the X and Y directions of the offset, 
 	#this ratio changes depending on how far the cursor is from the center of the screen

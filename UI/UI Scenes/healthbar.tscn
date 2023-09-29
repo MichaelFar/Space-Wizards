@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://UI/UI Scenes/healthbar.gd" id="2_na3f3"]
 
 [sub_resource type="SystemFont" id="SystemFont_utaur"]
+subpixel_positioning = 0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kir1v"]
 bg_color = Color(0.235294, 0.705882, 0.360784, 1)

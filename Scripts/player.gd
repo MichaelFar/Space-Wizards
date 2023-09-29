@@ -114,6 +114,8 @@ func post_initialize(animation_tree):
 	parent = get_parent()
 	#EnergyPointContainer = $EnergyPointContainer
 	PlayerCam = $PlayerCam
+
+
 func populate_stats():
 	
 	var stat_sheet = $player_stat_sheet
@@ -166,6 +168,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			parry_timer_on = false
 	
 func move_state(_delta):
+	store_state = MOVE
 	var camera = GlobalCameraValues.cameraNode
 	mouse_coordinates = get_local_mouse_position()
 	mouse_coordinates = mouse_coordinates.normalized()
@@ -247,13 +250,16 @@ func move_state(_delta):
 			
 			if(InputBuffer.is_action_press_buffered('dodge') 
 					&& !Input.is_action_just_released('dodge')):
-				
+				if(state == BOOKOPEN):
+					spellContainer.randomize_list()
+					store_state = BOOKOPEN
 				print("Dodge state entered")
 				state = DODGE
 				previous_velocity = input_vector * max_speed
 				attackContainer.abort_animation()
+				
 	max_speed = previous_max_speed
-	store_state = MOVE
+	
 	move_and_slide()
 
 func attack_state(_delta):#State machine for attack combos will go here
@@ -398,6 +404,7 @@ func dodge_state(_delta):#Candidate for player sheet
 		
 	set_collision_mask_value(2, !hit_box.disabled) #Changes the collision mask when dodging to go through enemies
 	move_and_slide()
+	print("State at end of dodge is " + str(state))
 
 func RAM_state(_delta):
 	

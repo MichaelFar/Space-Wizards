@@ -6,7 +6,7 @@ extends Camera2D
 
 @export var cameraThreshold = 100
 
-@export var maxCameraVelocity = 800
+@export var maxCameraVelocity = 1200
 
 @onready var MouseCursor = $MouseCursor
 var SpellBook = null#Manipulated in spell container 

@@ -48,15 +48,34 @@ void fragment() {
 	vec2 uv = UV;
 	if(enabled) {
 		if (add_margins) {
-			vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0));
+			vec2 real_texture_size = 1.0 / TEXTURE_PIXEL_SIZE;
 
-			uv = (uv - texture_pixel_size * width) * TEXTURE_PIXEL_SIZE / texture_pixel_size;
+		    // This is texture size when add margin equal to 
+		    // width of the outline*2 (left and right / top and down)
+		    vec2 added_margin_texture_pixel_size = 1.0 / (real_texture_size + (width*2.0));
 
-			if (uv != clamp(uv, vec2(0.0), vec2(1.0))) {
-				COLOR.a = 0.0;
-			} else {
-				COLOR = texture(TEXTURE, uv);
-			}
+		    // width in range (0,1), respected to the new texture size
+		    vec2 width_size = added_margin_texture_pixel_size * width;
+		    // shift the original uv bottom-right for 'width' unit 
+		    // Calculate how much bigger is the new size compared to the old one
+		    vec2 shifted_uv = UV - width_size;
+		    // Then scale the uv down to that ratio
+		    vec2 ratio = TEXTURE_PIXEL_SIZE / added_margin_texture_pixel_size;
+		    vec2 scaled_shifted_uv = shifted_uv * ratio;
+
+		    // sample the original texture with new uv to scale it down
+		    // to the original size
+		    
+		    COLOR= texture(TEXTURE, scaled_shifted_uv);
+//			vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0));
+//
+//			uv = (uv - texture_pixel_size * width) * TEXTURE_PIXEL_SIZE / texture_pixel_size;
+//
+//			if (uv != clamp(uv, vec2(0.0), vec2(1.0))) {
+//				COLOR.a = 0.0;
+//			} else {
+//				COLOR = texture(TEXTURE, uv);
+//			}
 		} else {
 			COLOR = texture(TEXTURE, uv);
 		}

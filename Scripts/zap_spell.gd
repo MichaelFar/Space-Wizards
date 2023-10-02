@@ -7,8 +7,8 @@ extends CharacterBody2D
 @export var target_distance = 20 #As the speed of the projectile increases, so too will this need to increase
 
 var spell_cooldown = 20
-@export var cool_down_denominator = 2 #Divided by frame rate to determine cooldown length. 2 = half second, 3 = 1/3rd second, etc
-var cooldown_begin = false
+@export var cool_down_denominator = 1 #Divided by frame rate to determine cooldown length. 2 = half second, 3 = 1/3rd second, etc
+var cooldown_begin = true
 
 @onready var spell_stat_sheet = $spell_stat_sheet
 @onready var icon_reference = $IconReference

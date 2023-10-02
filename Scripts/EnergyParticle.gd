@@ -19,7 +19,7 @@ func _physics_process(delta):
 	frame +=1
 	
 	if frame % 3 == 0:
-		rotation += 90
+		rotation += PI/4
 		
 	if !(position.distance_to(supplied_position + position) <= 5):
 		position = position.move_toward(max_speed * supplied_position, delta * acceleration)

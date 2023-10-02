@@ -8,6 +8,12 @@ extends CharacterBody2D
 
 
 #All spells should handle all behavior within its own scene, this allows for infinite scalability
+
+#ALL SPELL NODES NEED THE SAME 4 PROPERTIES TO BE CASTABLE WITHOUT CRASHING
+#global_destination
+#originPoint
+#cost()
+#spell_cooldown
 @onready var SpellLoader = $SpellLoader
 @onready var spawn_point = $spawn_point
 
@@ -65,6 +71,10 @@ var spells_dict = {"zap_spell":
 				   "lesser_heal":
 							 {
 							 "frame": 53,
+							 },
+				   "enemy_test":
+							 {
+							 "frame": 52,
 							 }
 					}
 
@@ -101,12 +111,14 @@ func _physics_process(delta):
 #					MouseCursor.global_position, 
 #					spawn_point.global_position)
 	if(shouldChangeIcon):
+		
 		book_icon_frame = spells_dict[current_spell]["frame"]
-	
 		camera.SpellBook.IconInBook.frame = book_icon_frame
 		camera.SpellBook.Icons.frame = book_icon_frame
 		shouldChangeIcon = false
+		
 	if(spell_cooldown_target):
+		
 		if(spell_cooldown_frames / spell_cooldown_target == 1):
 			spell_cooldown_target = 0
 			spell_cooldown_frames = 0
@@ -130,7 +142,7 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 	#@origin is where the spawned spell will appear from, the spell's parent is actually the scene root
 	var spellNode = selectedSpell.instantiate()
 	print("Parameters for spawn_spell are:")
-	print(str(selectedSpell) +" "+ str(destination) + " "+str(origin))
+	print(str(selectedSpell) + " " + str(destination) + " "+str(origin))
 	if(spellNode.cost()):
 		if(destination):
 			spellNode.global_destination = destination
@@ -148,11 +160,13 @@ func spawn_spell(selectedSpell : Resource, destination = Vector2.ZERO, origin = 
 
 func randomize_list():
 	#Wrapping this in a function cause I doubt we want to keep the default shuffle() functionality
+	var rObj = RandomNumberGenerator.new()
+	var randomIndex = rObj.randi_range(0, duplicate_resource_list.size() - 1)
 	print("Spell name list before shuffle is " + str(duplicate_resource_list))
 	duplicate_resource_list.shuffle()
 	print("Spell name list after shuffle is " + str(duplicate_resource_list))
-	current_spell = duplicate_resource_list[duplicate_resource_list.size() - 1]
-	selected_spell_index = duplicate_resource_list.size() - 1
+	current_spell = duplicate_resource_list[randomIndex]
+	selected_spell_index = randomIndex
 	shouldChangeIcon = true
 
 func cycle_spells(direction):
@@ -183,8 +197,8 @@ func toggle_book_open():
 	return is_open
 
 func trigger_icon_change():
-	book_icon_frame = spells_dict[current_spell]["frame"]
 	
+	book_icon_frame = spells_dict[current_spell]["frame"]
 	camera.SpellBook.IconInBook.frame = book_icon_frame
 	camera.SpellBook.Icons.frame = book_icon_frame
 

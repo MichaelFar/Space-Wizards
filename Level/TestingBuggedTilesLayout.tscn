@@ -1,9 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://c3ah3uhdbx2ky"]
+[gd_scene load_steps=6 format=3 uid="uid://c3ah3uhdbx2ky"]
 
 [ext_resource type="TileSet" uid="uid://jquepsuy03b" path="res://Tiles/64x64plane.tres" id="1_hr3t2"]
+[ext_resource type="Shader" path="res://Shaders/TestingBuggedTilesLayout.gdshader" id="2_7tdts"]
+[ext_resource type="Texture2D" uid="uid://hc4hv2lvt8lc" path="res://Sprites/lilgob/lil_goblin.png" id="3_v2sbb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vl837"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1ev0j"]
+shader = ExtResource("2_7tdts")
+shader_parameter/line_color = Color(1, 1, 1, 1)
+shader_parameter/width = 2.0
 
 [node name="Level1Tiles" type="Node2D"]
 y_sort_enabled = true
+material = SubResource("ShaderMaterial_vl837")
 position = Vector2(0, 3)
 metadata/_edit_group_ = true
 
@@ -46,3 +56,8 @@ layer_4/y_sort_origin = 0
 layer_4/z_index = -1
 layer_4/tile_data = PackedInt32Array()
 metadata/_edit_group_ = true
+
+[node name="LilGoblin" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_1ev0j")
+position = Vector2(218, 260)
+texture = ExtResource("3_v2sbb")

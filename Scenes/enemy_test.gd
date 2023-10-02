@@ -25,6 +25,8 @@ var playerAttackPoints = []
 var reserved_point = Vector2.ZERO
 var reserved_index = 0
 
+var cooldown_begin = false
+
 var frame = 0
 var state = CHOOSEPOINT
 var inclusion_area = Vector2.ZERO
@@ -601,3 +603,6 @@ func remove_from_tree():
 	
 	animationPlayer.stop()
 	queue_free()
+
+func cost():
+	return true

@@ -110,16 +110,19 @@ z_index = 1
 script = ExtResource("1_s3o1l")
 
 [node name="exclaim" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.576471)
 texture = ExtResource("1_bgyan")
 offset = Vector2(0, -14)
 hframes = 3
 
 [node name="question" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.576471)
 texture = ExtResource("2_s55a8")
 offset = Vector2(0, -14)
 hframes = 3
 
 [node name="startled" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.576471)
 texture = ExtResource("3_jepo5")
 offset = Vector2(0, -14)
 hframes = 3

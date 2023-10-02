@@ -248,11 +248,13 @@ func move_state(_delta):
 			#max_speed = previous_max_speed
 	if(!dodge_timer_on):
 			
-			if(InputBuffer.is_action_press_buffered('dodge') 
-					&& !Input.is_action_just_released('dodge')):
+			if(InputBuffer.is_action_press_buffered('dodge') && !Input.is_action_just_released('dodge')):
+						
 				if(state == BOOKOPEN):
+					if(spellContainer.is_open):
+						spellContainer.toggle_book_open()
 					spellContainer.randomize_list()
-					store_state = BOOKOPEN
+					store_state = MOVE
 				print("Dodge state entered")
 				state = DODGE
 				previous_velocity = input_vector * max_speed
@@ -310,6 +312,7 @@ func take_hit_state(_delta):
 		set_shader_time()
 		if(spellContainer.is_open):
 			spellContainer.toggle_book_open()
+			spellContainer.randomize_list()
 		
 	elif(playerSpritePlayer.current_animation_position < playerSpritePlayer.current_animation_length):
 

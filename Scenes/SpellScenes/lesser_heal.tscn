@@ -1,7 +1,25 @@
-[gd_scene load_steps=6 format=3 uid="uid://bl5enedbgemfm"]
+[gd_scene load_steps=9 format=3 uid="uid://bl5enedbgemfm"]
 
 [ext_resource type="Script" path="res://Scenes/SpellScenes/lesser_heal.gd" id="1_qj4fx"]
 [ext_resource type="Texture2D" uid="uid://bixkwycwrbak1" path="res://Sprites/Sprite Effects/Holy VFX 02.png" id="2_t7235"]
+[ext_resource type="Shader" path="res://Shaders/player.gdshader" id="2_ya46w"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jv6f7"]
+shader = ExtResource("2_ya46w")
+shader_parameter/speed = 0.4
+shader_parameter/tint = Color(0, 1, 0, 1)
+shader_parameter/span = 1.0
+shader_parameter/start_time = 0.0
+shader_parameter/applied = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6gyiy"]
+resource_local_to_scene = true
+shader = ExtResource("2_ya46w")
+shader_parameter/speed = 0.3
+shader_parameter/tint = Color(0.207843, 1, 0, 1)
+shader_parameter/span = 0.1
+shader_parameter/start_time = 0.0
+shader_parameter/applied = true
 
 [sub_resource type="Animation" id="Animation_76uk2"]
 length = 0.001
@@ -48,7 +66,7 @@ tracks/1/keys = {
 "method": &"heal"
 }, {
 "args": [],
-"method": &"queue_free"
+"method": &"delete_self_cleanup"
 }]
 }
 
@@ -59,10 +77,13 @@ _data = {
 }
 
 [node name="lesser_heal" type="CharacterBody2D"]
+material = SubResource("ShaderMaterial_jv6f7")
 script = ExtResource("1_qj4fx")
 
 [node name="HolyVfx02" type="Sprite2D" parent="."]
 z_index = 10
+material = SubResource("ShaderMaterial_6gyiy")
+use_parent_material = true
 texture = ExtResource("2_t7235")
 hframes = 16
 

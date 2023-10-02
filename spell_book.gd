@@ -2,7 +2,7 @@ extends Sprite2D
 
 @export var shakeStrength = 10.0
 @export var shouldShake = false
-var parameter_iterator = 0.2
+var parameter_iterator = 0.1
 var shakeFrames = 0
 
 @onready var animationPlayer = $AnimationPlayer#So that spell container can reference book animations
@@ -42,7 +42,7 @@ func shake_book():
 func outline_pulse():
 	
 	var next_value = material.get_shader_parameter('width') + parameter_iterator
-	if(next_value > 5.0 || next_value < 0.0):
+	if(next_value > 2.3 || next_value < 0.0):
 		parameter_iterator *= -1
 	material.set_shader_parameter('width', next_value)
 	

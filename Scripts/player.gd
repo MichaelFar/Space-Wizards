@@ -73,6 +73,8 @@ var state = MOVE
 signal s_parried
 signal s_attack_points
 
+var originalShader = null
+
 enum {
 	MOVE,
 	DODGE,
@@ -97,7 +99,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 			listOfSprites.append(i)
 	
 	shader = get("material")
-	
+	originalShader = shader
 	change_sprite("NakedWizard_base")
 	populate_stats()
 	set_collision_mask_value(2, true)

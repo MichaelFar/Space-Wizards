@@ -12,7 +12,7 @@ var playerShader = null
 func _ready():
 	animationPlayer.play("heal_effect")
 	set_shader_time()
-	playerShader = globals.player.material
+	
 	globals.player.material = material
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -37,5 +37,5 @@ func set_shader_time():
 	globals.player.material.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)
 
 func delete_self_cleanup():
-	globals.player.material = playerShader
+	globals.player.material = globals.player.originalShader
 	queue_free()

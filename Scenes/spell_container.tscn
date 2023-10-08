@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://csti3s5ve4j0r"]
 
 [ext_resource type="Script" path="res://Scripts/SpellContainer.gd" id="1_j5o2g"]
+[ext_resource type="PackedScene" uid="uid://bsc7ly8btdd5l" path="res://Scenes/SpellScenes/close_circuit.tscn" id="2_5mp7u"]
 [ext_resource type="PackedScene" uid="uid://bjntwb2lu6fbp" path="res://Scenes/SpellScenes/dummy_spell.tscn" id="2_fwod0"]
 [ext_resource type="PackedScene" uid="uid://bolae2xcgoyvh" path="res://Scenes/SpellScenes/zap_spell.tscn" id="2_ohlyt"]
-[ext_resource type="PackedScene" uid="uid://dusbiv02x5l05" path="res://Scenes/enemy_test.tscn" id="3_2f4e5"]
 [ext_resource type="Script" path="res://Scripts/spawn_point.gd" id="3_jkimt"]
 [ext_resource type="PackedScene" uid="uid://bl5enedbgemfm" path="res://Scenes/SpellScenes/lesser_heal.tscn" id="3_menpy"]
 
@@ -15,7 +15,7 @@ height = 8.0
 script = ExtResource("1_j5o2g")
 
 [node name="SpellLoader" type="ResourcePreloader" parent="."]
-resources = [PackedStringArray("dummy_spell", "dummy_spell 2", "dummy_spell 3", "enemy_test", "lesser_heal", "zap_spell"), [ExtResource("2_fwod0"), ExtResource("2_fwod0"), ExtResource("2_fwod0"), ExtResource("3_2f4e5"), ExtResource("3_menpy"), ExtResource("2_ohlyt")]]
+resources = [PackedStringArray("close_circuit", "dummy_spell", "lesser_heal", "zap_spell"), [ExtResource("2_5mp7u"), ExtResource("2_fwod0"), ExtResource("3_menpy"), ExtResource("2_ohlyt")]]
 
 [node name="spawn_point" type="Node2D" parent="."]
 script = ExtResource("3_jkimt")

@@ -75,6 +75,10 @@ var spells_dict = {"zap_spell":
 				   "enemy_test":
 							 {
 							 "frame": 52,
+							 },
+				   "close_circuit":
+							 {
+							 "frame": 51,
 							 }
 					}
 

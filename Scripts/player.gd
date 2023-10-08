@@ -64,6 +64,8 @@ var type = 'player'
 @onready var attackContainer = $attackContainer
 @onready var spellContainer = $SpellContainer
 
+@onready var stat_sheet = $player_stat_sheet
+
 var PlayerCam = null
 var listOfSprites = []
 var enemyIDs = []

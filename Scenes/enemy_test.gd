@@ -58,6 +58,8 @@ var faceRight = true
 
 var animationPlayer = null
 
+var originalShader = material
+var hit_with_broom = false
 @onready var playerNode = get_node("../Player")
 @onready var emoteContainer = $EmoteContainer
 @onready var smearContainer = $enemy_attack_container
@@ -335,6 +337,7 @@ func _on_hurtbox_area_entered(area):
 	#Sets the appropriate values and sets the state to TAKEHIT
 	#Enemies can be hit during any state
 	if(area.get_children()[0].disabled == false && state != DEAD):
+		hit_with_broom = true
 		if(area.name == 'AttackHitBox' && state != TAKEHIT && state != ATTACK):
 			
 			velocity = Vector2.ZERO
@@ -370,6 +373,7 @@ func _on_hurtbox_area_entered(area):
 			if(state != STAGGERED):
 				state = TAKEHIT
 			player_hit_me.emit()
+			hit_with_broom = false
 			#area.get_parent().shouldHit = true
 func take_hit_state(_delta, origin = position - playerPreviousPosition):
 	

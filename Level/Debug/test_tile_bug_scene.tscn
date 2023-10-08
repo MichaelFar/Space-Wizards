@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://diet0t1uhar4i"]
+
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_oonnq"]
+[ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="2_mlar7"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_htpw6"]
+
+[node name="TestTileBugScene" type="Node2D"]
+script = ExtResource("1_oonnq")
+
+[node name="ExclusionZone" parent="." instance=ExtResource("2_mlar7")]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_htpw6")
+
+[editable path="ExclusionZone"]

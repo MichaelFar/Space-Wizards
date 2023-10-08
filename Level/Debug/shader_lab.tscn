@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://crqy2jtu2oaxe"]
+
+[ext_resource type="Shader" path="res://Shaders/player.gdshader" id="1_l610u"]
+[ext_resource type="Texture2D" uid="uid://hc4hv2lvt8lc" path="res://Sprites/lilgob/lil_goblin.png" id="2_74i60"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ysjp5"]
+shader = ExtResource("1_l610u")
+shader_parameter/speed = 1.0
+shader_parameter/tint = Color(1, 1, 0, 1)
+shader_parameter/span = 1.0
+shader_parameter/start_time = 0.0
+shader_parameter/applied = true
+
+[node name="ShaderLab" type="Node2D"]
+
+[node name="LilGoblin" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_ysjp5")
+position = Vector2(67, 53)
+texture = ExtResource("2_74i60")

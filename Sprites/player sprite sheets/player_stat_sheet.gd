@@ -9,12 +9,25 @@ extends Node
 @export var attack_movement = 400 #Multiplied by delta
 @export var poise_damage = -10.0
 @export var parry_poise_damage = -100.0
+
+var originalDamage = damage
+
+var originalKnockback = knockback_strength
+
+var originalPoiseDamage = poise_damage
 signal player_stats
 
-func update_specs(newDamage = 200.0, newKnockback = 250.0):
+func update_specs(newDamage = damage, newKnockback = knockback_strength, newPoiseDamage = poise_damage):
 	
 	damage = newDamage
 	knockback_strength = newKnockback
+	poise_damage = newPoiseDamage
+
+func restore_specs():
+	
+	damage = originalDamage
+	knockback_strength = originalKnockback
+	poise_damage = originalPoiseDamage
 	
 func _ready():
 	post_initialize()

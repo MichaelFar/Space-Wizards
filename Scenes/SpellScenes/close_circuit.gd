@@ -26,37 +26,42 @@ var hit_frames = 0
 var frame = 0
 var effect_active = false
 
+var clone_siblings = []
+
 func _ready():
 	
 	post_initialize()
-
+	get_clones()
+	
 func post_initialize():
 	#Need to send energy container to this node, parent is scene root
 	global_position = originPoint 
+	#global_destination *= Vector2(2.0,2.0)
 	
 func _physics_process(delta):
+	if(is_instance_valid(hit_enemy)):
+			if(hit_enemy.state == 7):
+				shouldHit = false
+			
 	frame +=1
 	var frame_rate = 1/delta
 	spell_cooldown = frame_rate / cool_down_denominator
 	
-	if(frame/1 == 1 || $AnimationPlayer.current_animation != 'hit'):
+	if(frame/1 == 1 || $AnimationPlayer.current_animation != 'hit' && $AnimationPlayer.current_animation != 'strike'):
 		
 		$AnimationPlayer.play("travel")
 		
 	destination = global_destination - global_position
 	destination = destination.normalized()
 	
-	if(is_instance_valid(hit_enemy)):
-		if(hit_enemy.hit_with_broom):
-			hit_enemy.update_poise_bar(-150.0)
-			hit_enemy.update_healthbar(200)
-			hit_enemy.material = hit_enemy.originalShader
-			globals.player.stat_sheet.send_stats()
-			queue_free()
+	
 	
 	if(shouldHit):
-	
-		$AnimationPlayer.play('hit')
+		
+		if(!hit_enemy.hit_with_broom):
+			$AnimationPlayer.play('hit')
+		else:
+			$AnimationPlayer.play("strike")
 		rotation = 0
 		
 		if(is_instance_valid(hit_enemy)):
@@ -71,11 +76,11 @@ func _physics_process(delta):
 				queue_free()
 		else:
 			queue_free()
-	else:
+	elif($AnimationPlayer.current_animation == 'travel'):
 		
 		look_at(global_destination)
 		velocity = velocity.move_toward(destination * max_speed, delta * acceleration)
-		if(global_destination.distance_to(global_position) < target_distance):
+		if(global_position.distance_to(global_destination) < target_distance):
 			queue_free()
 	
 	move_and_slide()
@@ -95,15 +100,22 @@ func _on_spell_hit_box_area_entered(area):
 				shouldHit = true
 				hit_enemy = areaParent
 				if(hit_enemy.material == material):
-					
+					for i in clone_siblings:
+						i.hit_frames = 0
 					shouldHit = false
 					
 				hit_enemy_shader = hit_enemy.originalShader
 				hit_enemy.material = material
 				
-				
+func strike():
+	hit_enemy.update_poise_bar(-150.0)
+	hit_enemy.update_healthbar(150)
+	hit_enemy.material = hit_enemy.originalShader
+	globals.player.stat_sheet.send_stats()
+	#queue_free()
 
-
-
-
-
+func get_clones():
+	var parent = get_parent()
+	for i in parent.get_children():
+		if ("close_circuit" in i.name):
+			clone_siblings.append(i)

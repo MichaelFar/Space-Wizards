@@ -154,9 +154,9 @@ func _physics_process(_delta):#State machine runs per frame
 	
 	if(parent.debug):
 		print("State of " + name + " is " + str(state))
-	if(int(frame) % (int(frameRate) / 2) == 0 && !(poise <= 0.0)):
+	if(int(frame) % (int(frameRate) * 2) == 0 && !(poise <= 0.0)):
 		update_poise_bar(poise_recovery)
-	
+		
 	if(parent.noReservedPoints):
 		all_other_reserved_indexes = []
 	if(playerNode != null):
@@ -337,9 +337,9 @@ func _on_hurtbox_area_entered(area):
 	#Sets the appropriate values and sets the state to TAKEHIT
 	#Enemies can be hit during any state
 	if(area.get_children()[0].disabled == false && state != DEAD):
-		hit_with_broom = true
+		
 		if(area.name == 'AttackHitBox' && state != TAKEHIT && state != ATTACK):
-			
+			hit_with_broom = true
 			velocity = Vector2.ZERO
 			animationPlayer.stop()
 			playerPreviousPosition = parent.playerNode.position
@@ -352,7 +352,7 @@ func _on_hurtbox_area_entered(area):
 			player_hit_me.emit()
 			
 		elif(area.name == 'AttackHitBox' && state == ATTACK):
-			
+			hit_with_broom = true
 			update_healthbar(player_damage)	
 			update_poise_bar(player_poise_damage)
 			player_hit_me.emit()
@@ -382,7 +382,7 @@ func take_hit_state(_delta, origin = position - playerPreviousPosition):
 	animationPlayer.set("speed_scale", 1.0 + stun_modifier)
 	
 	if(animationPlayer.current_animation_position == 0):
-		reset_player_stats()
+		
 		if(state == TAKEHIT):
 			animationPlayer.play('take_hit')
 			print("State is " + str(state))
@@ -392,14 +392,15 @@ func take_hit_state(_delta, origin = position - playerPreviousPosition):
 		
 	elif(animationPlayer.current_animation_position < animationPlayer.current_animation_length):
 		
-		
+		print("origin is " + str(origin) + " and pushbackstrength is " + str(pushBackStrength) + " and pushbackacceleration " + str(pushBackAcceleration))
 		velocity = velocity.move_toward(origin * pushBackStrength, pushBackAcceleration)# + knockback_modifier), pushBackAcceleration)
 		
 	elif(animationPlayer.current_animation_position == animationPlayer.current_animation_length):
-		
+		reset_player_stats()
 		state_transition(PURSUE)
 		animationPlayer.set("speed_scale", 1.0)
 		if(poise <= 0.0):
+			
 			update_poise_bar(max_poise)
 		
 	if(current_health <= 0):
@@ -465,11 +466,10 @@ func dead_state(_delta):
 	
 	if(deadframes / framerate == 2):
 		
-		
 		$"DeathEffect-sheet".show()
 		
-		
 		animationPlayer.play("death")
+		
 	elif(deadframes / framerate >= 2):
 		shader.set_shader_parameter("dissolve_value", clamp(shader.get_shader_parameter("dissolve_value") - 0.015, 0.0, 1.0))
 		if(shader.get_shader_parameter("dissolve_value") == 0.0):
@@ -492,6 +492,7 @@ func get_parried(enemy_id):#Function that is called when the player is in parry 
 		change_sprite(body_sprite, playerPreviousPosition)
 		animationPlayer.play("parried")
 		smearContainer.abort_animation()
+		
 		coolDownTimerOn = false
 		coolDownFrames = 0
 		
@@ -522,6 +523,8 @@ func populate_stats():
 		
 func update_poise_bar(poise_change):#update_poise_bar and update_healthbar could be changed in future enemies to have specific behavior occur at certain values
 	
+	print("Updating poise and state is " + str(state))
+	
 	if(poisebar != null):
 		
 		poise += poise_change
@@ -539,8 +542,17 @@ func update_poise_bar(poise_change):#update_poise_bar and update_healthbar could
 		poisebar.value = (poise / max_poise) * 100
 		
 		if(poise <= 0):
-			poisebar.hide()
+			
 			if(state != STAGGERED):
+				
+				if(animationPlayer.get_queue().size() == 0):
+					
+					
+					animationPlayer.stop()
+					smearContainer.abort_animation()
+					#smearContainer.disable_hitbox()
+					#animationPlayer.seek(animationPlayer.current_animation_length, true)
+				playerPreviousPosition = globals.player.position
 				state = STAGGERED
 			else:
 				state = TAKEHIT

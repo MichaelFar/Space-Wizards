@@ -1264,7 +1264,7 @@ shape = SubResource("CapsuleShape2D_hslqc")
 [node name="player_stat_sheet" type="Node" parent="."]
 script = ExtResource("3_7wyvt")
 knockback_strength = 150.0
-poise_damage = -9.0
+poise_damage = -35.0
 
 [node name="NakedWizard_base" type="Sprite2D" parent="."]
 use_parent_material = true

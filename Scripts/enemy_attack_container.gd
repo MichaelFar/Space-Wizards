@@ -57,10 +57,16 @@ func set_new_attack_specs(objectName = '1'):#Given an object (weapon name string
 			break
 
 func abort_animation():
-	attackPlayer.stop()
+	attackPlayer.queue("RESET")
+	attackPlayer.seek(attackPlayer.current_animation_length, false)
+	
 	for i in smearChildren:
 		i.visible = false
 		
 		for j in i.get_node("enemy_attack_hitbox").get_children():
 			print("Hitbox " + j.name + " disabled")
 			j.disabled = true
+func disable_hitbox():#Call this only when necessary, animations handle the timeline of disabling collision shapes
+	#And for the love of god refactor this
+	$enemy_smear_2/enemy_attack_hitbox/CollisionShape2D.disabled = true
+	

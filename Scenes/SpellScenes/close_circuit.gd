@@ -39,22 +39,25 @@ func post_initialize():
 	#global_destination *= Vector2(2.0,2.0)
 	
 func _physics_process(delta):
+	
 	if(is_instance_valid(hit_enemy)):
-			if(hit_enemy.state == 7):
-				shouldHit = false
+			if(hit_enemy.state == 7): # DEAD state
+				
+				shouldHit = false 
+				if($AnimationPlayer.current_animation != 'strike'):
+					hit_enemy.material = hit_enemy.originalShader
+					queue_free()
 			
 	frame +=1
-	var frame_rate = 1/delta
+	var frame_rate = 1 / delta
 	spell_cooldown = frame_rate / cool_down_denominator
 	
 	if(frame/1 == 1 || $AnimationPlayer.current_animation != 'hit' && $AnimationPlayer.current_animation != 'strike'):
 		
 		$AnimationPlayer.play("travel")
 		
-	destination = global_destination - global_position
+	destination = (global_destination - global_position) * 3
 	destination = destination.normalized()
-	
-	
 	
 	if(shouldHit):
 		
@@ -112,7 +115,7 @@ func strike():
 	hit_enemy.update_healthbar(150)
 	hit_enemy.material = hit_enemy.originalShader
 	globals.player.stat_sheet.send_stats()
-	#queue_free()
+	
 
 func get_clones():
 	var parent = get_parent()

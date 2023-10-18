@@ -1,0 +1,63 @@
+[gd_scene load_steps=10 format=3 uid="uid://cjknylo5t2yvi"]
+
+[ext_resource type="Texture2D" uid="uid://ddhk5cw02ba74" path="res://Sprites/player sprite sheets/naked_wizard_06.png" id="1_45n5r"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_uvy74"]
+particles_animation = true
+particles_anim_h_frames = 8
+particles_anim_v_frames = 11
+particles_anim_loop = true
+
+[sub_resource type="Curve" id="Curve_hlewr"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_tw61p"]
+curve = SubResource("Curve_hlewr")
+
+[sub_resource type="Gradient" id="Gradient_6u1mn"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 0, 1, 0.290196)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_j6p47"]
+gradient = SubResource("Gradient_6u1mn")
+
+[sub_resource type="Curve" id="Curve_sgtcv"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.48421), -1.80323, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_rcgo1"]
+curve = SubResource("Curve_sgtcv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_57vyh"]
+emission_shape = 1
+emission_sphere_radius = 16.75
+particle_flag_disable_z = true
+direction = Vector3(0, 0, 0)
+spread = 1.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 29.63
+initial_velocity_max = 103.7
+angular_velocity_curve = SubResource("CurveTexture_tw61p")
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+scale_curve = SubResource("CurveTexture_rcgo1")
+color_ramp = SubResource("GradientTexture1D_j6p47")
+turbulence_enabled = true
+turbulence_noise_strength = 3.37
+turbulence_noise_scale = 2.04
+turbulence_noise_speed_random = 0.79
+turbulence_influence_min = 0.0
+turbulence_influence_max = 0.33
+anim_speed_min = 0.2
+anim_speed_max = 0.2
+
+[node name="DodgeParticle" type="GPUParticles2D"]
+material = SubResource("CanvasItemMaterial_uvy74")
+emitting = false
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_57vyh")
+texture = ExtResource("1_45n5r")
+lifetime = 0.15
+preprocess = 0.15

@@ -7,7 +7,7 @@ extends CharacterBody2D
 var input_vector = Vector2.ZERO
 var shouldDie = false
 var parry_active = false
-
+var dodgeProgress = 0
 var acceleration = 450 #Multiplied by delta
 var prevAcceleration = acceleration
 var friction = 250 #Multiplied by delta
@@ -15,6 +15,7 @@ var max_speed = 150 # NOT multiplied by delta
 var previous_max_speed = max_speed
 var attack_movement = 400 #Multiplied by delta
 
+var progressIterator = 0
 var max_health = 1000
 var current_health = max_health
 var pushBackStrength = 0
@@ -37,7 +38,7 @@ var hit_enemy = false
 var parried_enemy = false
 var successfulHit = false
 var dummy_delta = 0
-
+var halfwayReached = false
 var dodge_frames = 0
 var dodge_timer = 0
 var dodge_timer_on = false
@@ -48,8 +49,9 @@ var parry_energy = 0
 var store_state = 0 #Certain actions have multiple potential final states they can transition to, such as dodging with the book open
 @export var accelerationCoef = 1.8
 @export var knockBackHitStrength = 5 #Determines how strong the knockback is when hitting the enemy
-
-
+@export var dodgeFrameTarget = 20
+var dodge_particle_linger = false
+var dodge_linger_frames = 0
 var previous_velocity = Vector2.ZERO
 
 var type = 'player'
@@ -63,8 +65,9 @@ var type = 'player'
 @onready var nakedWizardBase = $NakedWizard_base
 @onready var attackContainer = $attackContainer
 @onready var spellContainer = $SpellContainer
-
+@onready var resourcePreloader = $ResourcePreloader
 @onready var stat_sheet = $player_stat_sheet
+@onready var dodge_particle = $DodgeParticle
 
 var PlayerCam = null
 var listOfSprites = []
@@ -75,7 +78,7 @@ var state = MOVE
 signal s_parried
 signal s_attack_points
 
-var originalShader = null
+var originalShader = material
 
 enum {
 	MOVE,
@@ -99,7 +102,7 @@ func _ready():#Called when node loads into the scene, children ready functions r
 	for i in get_children():
 		if i is Sprite2D:
 			listOfSprites.append(i)
-	
+	dodge_particle.emitting = false
 	shader = get("material")
 	originalShader = shader
 	change_sprite("NakedWizard_base")
@@ -138,6 +141,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 	#s_attack_points.emit(attack_points)
 	dummy_delta = _delta
 	frame += 1
+	var frameRate = 1/_delta
 	match state:
 		
 		MOVE:
@@ -159,7 +163,7 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 	
 	if(dodge_timer_on):
 		dodge_timer += 1
-		if(dodge_timer / 15 == 1):
+		if(dodge_timer / dodgeFrameTarget == 1):
 			dodge_timer_on = false
 			dodge_timer = 0
 	
@@ -171,6 +175,12 @@ func _physics_process(_delta):#Runs per frame, contains starting player state ma
 			parry_cool_down_frames = 0
 			parry_timer_on = false
 	
+	if(dodge_particle_linger):
+		var dodge_linger_time = frame - dodge_linger_frames
+		
+		if(dodge_linger_time / int(frameRate) == 1):
+			dodge_particle.emitting = false
+			dodge_linger_frames = 0
 func move_state(_delta):
 	store_state = MOVE
 	var camera = GlobalCameraValues.cameraNode
@@ -178,10 +188,10 @@ func move_state(_delta):
 	mouse_coordinates = mouse_coordinates.normalized()
 	
 	input_vector.x = Input.get_action_strength("right") - Input.get_action_strength("left")
-	
+	dodge_particle.scale.x = -1 * input_vector.x
 	input_vector.y = Input.get_action_strength("down") - Input.get_action_strength("up")
 	
-	playerPosition = self.position
+	playerPosition = position
 	
 	if (input_vector != Vector2.ZERO):#Movement
 		
@@ -312,7 +322,8 @@ func take_hit_state(_delta):
 		attackSpritePlayer.clear_queue()
 		change_sprite("NakedWizard_hurt_armed")
 		playerSpritePlayer.play("take_hit")
-		shader.set_shader_parameter("applied", true)
+		material = resourcePreloader.get_resource("player")
+		material.set_shader_parameter("applied", true)
 		set_shader_time()
 		if(spellContainer.is_open):
 			spellContainer.toggle_book_open()
@@ -328,14 +339,14 @@ func take_hit_state(_delta):
 		state = MOVE
 		
 		change_sprite("NakedWizard_base")
-		shader.set_shader_parameter("applied", false)
+		material.set_shader_parameter("applied", false)
 		#Shader unapplies here in animation player
 		
 	move_and_slide()
 
 func dead_state(_delta):
 	
-	shader.set_shader_parameter("modulate", Vector4(0,0,0,0))
+	material.set_shader_parameter("modulate", Vector4(0,0,0,0))
 	animationState.stop()
 	if(shouldDie):
 		playerSpritePlayer.stop()
@@ -384,7 +395,17 @@ func cool_down_state(_delta):
 
 func dodge_state(_delta):#Candidate for player sheet
 	
+	
+	progressIterator += 1
+	if(progressIterator > dodgeFrameTarget / 2):
+		halfwayReached = true
+	
+	if(halfwayReached):
+		dodgeProgress -= 0.04
+	else:
+		dodgeProgress += 0.04
 	dodge_frames += 1
+	var progressRatio = dodgeProgress
 	var dodge_max_speed = 800
 	var dodge_accel = dodge_max_speed * 2
 	attack_cool_down_frames = 0
@@ -395,7 +416,11 @@ func dodge_state(_delta):#Candidate for player sheet
 	
 	velocity = velocity.move_toward(input_vector * dodge_max_speed, dodge_accel * _delta)
 	
-	if(dodge_frames / 15 == 1):
+	if(dodge_frames == 1):
+		dodge_particle.emitting = true
+		#material = resourcePreloader.get_resource("dodge_material")
+		#material.set_shader_parameter("progress", progressRatio)
+	if(dodge_frames / dodgeFrameTarget == 1):
 		
 		dodge_frames = 0
 		state = store_state
@@ -404,14 +429,21 @@ func dodge_state(_delta):#Candidate for player sheet
 		hit_box.disabled = false
 		dodge_timer_on = true
 		dodge_timer = 0
-		
+		material = resourcePreloader.get_resource("player")
+		halfwayReached = false
+		dodgeProgress = 0.0
+		progressIterator = 0
+		dodge_particle.emitting = false
+		dodge_particle_linger = true
+		dodge_linger_frames = frame
 	else:
+		#material.set_shader_parameter("progress", progressRatio)
 		
 		hit_box.disabled = true
 		
 	set_collision_mask_value(2, !hit_box.disabled) #Changes the collision mask when dodging to go through enemies
 	move_and_slide()
-	print("State at end of dodge is " + str(state))
+	
 
 func RAM_state(_delta):
 	
@@ -450,7 +482,7 @@ func _on_player_hurtbox_area_entered(area):
 			
 			if(attackSpritePlayer.current_animation != ''):
 				
-				shader.set_shader_parameter("applied", false)
+				material.set_shader_parameter("applied", false)
 			
 			attackContainer.abort_animation()#Hope this fixed the smear bug (later michael edit: likely did fix)
 				
@@ -538,7 +570,7 @@ func queue_parry_hit():#Called in _on_player_hurtbox_area_entered()
 		
 func set_shader_time():
 	
-	shader.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)#Give time in seconds since engine has started
+	material.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)#Give time in seconds since engine has started
 
 func reset_knockback_direction():#Called in attack animations
 	knockBackDirection = 1

@@ -1,14 +1,16 @@
-[gd_scene load_steps=58 format=3 uid="uid://duuyynepqg4x2"]
+[gd_scene load_steps=60 format=3 uid="uid://duuyynepqg4x2"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_cdtsu"]
 [ext_resource type="Material" uid="uid://dumxkcum8oy8r" path="res://Shaders/player.tres" id="1_kkqpc"]
 [ext_resource type="Texture2D" uid="uid://cme7itjvd6u5m" path="res://Sprites/player sprite sheets/naked_wizard_04.png" id="2_mxy5m"]
 [ext_resource type="Script" path="res://Sprites/player sprite sheets/player_stat_sheet.gd" id="3_7wyvt"]
+[ext_resource type="Material" uid="uid://0f5m4htyiaa1" path="res://Shaders/dodge_material.tres" id="3_e5ub5"]
 [ext_resource type="Texture2D" uid="uid://swc4t8u2jlia" path="res://Sprites/player sprite sheets/naked_wizard_02.png" id="5_qw86e"]
 [ext_resource type="Script" path="res://Scripts/WizardWeaponContainer.gd" id="5_s86xv"]
 [ext_resource type="PackedScene" uid="uid://bsgcp3yjcx28x" path="res://UI/UI Scenes/healthbar.tscn" id="7_6wihs"]
 [ext_resource type="PackedScene" uid="uid://b267d86bs3b4e" path="res://Scenes/attack_container.tscn" id="8_6tmly"]
 [ext_resource type="Texture2D" uid="uid://ddhk5cw02ba74" path="res://Sprites/player sprite sheets/naked_wizard_06.png" id="14_rfyrk"]
+[ext_resource type="PackedScene" uid="uid://cjknylo5t2yvi" path="res://Scenes/dodge_particle.tscn" id="15_udywh"]
 [ext_resource type="Texture2D" uid="uid://dpdlkwabtfqv5" path="res://Sprites/player sprite sheets/nakedwizard_broom_01.png" id="15_wnbpv"]
 [ext_resource type="PackedScene" uid="uid://bs8071ewrak5g" path="res://Scenes/energy_point_container.tscn" id="18_0bs8l"]
 [ext_resource type="PackedScene" uid="uid://1fa7yelaqc5d" path="res://Scenes/player_cam.tscn" id="19_o57sc"]
@@ -1257,6 +1259,9 @@ material = ExtResource("1_kkqpc")
 script = ExtResource("1_cdtsu")
 knockBackHitStrength = 2
 
+[node name="ResourcePreloader" type="ResourcePreloader" parent="."]
+resources = [PackedStringArray("dodge_material", "player"), [ExtResource("3_e5ub5"), ExtResource("1_kkqpc")]]
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_hslqc")
@@ -1331,6 +1336,9 @@ offset_bottom = 13.0
 [node name="SpellContainer" parent="." instance=ExtResource("20_whlnt")]
 
 [node name="PlayerCam" parent="." instance=ExtResource("19_o57sc")]
+
+[node name="DodgeParticle" parent="." instance=ExtResource("15_udywh")]
+position = Vector2(0, -12)
 
 [connection signal="area_entered" from="attackContainer/broom_smear_1/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]
 [connection signal="area_entered" from="player_hurtbox" to="." method="_on_player_hurtbox_area_entered"]

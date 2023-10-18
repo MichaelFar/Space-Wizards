@@ -6,6 +6,6 @@
 shader = ExtResource("1_bkdts")
 shader_parameter/speed = 3.0
 shader_parameter/tint = Color(1, 0, 0.113725, 1)
-shader_parameter/span = 0.3
+shader_parameter/span = 1.0
 shader_parameter/start_time = 0.0
 shader_parameter/applied = false

@@ -55,7 +55,6 @@ anim_speed_max = 0.2
 
 [node name="DodgeParticle" type="GPUParticles2D"]
 material = SubResource("CanvasItemMaterial_uvy74")
-emitting = false
 amount = 16
 process_material = SubResource("ParticleProcessMaterial_57vyh")
 texture = ExtResource("1_45n5r")

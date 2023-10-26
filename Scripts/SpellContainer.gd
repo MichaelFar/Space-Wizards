@@ -92,8 +92,6 @@ func post_initialize():
 	
 	global_position = MouseCursor.global_position
 	
-	#randomize_list()
-	
 	current_spell = "zap_spell"
 	selected_spell_index = spell_name_list.find(current_spell)
 	
@@ -108,12 +106,7 @@ func _physics_process(delta):
 	frame += 1
 	updated_mouse_coordinate = MouseCursor.global_position
 	updated_spawn_point = spawn_point.global_position
-	#This now lives in player.gd, except for cooldown as of 9/20/23
-#		if(!spell_cooldown_target):
-#
-#			spawn_spell(SpellLoader.get_resource(all_possible_spell_resources[0]), 
-#					MouseCursor.global_position, 
-#					spawn_point.global_position)
+	
 	if(shouldChangeIcon):
 		
 		book_icon_frame = spells_dict[current_spell]["frame"]

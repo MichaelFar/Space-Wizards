@@ -1,12 +1,150 @@
-[gd_scene load_steps=13 format=3 uid="uid://ccftd7obe8afk"]
+[gd_scene load_steps=15 format=3 uid="uid://ccftd7obe8afk"]
 
 [ext_resource type="Material" uid="uid://bq5sdf05c8oyl" path="res://Shaders/spell_book_material.tres" id="1_7uxpb"]
-[ext_resource type="Texture2D" uid="uid://ob8075if8wa0" path="res://Sprites/UI Sprites/Book UI/bookUI_02.png" id="1_whaon"]
 [ext_resource type="Script" path="res://spell_book.gd" id="2_n6no4"]
 [ext_resource type="Texture2D" uid="uid://ba48fg7qocp1d" path="res://Sprites/UI Sprites/Book UI/tile_0015.png" id="4_fj7m1"]
 [ext_resource type="Texture2D" uid="uid://drqljihxcinaf" path="res://Sprites/UI Sprites/Book UI/#1 - Transparent Icons.png" id="5_5ri6y"]
+[ext_resource type="Texture2D" uid="uid://tj7jhi6ox4we" path="res://Sprites/UI Sprites/Book UI/bookUI_04.png" id="6_buple"]
 
-[sub_resource type="Animation" id="Animation_neqs3"]
+[sub_resource type="Shader" id="Shader_ucou7"]
+code = "shader_type canvas_item;
+
+uniform vec2 frame_coord = vec2(0.0);
+uniform vec4 color : source_color = vec4(1.0);
+uniform float width : hint_range(0, 10) = 1.0;
+uniform int pattern : hint_range(0, 2) = 0; // diamond, circle, square
+uniform bool inside = false;
+uniform bool add_margins = true; // only useful when inside is false
+uniform bool enabled = false;
+const float EPSILON = 0.0001;
+void vertex() {
+	if(enabled){
+		if (add_margins) {
+			VERTEX += (UV * 2.0 - 1.0) * width;
+		}
+	}
+}
+
+bool hasContraryNeighbour(vec2 uv, vec2 texture_pixel_size, sampler2D texture) {
+	if(enabled){
+		for (float i = -ceil(width); i <= ceil(width); i++) {
+			float x = abs(i) > width ? width * sign(i) : i;
+			float offset;
+
+			if (pattern == 0) {
+				offset = width - abs(x);
+			} else if (pattern == 1) {
+				offset = floor(sqrt(pow(width + 0.5, 2) - x * x));
+			} else if (pattern == 2) {
+				offset = width;
+			}
+
+			for (float j = -ceil(offset); j <= ceil(offset); j++) {
+				float y = abs(j) > offset ? offset * sign(j) : j;
+				vec2 xy = uv + texture_pixel_size * vec2(x, y);
+
+				if ((xy != clamp(xy, vec2(0.0), vec2(1.0)) || texture(texture, xy).a == 0.0) == inside) {
+					return true;
+				}
+			}
+		}
+
+	return false;
+	}
+}
+
+void fragment() {
+	vec2 uv = UV;
+	vec4 tempColor = texture(TEXTURE, UV);
+	float textureWidth = 1.0 / TEXTURE_PIXEL_SIZE.x;//Inverse of a single pixel gets the total width
+	int integerWidth = int(textureWidth);
+	float xIterator = TEXTURE_PIXEL_SIZE.x;
+	
+	
+	//tempColor = vec4(0.0);
+	
+	//COLOR = tempColor;
+	
+	if(enabled) {
+		for(int i = 0; i < integerWidth; i++)
+		{
+			float currentPosition = float(i) * TEXTURE_PIXEL_SIZE.x;
+			vec4 right_neighbor_color = texture(TEXTURE, UV + vec2(currentPosition, 0));
+			clamp(tempColor.rgb += right_neighbor_color.rgb, 0.0, 1.0);
+		}
+		tempColor = tempColor / vec4(textureWidth);
+		if (add_margins) {
+			vec2 real_texture_size = 1.0 / TEXTURE_PIXEL_SIZE;
+
+		    // This is texture size when add margin equal to 
+		    // width of the outline*2 (left and right / top and down)
+		    vec2 added_margin_texture_pixel_size = 1.0 / (real_texture_size + (width*2.0));
+
+		    // width in range (0,1), respected to the new texture size
+		    vec2 width_size = added_margin_texture_pixel_size * width;
+		    // shift the original uv bottom-right for 'width' unit 
+		    // Calculate how much bigger is the new size compared to the old one
+		    vec2 shifted_uv = UV - width_size;
+		    // Then scale the uv down to that ratio
+		    vec2 ratio = TEXTURE_PIXEL_SIZE / added_margin_texture_pixel_size;
+		    vec2 scaled_shifted_uv = shifted_uv * ratio;
+
+		    // sample the original texture with new uv to scale it down
+		    // to the original size
+		    
+		    COLOR= texture(TEXTURE, scaled_shifted_uv);
+//			vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0));
+//
+//			uv = (uv - texture_pixel_size * width) * TEXTURE_PIXEL_SIZE / texture_pixel_size;
+//
+//			if (uv != clamp(uv, vec2(0.0), vec2(1.0))) {
+//				COLOR.a = 0.0;
+//			} else {
+//				COLOR = texture(TEXTURE, uv);
+//			}
+		} else {
+			COLOR = texture(TEXTURE, uv);
+		}
+
+		if ((COLOR.a > 0.0) == inside && hasContraryNeighbour(uv, TEXTURE_PIXEL_SIZE, TEXTURE)) {
+			COLOR.rgb = inside ? mix(COLOR.rgb, tempColor.rgb, tempColor.a) : tempColor.rgb;
+			COLOR.a += (1.0 - COLOR.a) * color.a;
+		}
+	}
+}
+//shader_type canvas_item;
+//
+//uniform vec4 line_color : source_color = vec4(1);
+//uniform float line_thickness : hint_range(0, 10) = 1.0;
+//
+//void fragment() {
+//	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
+//
+//	float outline = texture(TEXTURE, UV + vec2(-size.x, 0)).a;
+//	outline += texture(TEXTURE, UV + vec2(0, size.y)).a;
+//	outline += texture(TEXTURE, UV + vec2(size.x, 0)).a;
+//	outline += texture(TEXTURE, UV + vec2(0, -size.y)).a;
+//	outline += texture(TEXTURE, UV + vec2(-size.x, size.y)).a;
+//	outline += texture(TEXTURE, UV + vec2(size.x, size.y)).a;
+//	outline += texture(TEXTURE, UV + vec2(-size.x, -size.y)).a;
+//	outline += texture(TEXTURE, UV + vec2(size.x, -size.y)).a;
+//	outline = min(outline, 1.0);
+//
+//	vec4 color = texture(TEXTURE, UV);
+//	COLOR = mix(color, line_color, outline - color.a);
+//}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_itdnj"]
+shader = SubResource("Shader_ucou7")
+shader_parameter/frame_coord = Vector2(0, 0)
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/width = 1.0
+shader_parameter/pattern = 0
+shader_parameter/inside = false
+shader_parameter/add_margins = true
+shader_parameter/enabled = false
+
+[sub_resource type="Animation" id="Animation_i1rru"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -18,127 +156,61 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [30]
+"values": [23]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("IconInBook:visible")
+tracks/1/path = NodePath("IconInBook2:offset")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [Vector2(-12, 0)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("IconInBook:offset")
+tracks/2/path = NodePath("IconInBook2:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [Vector2(-37, 0)]
+"values": [false]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("IconInBook:skew")
+tracks/3/path = NodePath("IconInBook2:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [0.0]
+"values": [Vector2(2, 2)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("IconInBook:scale")
+tracks/4/path = NodePath("IconInBook2:skew")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [Vector2(2, 2)]
+"values": [0.0]
 }
 
-[sub_resource type="Animation" id="Animation_2co67"]
+[sub_resource type="Animation" id="Animation_5bjf1"]
 resource_name = "close_book"
-length = 0.7
-step = 0.075
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.075, 0.15, 0.225, 0.3, 0.375, 0.45),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [24, 25, 26, 27, 28, 29, 30]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("IconInBook:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.225),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("IconInBook:offset")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.075, 0.15),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [Vector2(-19, 0), Vector2(-37, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_uinhp"]
-resource_name = "initial_state"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [32]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("IconInBook:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_8vt6g"]
-resource_name = "open_book"
+length = 0.65
+step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -149,16 +221,72 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [32, 33, 34, 35, 36, 37, 38]
+"values": [16, 17, 18, 19, 20, 21, 23]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("IconInBook:visible")
+tracks/1/path = NodePath("IconInBook2:offset")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.4),
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, 0), Vector2(-12, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IconInBook2:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_31t8j"]
+resource_name = "initial_state"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [23]
+}
+
+[sub_resource type="Animation" id="Animation_nkwtb"]
+resource_name = "open_book"
+length = 0.75
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [24, 25, 26, 27, 28, 29, 30, 31]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IconInBook2:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -166,17 +294,17 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("IconInBook:offset")
+tracks/2/path = NodePath("IconInBook2:offset")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.4, 0.5, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [Vector2(-37, 0), Vector2(-19, 0), Vector2(0, 0)]
+"values": [Vector2(-14, 0), Vector2(0, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_v4a56"]
+[sub_resource type="Animation" id="Animation_pfhf7"]
 resource_name = "page_left"
 length = 0.45
 step = 0.05
@@ -190,16 +318,95 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [15, 16, 17, 18, 19, 20, 21, 22, 23]
+"values": [7, 8, 9, 10, 11, 12, 13, 14, 15]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("IconInBook:visible")
+tracks/1/path = NodePath("IconInBook2:offset")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.35),
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(0, 0), Vector2(-2, 0), Vector2(-4, 0), Vector2(-11, -3), Vector2(-24, -6), Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IconInBook2:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.2, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(2, 2), Vector2(1.5, 2), Vector2(1.25, 2), Vector2(2, 2)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IconInBook2:skew")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0.0, -0.0767945, 0.0]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.25),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [true],
+"method": &"trigger_icon_change"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IconInBook2:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_kwpci"]
+resource_name = "page_right"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IconInBook2:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.25),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [true, false, true]
@@ -218,132 +425,79 @@ tracks/2/keys = {
 "method": &"trigger_icon_change"
 }]
 }
-
-[sub_resource type="Animation" id="Animation_hsvpb"]
-resource_name = "page_right"
-length = 0.4
-step = 0.05
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [8, 9, 10, 11, 12, 13, 14, 15]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("IconInBook:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 1,
-"values": [true, true, true]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.25),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [true],
-"method": &"trigger_icon_change"
-}]
-}
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("IconInBook:skew")
+tracks/3/path = NodePath("IconInBook2:offset")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.2),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.25, 0.3, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [0.0, -0.0750492, 0.0]
+"values": [Vector2(0, 0), Vector2(-5, 0), Vector2(-2, 0), Vector2(0, 0)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("IconInBook:scale")
+tracks/4/path = NodePath("IconInBook2:scale")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.2, 0.25),
+"times": PackedFloat32Array(0, 0.25, 0.3, 0.35),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [Vector2(2, 2), Vector2(1.5, 2), Vector2(0.75, 2), Vector2(2, 2)]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("IconInBook:offset")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.15, 0.2, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 1,
-"values": [Vector2(0, 0), Vector2(-7, -3), Vector2(-19, -12), Vector2(-115, -22), Vector2(0, 0)]
+"values": [Vector2(2, 2), Vector2(1.5, 2), Vector2(1.75, 2), Vector2(2, 2)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_f6pmn"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_if2jk"]
 _data = {
-"RESET": SubResource("Animation_neqs3"),
-"close_book": SubResource("Animation_2co67"),
-"initial_state": SubResource("Animation_uinhp"),
-"open_book": SubResource("Animation_8vt6g"),
-"page_left": SubResource("Animation_v4a56"),
-"page_right": SubResource("Animation_hsvpb")
+"RESET": SubResource("Animation_i1rru"),
+"close_book": SubResource("Animation_5bjf1"),
+"initial_state": SubResource("Animation_31t8j"),
+"open_book": SubResource("Animation_nkwtb"),
+"page_left": SubResource("Animation_pfhf7"),
+"page_right": SubResource("Animation_kwpci")
 }
 
-[node name="spell_book" type="Sprite2D"]
-z_index = 10
+[node name="BookUi04" type="Sprite2D" node_paths=PackedStringArray("animationPlayer", "IconContainer", "Icons", "IconInBook")]
+z_index = 5
 material = ExtResource("1_7uxpb")
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("1_whaon")
+texture = ExtResource("6_buple")
 hframes = 8
-vframes = 5
-frame = 30
+vframes = 6
+frame = 23
 script = ExtResource("2_n6no4")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_f6pmn")
-}
+animationPlayer = NodePath("AnimationPlayer")
+IconContainer = NodePath("IconContainer")
+Icons = NodePath("Icons")
+IconInBook = NodePath("IconInBook2")
 
 [node name="IconContainer" type="Sprite2D" parent="."]
-position = Vector2(152, 0)
-scale = Vector2(2, 2)
+position = Vector2(76, 0)
 texture = ExtResource("4_fj7m1")
 
 [node name="Icons" type="Sprite2D" parent="."]
 z_index = 10
-position = Vector2(152, 0)
-scale = Vector2(2, 2)
+position = Vector2(76, 0)
 texture = ExtResource("5_5ri6y")
 hframes = 16
 vframes = 27
 frame = 53
 
-[node name="IconInBook" type="Sprite2D" parent="."]
+[node name="IconInBook2" type="Sprite2D" parent="."]
+visible = false
 z_index = 10
-use_parent_material = true
-position = Vector2(57, 0)
+material = SubResource("ShaderMaterial_itdnj")
+position = Vector2(25, 4)
 scale = Vector2(2, 2)
 texture = ExtResource("5_5ri6y")
-offset = Vector2(-37, 0)
+offset = Vector2(-12, 0)
 hframes = 16
 vframes = 27
 frame = 9
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_if2jk")
+}

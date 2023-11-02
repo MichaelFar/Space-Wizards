@@ -36,6 +36,7 @@ func _ready():
 func post_initialize():
 	#Need to send energy container to this node, parent is scene root
 	global_position = originPoint 
+	look_at(global_destination)
 	#global_destination *= Vector2(2.0,2.0)
 	
 func _physics_process(delta):
@@ -55,9 +56,7 @@ func _physics_process(delta):
 	if(frame/1 == 1 || $AnimationPlayer.current_animation != 'hit' && $AnimationPlayer.current_animation != 'strike'):
 		
 		$AnimationPlayer.play("travel")
-		
-	destination = (global_destination - global_position) * 3
-	destination = destination.normalized()
+
 	
 	if(shouldHit):
 		
@@ -81,10 +80,8 @@ func _physics_process(delta):
 			queue_free()
 	elif($AnimationPlayer.current_animation == 'travel'):
 		
-		look_at(global_destination)
-		velocity = velocity.move_toward(destination * max_speed, delta * acceleration)
-		if(global_position.distance_to(global_destination) < target_distance):
-			queue_free()
+		velocity = transform.x * max_speed
+		
 	
 	move_and_slide()
 	

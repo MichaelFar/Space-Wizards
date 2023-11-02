@@ -5,16 +5,16 @@ extends Sprite2D
 var parameter_iterator = 0.1
 var shakeFrames = 0
 
-@onready var animationPlayer = $AnimationPlayer#So that spell container can reference book animations
-@onready var IconContainer = $IconContainer#Box that contains spell icons
-@onready var Icons = $Icons #Icon that represents currently selected spell
-@onready var IconInBook = $IconInBook #Icon that changes depending on the page
+@export var animationPlayer : AnimationPlayer#So that spell container can reference book animations
+@export var IconContainer : Sprite2D#Box that contains spell icons
+@export var Icons : Sprite2D #Icon that represents currently selected spell
+@export var IconInBook : Sprite2D #Icon that changes depending on the page
 
 var should_change_icon = false
 
 func _ready():
 	
-	global_position = Vector2(-50.0, get_viewport_rect().size.y * 16.5/20)#Placed in bottom left corner, based on viewport
+	global_position = Vector2(-30.0, get_viewport_rect().size.y * 15/20)#Placed in bottom left corner, based on viewport
 	animationPlayer.play("initial_state")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -45,6 +45,8 @@ func outline_pulse():
 	if(next_value > 2.3 || next_value < 0.0):
 		parameter_iterator *= -1
 	material.set_shader_parameter('width', next_value)
+	IconInBook.material.set_shader_parameter('enabled', material.get_shader_parameter('enabled'))
 	
+	IconInBook.material.set_shader_parameter('width', next_value)
 func trigger_icon_change(shouldChange):
 	should_change_icon = shouldChange

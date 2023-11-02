@@ -191,6 +191,7 @@ func toggle_book_open():
 		is_open = false
 		
 	camera.SpellBook.material.set_shader_parameter("enabled", is_open)
+	#camera.SpellBook.IconInBook.material.set_shader_parameter("enabled", is_open)
 	return is_open
 
 func trigger_icon_change():

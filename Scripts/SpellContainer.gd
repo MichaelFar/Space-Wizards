@@ -79,8 +79,13 @@ var spells_dict = {"zap_spell":
 				   "close_circuit":
 							 {
 							 "frame": 51,
+							 },
+				   "gust":
+							 {
+							 "frame": 60,
 							 }
 					}
+					
 
 func _ready():
 	

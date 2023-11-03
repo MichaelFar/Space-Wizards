@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://bsc7ly8btdd5l"]
+[gd_scene load_steps=14 format=3 uid="uid://bsc7ly8btdd5l"]
 
 [ext_resource type="Shader" path="res://Shaders/player.gdshader" id="1_6mmgm"]
 [ext_resource type="Script" path="res://Scenes/SpellScenes/close_circuit.gd" id="1_aiu3e"]
 [ext_resource type="Script" path="res://Scenes/SpellScenes/close_circuit_stat_sheet.gd" id="1_akfeh"]
 [ext_resource type="Texture2D" uid="uid://d34y634rsmd7c" path="res://Sprites/Sprite Effects/Thunderstrike wo blur.png" id="3_us74g"]
 [ext_resource type="Texture2D" uid="uid://cs22du8ly5el7" path="res://Sprites/Sprite Effects/Thunder projectile1 wo blur.png" id="4_y0k57"]
+[ext_resource type="PackedScene" uid="uid://b4njluao5qpua" path="res://Scenes/SpellScenes/zap_particle.tscn" id="6_m314m"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_361h4"]
 shader = ExtResource("1_6mmgm")
@@ -362,10 +363,14 @@ _data = {
 radius = 5.0
 height = 28.0
 
-[node name="close_circuit" type="CharacterBody2D" node_paths=PackedStringArray("spell_stat_sheet")]
+[node name="close_circuit" type="CharacterBody2D" node_paths=PackedStringArray("spell_stat_sheet", "electric_child_1", "electric_child_2", "electric_child_3", "zap_particle")]
 material = SubResource("ShaderMaterial_361h4")
 script = ExtResource("1_aiu3e")
 spell_stat_sheet = NodePath("spell_stat_sheet")
+electric_child_1 = NodePath("ThunderstrikeWoBlur2")
+electric_child_2 = NodePath("ThunderstrikeWoBlur3")
+electric_child_3 = NodePath("ThunderstrikeWoBlur4")
+zap_particle = NodePath("zap_particle")
 
 [node name="spell_stat_sheet" type="Node2D" parent="."]
 script = ExtResource("1_akfeh")
@@ -422,6 +427,9 @@ scale = Vector2(2, 2)
 texture = ExtResource("3_us74g")
 offset = Vector2(0, -26)
 hframes = 13
+
+[node name="zap_particle" parent="." instance=ExtResource("6_m314m")]
+lifetime = 1.0
 
 [connection signal="area_entered" from="SpellHitBox" to="." method="_on_spell_hit_box_area_entered"]
 [connection signal="body_entered" from="SpellHitBox" to="." method="_on_spell_hit_box_body_entered"]

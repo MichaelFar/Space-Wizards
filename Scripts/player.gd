@@ -92,7 +92,7 @@ enum {
 }
 
 func _ready():#Called when node loads into the scene, children ready functions run first
-	
+	globals.player = self
 	velocity = Vector2.ZERO
 	playerSpritePlayer = $PlayerSpriteAnimPlayer
 	playerSpriteTree = $PlayerSpriteAnimTree

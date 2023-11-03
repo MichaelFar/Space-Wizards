@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://bolae2xcgoyvh"]
+[gd_scene load_steps=13 format=3 uid="uid://bolae2xcgoyvh"]
 
 [ext_resource type="Script" path="res://Scripts/zap_spell.gd" id="1_lrpfm"]
 [ext_resource type="Script" path="res://Scenes/SpellScenes/spell_stat_sheet.gd" id="2_5a4xv"]
 [ext_resource type="Texture2D" uid="uid://cs22du8ly5el7" path="res://Sprites/Sprite Effects/Thunder projectile1 wo blur.png" id="2_7ltrn"]
 [ext_resource type="Texture2D" uid="uid://d34y634rsmd7c" path="res://Sprites/Sprite Effects/Thunderstrike wo blur.png" id="3_x6pgy"]
 [ext_resource type="Texture2D" uid="uid://drqljihxcinaf" path="res://Sprites/UI Sprites/Book UI/#1 - Transparent Icons.png" id="5_fegss"]
+[ext_resource type="PackedScene" uid="uid://b4njluao5qpua" path="res://Scenes/SpellScenes/zap_particle.tscn" id="6_3yjmq"]
 
 [sub_resource type="Animation" id="Animation_kojhg"]
 length = 0.001
@@ -213,9 +214,10 @@ radius = 4.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_a0aqs"]
 radius = 14.0
 
-[node name="zap_spell" type="CharacterBody2D"]
+[node name="zap_spell" type="CharacterBody2D" node_paths=PackedStringArray("zap_particle")]
 motion_mode = 1
 script = ExtResource("1_lrpfm")
+zap_particle = NodePath("zap_particle")
 
 [node name="spell_stat_sheet" type="Node2D" parent="."]
 script = ExtResource("2_5a4xv")
@@ -256,6 +258,8 @@ texture = ExtResource("5_fegss")
 hframes = 16
 vframes = 28
 frame = 8
+
+[node name="zap_particle" parent="." instance=ExtResource("6_3yjmq")]
 
 [connection signal="area_entered" from="SpellHitBox" to="." method="_on_spell_hit_box_area_entered"]
 [connection signal="body_entered" from="SpellHitBox" to="." method="_on_spell_hit_box_body_entered"]

@@ -12,6 +12,7 @@ var cooldown_begin = true
 
 @onready var spell_stat_sheet = $spell_stat_sheet
 @onready var icon_reference = $IconReference
+@export var zap_particle : GPUParticles2D
 var originPoint = Vector2.ZERO
 var currentGlobalVector = Vector2.ZERO
 var vectorDifference = Vector2.ZERO
@@ -48,21 +49,29 @@ func _physics_process(delta):
 		
 		$AnimationPlayer.play("travel")
 		
-	destination = global_destination - global_position
+	destination = transform.x
 	
 	if(global_position.distance_to(global_destination) < target_distance || shouldHit):
 	
 		$AnimationPlayer.play('hit')
 		rotation = 0
+		
 		if(!shouldHit):
+			zap_particle.reparent(globals.currentLevel)
+			zap_particle.particle_timer_on = true
 			global_position = global_destination
-		else:
-			global_position = hit_enemy.global_position
-		shouldHit = false
+		elif(hit_enemy != null):
+			#zap_particle.process_material.emission_sphere_radius = hit_enemy.body_sprite.region_rect.size.x
+			zap_particle.reparent(hit_enemy)
+			zap_particle.particle_timer_on = true
+			global_position = hit_enemy.global_position - hit_enemy.body_sprite.offset
+			
+		#shouldHit = false
 	elif($AnimationPlayer.current_animation != 'hit'):
 		
 		look_at(global_destination)
-		position = position.move_toward(destination * max_speed, delta * acceleration)
+		velocity = destination * max_speed
+		move_and_slide()
 	
 func _on_spell_hit_box_body_entered(body):
 	if(body is TileMap):
@@ -85,9 +94,5 @@ func cost():#This is used in spell_container to tell if the player has enough en
 		print("Player able to pay for " + self.name)
 	return paid 
 
-func get_icon_reference():
-	#Returns resource, hframes, vframes, and current frame of icon sheet
-	#This is then loaded into spell_container, this is to ensure that the proper icons are displayed on the ui and within the book
-	#Continuing with the philosophy of all spells containing their own functionality, the spells will self determine icons
-	return [icon_reference, icon_reference.hframes, icon_reference.vframes, icon_reference.frame]
+
 	

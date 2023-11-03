@@ -15,6 +15,7 @@ var originPoint = Vector2.ZERO
 @export var electric_child_1 = Sprite2D
 @export var electric_child_2 = Sprite2D
 @export var electric_child_3 = Sprite2D
+@export var zap_particle = GPUParticles2D
 var target_distance = 20
 var shouldHit = false
 var max_speed = 900
@@ -29,7 +30,7 @@ var effect_active = false
 var clone_siblings = []
 
 func _ready():
-	
+	zap_particle.emitting = false
 	post_initialize()
 	get_clones()
 	
@@ -62,6 +63,7 @@ func _physics_process(delta):
 		
 		if(!hit_enemy.hit_with_broom):
 			$AnimationPlayer.play('hit')
+			zap_particle.emitting = true
 		else:
 			$AnimationPlayer.play("strike")
 		rotation = 0

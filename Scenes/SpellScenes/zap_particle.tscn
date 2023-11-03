@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://b4njluao5qpua"]
+
+[ext_resource type="Script" path="res://Scenes/SpellScenes/zap_particle.gd" id="1_uyskm"]
+
+[sub_resource type="Gradient" id="Gradient_y6rca"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_wyrxm"]
+gradient = SubResource("Gradient_y6rca")
+
+[sub_resource type="Curve" id="Curve_wo8pc"]
+min_value = -200.0
+max_value = 200.0
+_data = [Vector2(0, -166.316), 0.0, 0.0, 0, 0, Vector2(0.425101, 120), 0.0, 0.0, 0, 0, Vector2(0.813765, -115.789), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_raj2g"]
+curve = SubResource("Curve_wo8pc")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ngkrr"]
+emission_shape = 1
+emission_sphere_radius = 24.19
+particle_flag_align_y = true
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+gravity = Vector3(0, -98, 0)
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+tangential_accel_min = -22.23
+tangential_accel_curve = SubResource("CurveTexture_raj2g")
+scale_min = 3.0
+scale_max = 3.0
+color = Color(1, 1, 0.521569, 1)
+color_ramp = SubResource("GradientTexture1D_wyrxm")
+
+[node name="zap_particle" type="GPUParticles2D"]
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_ngkrr")
+lifetime = 0.5
+script = ExtResource("1_uyskm")

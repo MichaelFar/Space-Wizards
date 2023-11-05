@@ -393,8 +393,11 @@ func cool_down_state(_delta):
 		
 	move_and_slide()
 
-func dodge_state(_delta):#Candidate for player sheet
-	
+func dodge_state(_delta):
+	var originalColor = nakedWizardBase.self_modulate
+	var progressRatio = dodgeProgress
+	var dodge_max_speed = 800
+	var dodge_accel = dodge_max_speed * 2
 	
 	progressIterator += 1
 	if(progressIterator > dodgeFrameTarget / 2):
@@ -405,9 +408,7 @@ func dodge_state(_delta):#Candidate for player sheet
 	else:
 		dodgeProgress += 0.04
 	dodge_frames += 1
-	var progressRatio = dodgeProgress
-	var dodge_max_speed = 800
-	var dodge_accel = dodge_max_speed * 2
+	
 	attack_cool_down_frames = 0
 	attack_timer_on = false
 	playerSpriteTree.set("parameters/IdleBlend/blend_position", input_vector)
@@ -418,6 +419,8 @@ func dodge_state(_delta):#Candidate for player sheet
 	
 	if(dodge_frames == 1):
 		dodge_particle.emitting = true
+		var colorOBJ = Color(nakedWizardBase.modulate, 0.0)
+		nakedWizardBase.modulate = colorOBJ
 		#material = resourcePreloader.get_resource("dodge_material")
 		#material.set_shader_parameter("progress", progressRatio)
 	if(dodge_frames / dodgeFrameTarget == 1):
@@ -436,6 +439,8 @@ func dodge_state(_delta):#Candidate for player sheet
 		dodge_particle.emitting = false
 		dodge_particle_linger = true
 		dodge_linger_frames = frame
+		#nakedWizardBase.self_modulate = Vector4(255.0,255.0,255.0,255.0)
+		nakedWizardBase.modulate = originalColor
 	else:
 		#material.set_shader_parameter("progress", progressRatio)
 		

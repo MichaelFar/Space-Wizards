@@ -4,6 +4,21 @@
 [ext_resource type="Script" path="res://Scenes/SpellScenes/gust_stat_sheet.gd" id="2_mi0wy"]
 [ext_resource type="Texture2D" uid="uid://mgmst5ynaik3" path="res://Sprites/Sprite Effects/Free Smoke Fx  Pixel 05.png" id="3_7oqf3"]
 
+[sub_resource type="Animation" id="Animation_lomon"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("FreeSmokeFxPixel05:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [120]
+}
+
 [sub_resource type="Animation" id="Animation_mykuk"]
 resource_name = "gust"
 length = 0.6
@@ -19,21 +34,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130]
-}
-
-[sub_resource type="Animation" id="Animation_lomon"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("FreeSmokeFxPixel05:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [120]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_64egi"]

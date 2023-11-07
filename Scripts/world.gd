@@ -1,4 +1,4 @@
-extends Control
+extends Node2D
 
 #Root container node script
 #Navigation Area and the Exclusion zone MUST be located at (0,0) or the points will not be correct and the ai will choose erroneous coordinates

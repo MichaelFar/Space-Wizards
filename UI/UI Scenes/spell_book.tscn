@@ -66,12 +66,12 @@ void fragment() {
 	//COLOR = tempColor;
 	
 	if(enabled) {
-		for(int i = 0; i < integerWidth; i++)
-		{
-			float currentPosition = float(i) * TEXTURE_PIXEL_SIZE.x;
-			vec4 right_neighbor_color = texture(TEXTURE, UV + vec2(currentPosition, 0));
-			clamp(tempColor.rgb += right_neighbor_color.rgb, 0.0, 1.0);
-		}
+//		for(int i = 0; i < integerWidth; i++)
+//		{
+//			float currentPosition = float(i) * TEXTURE_PIXEL_SIZE.x;
+//			vec4 right_neighbor_color = texture(TEXTURE, UV + vec2(currentPosition, 0));
+//			clamp(tempColor.rgb += right_neighbor_color.rgb, 0.0, 1.0);
+//		}
 		tempColor = tempColor / vec4(textureWidth);
 		if (add_margins) {
 			vec2 real_texture_size = 1.0 / TEXTURE_PIXEL_SIZE;
@@ -107,7 +107,7 @@ void fragment() {
 		}
 
 		if ((COLOR.a > 0.0) == inside && hasContraryNeighbour(uv, TEXTURE_PIXEL_SIZE, TEXTURE)) {
-			COLOR.rgb = inside ? mix(COLOR.rgb, tempColor.rgb, tempColor.a) : tempColor.rgb;
+			COLOR.rgb = inside ? mix(color.rgb, color.rgb, color.a) : color.rgb;
 			COLOR.a += (1.0 - COLOR.a) * color.a;
 		}
 	}
@@ -137,7 +137,7 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_itdnj"]
 shader = SubResource("Shader_ucou7")
 shader_parameter/frame_coord = Vector2(0, 0)
-shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/color = Color(1, 0.219608, 1, 1)
 shader_parameter/width = 1.0
 shader_parameter/pattern = 0
 shader_parameter/inside = false

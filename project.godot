@@ -38,7 +38,7 @@ window/stretch/aspect="ignore"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/YATI/plugin.cfg")
+enabled=PackedStringArray("res://addons/YATI/plugin.cfg", "res://addons/godot_state_charts/plugin.cfg")
 
 [filesystem]
 

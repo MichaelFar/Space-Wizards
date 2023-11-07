@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://qnpom1gsmtkp"]
+
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_knts2"]
+[ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_1lkvg"]
+[ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="3_cekdy"]
+[ext_resource type="PackedScene" uid="uid://bqko0p70buahx" path="res://Scenes/state_chart_enemy.tscn" id="4_cck5t"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_odymy"]
+vertices = PackedVector2Array(78, 47, 101, 98, 27, 111, 6, 59)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(6, 59, 27, 111, 101, 98, 78, 47)])
+
+[node name="debugStateChartLevelTest" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_knts2")
+
+[node name="Player" parent="." instance=ExtResource("2_1lkvg")]
+position = Vector2(306, 225)
+
+[node name="ExclusionZone" parent="." instance=ExtResource("3_cekdy")]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_odymy")
+
+[node name="StateChartEnemy" parent="." instance=ExtResource("4_cck5t")]
+
+[editable path="StateChartEnemy"]

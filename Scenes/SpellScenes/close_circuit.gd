@@ -88,7 +88,7 @@ func _physics_process(delta):
 	move_and_slide()
 	
 func cost():
-	return true
+	return EnergyPointContainer.lose_energy(2)
 
 func _on_spell_hit_box_body_entered(body):
 	if(body is TileMap && !is_instance_valid(hit_enemy)):

@@ -21,7 +21,8 @@ func post_initialize():
 
 func _physics_process(delta):
 	frame +=1
-	global_position = globals.player.global_position
+	if(globals.player != null):
+		global_position = globals.player.global_position
 	
 func get_point_children():
 	point_children = []

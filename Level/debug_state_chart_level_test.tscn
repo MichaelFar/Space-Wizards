@@ -9,6 +9,7 @@
 vertices = PackedVector2Array(78, 47, 101, 98, 27, 111, 6, 59)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(6, 59, 27, 111, 101, 98, 78, 47)])
+source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="debugStateChartLevelTest" type="Node2D"]
 y_sort_enabled = true

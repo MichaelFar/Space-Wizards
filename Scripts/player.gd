@@ -272,7 +272,7 @@ func move_state(_delta):
 				print("Dodge state entered")
 				state = DODGE
 				previous_velocity = input_vector * max_speed
-				attackContainer.abort_animation()
+				attackContainer.call_deferred("abort_animation")
 				
 	max_speed = previous_max_speed
 	
@@ -302,7 +302,7 @@ func attack_state(_delta):#State machine for attack combos will go here
 		#hit_enemy = !attack_timer_on
 		print(" attack timer on is " + str(attack_timer_on))
 		print("Hit enemy is " + str(hit_enemy) + " and attack timer is set to " + str(attack_timer_on))
-		attackContainer.abort_animation()
+		attackContainer.call_deferred("abort_animation")
 		state = COOLDOWN
 		change_sprite("NakedWizard_base")
 		nakedWizardBase.switch_weapon_sprite("NakedwizardBroom01")
@@ -335,7 +335,7 @@ func take_hit_state(_delta):
 
 	elif(playerSpritePlayer.current_animation_position == playerSpritePlayer.current_animation_length):
 		playerSpritePlayer.stop()
-		attackContainer.abort_animation()
+		attackContainer.call_deferred("abort_animation")
 		state = MOVE
 		
 		change_sprite("NakedWizard_base")
@@ -489,7 +489,7 @@ func _on_player_hurtbox_area_entered(area):
 				
 				material.set_shader_parameter("applied", false)
 			
-			attackContainer.abort_animation()#Hope this fixed the smear bug (later michael edit: likely did fix)
+			attackContainer.call_deferred("abort_animation")#Hope this fixed the smear bug (later michael edit: likely did fix)
 				
 			update_healthbar(enemy_damage)
 		elif(area.name == 'enemy_attack_hitbox' && parry_active):

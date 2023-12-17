@@ -5,10 +5,11 @@ extends Control
 #Calculates a list of valid points once as well as player position and delivers to the ai
 #Also contains debug commands like escaping
 
-@onready var exclusion_zone = $ExclusionZone
 
-@onready var playerNode = $Player
-@onready var navRegion = $NavigationRegion2D
+
+@export var playerNode : CharacterBody2D
+
+@export var navRegion : NavigationRegion2D
 var playerPosition = Vector2.ZERO
 var validpoints = []
 var enemyChildren = []
@@ -35,10 +36,12 @@ enum {
 
 func _ready():
 	
+	initialize_level()
+	
+func initialize_level():
 	navOutline = navRegion.navigation_polygon.get_outline(0)
 	var inclusion_area = get_dimensions(navOutline)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	#print(" min " + str(inclusionZone.shape.get_rect().position + inclusionZone.global_position) + "; max : " + str(inclusionZone.shape.get_rect().size + inclusionZone.global_position))
 	get_exclusion_children()
 	validpoints = get_valid_points(inclusion_area[0], inclusion_area[1])
 	enemyScene = preload("res://Scenes/enemy_test.tscn")
@@ -50,7 +53,6 @@ func _ready():
 		enemyStartPositions.append(i.global_position)
 		
 	playerStartPos = playerNode.global_position
-	
 
 func _process(_delta):
 	frame += 1
@@ -81,7 +83,6 @@ func _process(_delta):
 	if(Input.is_action_just_pressed("relevant_raycasts")):
 		debug = true
 	
-	noReservedPoints = !(true in reservedAttackPoints)
 	
 	if(debug):
 		print("Outline 0 of nav region is " + str(navRegion.navigation_polygon.get_outline(0)))
@@ -138,10 +139,12 @@ func compare_float_vectors(a, b):
 	return abs(a - b) < Vector2(0.000001,0.000001)
 		
 func get_exclusion_children():
-	for i in get_children():
-		if 'ExclusionZone' in i.name:
-			exclusionAreas.append(i)
-			print("Added " + i.name + " to exclusion zones")
+	exclusionAreas = []
+	for i in navRegion.get_children():
+		
+		exclusionAreas.append(i)
+		print("Added " + i.name + " to exclusion zones")
+		
 	for i in exclusionAreas:
 		exclusionDimensions.append(i.get_children()[0].polygon)
 		print("Exclusion polygon vertices for " + i.name + " are " + str(i.get_children()[0].polygon))

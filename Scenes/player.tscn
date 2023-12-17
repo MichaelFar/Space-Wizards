@@ -1301,9 +1301,11 @@ libraries = {
 }
 
 [node name="PlayerSpriteAnimTree" type="AnimationTree" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_101kq")
+}
 tree_root = SubResource("AnimationNodeStateMachine_eiten")
 anim_player = NodePath("../PlayerSpriteAnimPlayer")
-active = true
 parameters/IdleBlend/blend_position = Vector2(-0.5568, 0.423581)
 parameters/MoveBlend/blend_position = Vector2(0, 0)
 

@@ -365,7 +365,7 @@ radius = 6.0
 
 [node name="Enemy_Test" type="CharacterBody2D"]
 material = ExtResource("1_dtlbr")
-collision_layer = 2
+collision_layer = 6
 motion_mode = 1
 platform_on_leave = 2
 script = ExtResource("1_qhvur")
@@ -380,7 +380,6 @@ target_desired_distance = 35.0
 [node name="pirate_grunt_stat_sheet" type="Node" parent="."]
 script = ExtResource("2_2kxfx")
 knockback_strength = 150
-max_poise = 200
 
 [node name="DeathEffect-sheet" type="Sprite2D" parent="."]
 visible = false
@@ -435,7 +434,6 @@ position = Vector2(160.564, -63.7497)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_ja028")
 disabled = true
-one_way_collision = true
 
 [node name="Healthbar" parent="." instance=ExtResource("10_t608j")]
 offset_left = -16.0

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/world.gd" id="1_ph1ox"]
 [ext_resource type="PackedScene" uid="uid://duuyynepqg4x2" path="res://Scenes/player.tscn" id="2_iopc2"]
-[ext_resource type="PackedScene" uid="uid://bm1oapd04iuuh" path="res://Tiles/64x64plane.tscn" id="3_tenns"]
+[ext_resource type="PackedScene" path="res://Tiles/64x64plane.tscn" id="3_tenns"]
 
 [node name="World" type="Node2D"]
 y_sort_enabled = true
@@ -15,3 +15,4 @@ position = Vector2(234.715, 149.448)
 
 [node name="LevelTiles" parent="." instance=ExtResource("3_tenns")]
 position = Vector2(159.813, 98.3049)
+scale = Vector2(1e-05, 1e-05)

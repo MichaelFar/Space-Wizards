@@ -11,18 +11,21 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(6, 59, 27, 111, 101, 98, 78, 47)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 
-[node name="debugStateChartLevelTest" type="Node2D"]
+[node name="debugStateChartLevelTest" type="Node2D" node_paths=PackedStringArray("playerNode", "navRegion")]
 y_sort_enabled = true
 script = ExtResource("1_knts2")
+playerNode = NodePath("Player")
+navRegion = NodePath("NavigationRegion2D")
 
 [node name="Player" parent="." instance=ExtResource("2_1lkvg")]
-position = Vector2(306, 225)
-
-[node name="ExclusionZone" parent="." instance=ExtResource("3_cekdy")]
+position = Vector2(291, 31)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_odymy")
 
+[node name="ExclusionZone" parent="NavigationRegion2D" instance=ExtResource("3_cekdy")]
+
 [node name="StateChartEnemy" parent="." instance=ExtResource("4_cck5t")]
 
+[editable path="NavigationRegion2D/ExclusionZone"]
 [editable path="StateChartEnemy"]

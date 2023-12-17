@@ -491,7 +491,7 @@ func get_parried(enemy_id):#Function that is called when the player is in parry 
 		playerPreviousPosition = parent.playerNode.position
 		change_sprite(body_sprite, playerPreviousPosition)
 		animationPlayer.play("parried")
-		smearContainer.abort_animation()
+		smearContainer.call_deferred("abort_animation")
 		
 		coolDownTimerOn = false
 		coolDownFrames = 0
@@ -530,11 +530,13 @@ func update_poise_bar(poise_change):#update_poise_bar and update_healthbar could
 		poise += poise_change
 		
 		if(poise <= 0.0):
+			
 			stun_modifier = clampf(poise / 180.0, 0.0, 1.0) #Increases the length of the animation based on how overkill the poise damage was
 			print("Stun modifier is " + str(stun_modifier))
 			knockback_modifier = absf(poise)#How far the enemy is knocked back when poise overkill occurs (currently no effect)
 			
 		else:
+			
 			stun_modifier = 0.0
 			knockback_modifier = 0.0 
 		
@@ -547,11 +549,9 @@ func update_poise_bar(poise_change):#update_poise_bar and update_healthbar could
 				
 				if(animationPlayer.get_queue().size() == 0):
 					
-					
 					animationPlayer.stop()
-					smearContainer.abort_animation()
-					#smearContainer.disable_hitbox()
-					#animationPlayer.seek(animationPlayer.current_animation_length, true)
+					smearContainer.call_deferred("abort_animation")
+					
 				playerPreviousPosition = globals.player.position
 				state = STAGGERED
 			else:

@@ -17,9 +17,10 @@ radius = 202.529
 script = ExtResource("8_fmw4k")
 expression = ""
 
-[node name="StateChartEnemy" type="CharacterBody2D" node_paths=PackedStringArray("body_sprite")]
+[node name="StateChartEnemy" type="CharacterBody2D" node_paths=PackedStringArray("body_sprite", "StateChart")]
 script = ExtResource("1_co6sp")
 body_sprite = NodePath("PirateAllSnail")
+StateChart = NodePath("StateChart")
 
 [node name="PirateAllSnail" type="Sprite2D" parent="."]
 texture = ExtResource("1_qxy3s")

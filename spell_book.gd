@@ -14,7 +14,8 @@ var should_change_icon = false
 
 func _ready():
 	
-	global_position = Vector2(-30.0, get_viewport_rect().size.y * 15/20)#Placed in bottom left corner, based on viewport
+	resize()
+	
 	animationPlayer.play("initial_state")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -50,3 +51,7 @@ func outline_pulse():
 	IconInBook.material.set_shader_parameter('width', next_value)
 func trigger_icon_change(shouldChange):
 	should_change_icon = shouldChange
+
+func resize():
+	var center_position = get_parent().get_screen_center_position()
+	global_position = Vector2(center_position.x / 3.0, center_position.y * 4.0)

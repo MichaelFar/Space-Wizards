@@ -105,9 +105,10 @@ _data = {
 "startled": SubResource("Animation_8dbxl")
 }
 
-[node name="EmoteContainer" type="Node2D"]
+[node name="EmoteContainer" type="Node2D" node_paths=PackedStringArray("emotePlayer")]
 z_index = 1
 script = ExtResource("1_s3o1l")
+emotePlayer = NodePath("EmotePlayer")
 
 [node name="exclaim" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.576471)

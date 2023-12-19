@@ -54,4 +54,4 @@ func trigger_icon_change(shouldChange):
 
 func resize():
 	var center_position = get_parent().get_screen_center_position()
-	global_position = Vector2(center_position.x / 3.0, center_position.y * 4.0)
+	global_position = Vector2(center_position.x / 2.0 , center_position.y * 1.5)

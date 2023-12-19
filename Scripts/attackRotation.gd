@@ -62,7 +62,7 @@ func get_all_attack_specs():#Get attack spec scripts
 	
 	for i in get_children():
 		if '_attack_specs' in i.name:
-			print('Adding specs ' + i.name)
+			#print('Adding specs ' + i.name)
 			attack_specs_objects.append(i)
 			
 func set_new_attack_specs(objectName = 'broom'):#Given an object (weapon name string) get the stats
@@ -77,11 +77,11 @@ func set_new_attack_specs(objectName = 'broom'):#Given an object (weapon name st
 func abort_animation():
 	
 	attackPlayer.stop()
-	print("Number of smear children is " + str(smearChildren.size()))
+	#print("Number of smear children is " + str(smearChildren.size()))
 	playerNode.PlayerCam.shouldShake = false
 	for i in smearChildren:
 		i.visible = false
-		print("Current smear child is " + i.name)
+		#print("Current smear child is " + i.name)
 		if(i.get_children()):
 			for j in i.get_node("AttackHitBox").get_children():
 				print("Hitbox " + j.name + " disabled")

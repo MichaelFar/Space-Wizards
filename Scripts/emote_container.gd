@@ -1,12 +1,6 @@
 extends Node2D
 
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+@export var emotePlayer : AnimationPlayer
 
 func play_emote(emoteName):
 	
@@ -16,9 +10,8 @@ func play_emote(emoteName):
 		
 		if i is Sprite2D && i.name == emoteName:
 		
-			
 			i.show()
-			$EmotePlayer.play(emoteName)
+			emotePlayer.play(emoteName)
 		
 		elif i is Sprite2D:
 			i.hide()

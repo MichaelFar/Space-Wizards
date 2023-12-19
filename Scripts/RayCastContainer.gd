@@ -4,7 +4,7 @@ var raycastChildren = []
 var debug = false
 
 var suggestedVector = Vector2.ZERO
-@onready var supplied_direction = get_parent().playerPreviousPosition
+@onready var supplied_direction = globals.player.global_position
 # Called when the node enters the scene tree for the first time.
 var interest_array = []
 var danger_array = []
@@ -18,7 +18,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	#look_at(supplied_direction)
-	frameRate = get_parent().frameRate
+	#frameRate = get_parent().frameRate
 	
 	if frame % 2 == 0:	
 		set_relevant_directions()

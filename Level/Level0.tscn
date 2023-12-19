@@ -10,7 +10,7 @@ playerNode = NodePath("Player")
 navRegion = NodePath("combat_demo_arena/NavigationRegion2D")
 
 [node name="Player" parent="." instance=ExtResource("3_e782x")]
-position = Vector2(171, 168)
+position = Vector2(337, 190)
 
 [node name="combat_demo_arena" parent="." instance=ExtResource("2_mhx6l")]
 position = Vector2(281, 108)
@@ -18,6 +18,10 @@ position = Vector2(281, 108)
 [node name="TileMap" parent="combat_demo_arena" index="1"]
 layer_3/y_sort_enabled = true
 
+[editable path="Player"]
+[editable path="Player/attackContainer"]
+[editable path="Player/attackContainer/broom_smear_1/AttackHitBox"]
+[editable path="Player/PlayerCam"]
 [editable path="combat_demo_arena"]
 [editable path="combat_demo_arena/NavigationRegion2D/ExclusionZone"]
 [editable path="combat_demo_arena/NavigationRegion2D/ExclusionZone2"]

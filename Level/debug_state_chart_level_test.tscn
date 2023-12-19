@@ -5,10 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://2oyu28cf4l1v" path="res://Scenes/exclusion_zone.tscn" id="3_cekdy"]
 [ext_resource type="PackedScene" uid="uid://bqko0p70buahx" path="res://Scenes/state_chart_enemy.tscn" id="4_cck5t"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_odymy"]
-vertices = PackedVector2Array(78, 47, 101, 98, 27, 111, 6, 59)
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_syasn"]
+vertices = PackedVector2Array(576, 298, -296, 298, -287, -259, 576, -276)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(6, 59, 27, 111, 101, 98, 78, 47)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-297, -269, -307, 308, 587, 309, 586, -287)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="debugStateChartLevelTest" type="Node2D" node_paths=PackedStringArray("playerNode", "navRegion")]
@@ -21,11 +21,13 @@ navRegion = NodePath("NavigationRegion2D")
 position = Vector2(291, 31)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_odymy")
+navigation_polygon = SubResource("NavigationPolygon_syasn")
 
-[node name="ExclusionZone" parent="NavigationRegion2D" instance=ExtResource("3_cekdy")]
+[node name="ExclusionZone2" parent="NavigationRegion2D" instance=ExtResource("3_cekdy")]
+
+[node name="Shape" parent="NavigationRegion2D/ExclusionZone2" index="0"]
+polygon = PackedVector2Array(-339, -334, -342, 352, 641, 364, 642, -360, 579, -293, 591, 325, -304, 320, -294, -278, 579, -293, 642, -360)
 
 [node name="StateChartEnemy" parent="." instance=ExtResource("4_cck5t")]
 
-[editable path="NavigationRegion2D/ExclusionZone"]
-[editable path="StateChartEnemy"]
+[editable path="NavigationRegion2D/ExclusionZone2"]

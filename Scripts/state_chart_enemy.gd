@@ -7,11 +7,14 @@ extends CharacterBody2D
 @export var animationPlayer : AnimationPlayer
 @export var aggrotimer : Timer
 @export var idletimer : Timer
+@export var lostplayertimer : Timer
+@export var spritefliptimer : Timer
 @export var navAgent : NavigationAgent2D
 @export var rayCastContainer : CharacterBody2D
+
 @export var sightArea : Area2D
 @export var max_speed = 200.0
-@export var acceleration = 450.0
+@export var acceleration = 90.0
 var aggro_target = 3.0# time in seconds that the enemy will take to become aggro
 var player = null
 var current_chosen_point = Vector2.ZERO
@@ -29,10 +32,10 @@ func get_sight_radius():
 func _on_area_2d_area_entered(area):
 	
 	if(area.get_parent() == player):
-		
+		current_chosen_point = globals.player.global_position
 		StateChart.send_event("player_entered")
-		emoteContainer.play_emote("question")
 		aggrotimer.start()
+		
 		
 func _on_area_2d_area_exited(area):
 	
@@ -40,8 +43,8 @@ func _on_area_2d_area_exited(area):
 		
 		StateChart.send_event("player_exited")
 		current_chosen_point = globals.player.global_position
-		emoteContainer.play_emote("")
-		aggrotimer.stop()
+		spritefliptimer.stop()
+		
 		
 func _on_observing_state_physics_processing(delta):
 	
@@ -54,7 +57,8 @@ func _on_timer_timeout():#aggrotimer timeout
 func _on_aggro_state_entered():
 	animationPlayer.play("walk")
 	emoteContainer.play_emote("exclaim")
-
+	#StateChart.send_event("player_entered")
+	
 
 func _on_wander_state_state_physics_processing(delta):#Wander state
 	var target_distance = 10
@@ -102,14 +106,14 @@ func choose_point():
 		travel_points = get_travel_points()
 		chosen_point = travel_points[randomPoint.randi_range(0, travel_points.size() - 1)]
 		
-	
 	return chosen_point
-
 
 func _on_idle_state_state_entered():
 	idletimer.start()
+	aggrotimer.stop()
 	animationPlayer.play("idle")
-
+	emoteContainer.play_emote("")
+	
 
 func _on_idletimer_timeout():
 	StateChart.send_event("idled_enough")
@@ -125,6 +129,11 @@ func move_to_target():
 
 func _on_observing_state_state_entered():
 	animationPlayer.play("idle")
+	emoteContainer.play_emote("question")
+	
+	spritefliptimer.stop()
+	lostplayertimer.stop()
+	
 
 
 func _on_aggro_state_physics_processing(delta):
@@ -138,5 +147,26 @@ func _on_aggro_state_physics_processing(delta):
 		move_and_slide()
 
 
-func _on_non_aggro_state_entered():
+func _on_lostplayertimer_timeout():
 	StateChart.send_event("back_to_rest")
+	spritefliptimer.stop()
+
+
+func _on_lost_player_state_state_entered():
+	animationPlayer.play("idle")
+	spritefliptimer.start()
+	lostplayertimer.start()
+	
+
+func _on_spritefliptimer_timeout():
+	
+	body_sprite.scale.x = body_sprite.scale.x * -1.0
+	
+
+func _on_aggro_state_exited():
+	StateChart.send_event("lost_player")
+	emoteContainer.play_emote("question")
+
+func _on_lost_player_state_state_physics_processing(delta):
+	if(spritefliptimer.is_stopped() && animationPlayer.current_animation != "walk"):
+		spritefliptimer.start()

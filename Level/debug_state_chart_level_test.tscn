@@ -18,7 +18,7 @@ playerNode = NodePath("Player")
 navRegion = NodePath("NavigationRegion2D")
 
 [node name="Player" parent="." instance=ExtResource("2_1lkvg")]
-position = Vector2(291, 31)
+position = Vector2(-83, 194)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_syasn")

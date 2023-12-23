@@ -14,7 +14,7 @@ var should_change_icon = false
 
 func _ready():
 	
-	resize()
+	#resize()
 	
 	animationPlayer.play("initial_state")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -53,5 +53,6 @@ func trigger_icon_change(shouldChange):
 	should_change_icon = shouldChange
 
 func resize():
-	var center_position = get_parent().get_screen_center_position()
-	global_position = Vector2(center_position.x / 2.0 , center_position.y * 1.5)
+	var center_position = get_parent().get_target_position()
+	print ("Center position of screen is " + str(center_position))
+	global_position = center_position - (get_viewport_rect().size / 2.0)

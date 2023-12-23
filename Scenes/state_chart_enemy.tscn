@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bqko0p70buahx"]
+[gd_scene load_steps=24 format=3 uid="uid://bqko0p70buahx"]
 
 [ext_resource type="Script" path="res://Scripts/state_chart_enemy.gd" id="1_co6sp"]
 [ext_resource type="Texture2D" uid="uid://bqabf4g66sxg8" path="res://Sprites/pirate_snail/pirate_all_snail.png" id="1_qxy3s"]
@@ -81,7 +81,23 @@ state = NodePath("../../../AggroState/Aggro")
 script = ExtResource("9_wps06")
 guard = SubResource("Resource_p81q5")
 
-[node name="StateChartEnemy" type="CharacterBody2D" node_paths=PackedStringArray("body_sprite", "StateChart", "emoteContainer", "animationPlayer", "aggrotimer", "idletimer", "navAgent", "rayCastContainer", "sightArea")]
+[sub_resource type="Resource" id="Resource_gjm35"]
+script = ExtResource("8_x6eli")
+state = NodePath("../../../AggroState/Aggro")
+
+[sub_resource type="Resource" id="Resource_jqo2v"]
+script = ExtResource("9_wps06")
+guard = SubResource("Resource_gjm35")
+
+[sub_resource type="Resource" id="Resource_bxx37"]
+script = ExtResource("8_x6eli")
+state = NodePath("../../../AlertState/LostPlayerState")
+
+[sub_resource type="Resource" id="Resource_rllhe"]
+script = ExtResource("9_wps06")
+guard = SubResource("Resource_bxx37")
+
+[node name="StateChartEnemy" type="CharacterBody2D" node_paths=PackedStringArray("body_sprite", "StateChart", "emoteContainer", "animationPlayer", "aggrotimer", "idletimer", "lostplayertimer", "spritefliptimer", "navAgent", "rayCastContainer", "sightArea")]
 script = ExtResource("1_co6sp")
 body_sprite = NodePath("PirateAllSnail")
 StateChart = NodePath("StateChart")
@@ -89,9 +105,12 @@ emoteContainer = NodePath("EmoteContainer")
 animationPlayer = NodePath("AnimationPlayer")
 aggrotimer = NodePath("aggrotimer")
 idletimer = NodePath("idletimer")
+lostplayertimer = NodePath("lostplayertimer")
+spritefliptimer = NodePath("spritefliptimer")
 navAgent = NodePath("NavigationAgent2D")
 rayCastContainer = NodePath("RayCastContainer")
 sightArea = NodePath("SightRadius")
+max_speed = 100.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -159,6 +178,20 @@ script = ExtResource("6_iqd13")
 to = NodePath("../../ObservingState")
 event = &"player_entered"
 
+[node name="LostPlayerState" type="Node" parent="StateChart/Root/AlertState"]
+script = ExtResource("4_8r5ai")
+
+[node name="toIdleState" type="Node" parent="StateChart/Root/AlertState/LostPlayerState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../IdleState")
+event = &"back_to_rest"
+guard = SubResource("Resource_jqo2v")
+
+[node name="toAggro" type="Node" parent="StateChart/Root/AlertState/LostPlayerState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../../AggroState/Aggro")
+event = &"player_entered"
+
 [node name="AggroState" type="Node" parent="StateChart/Root"]
 script = ExtResource("3_dcexh")
 initial_state = NodePath("NonAggro")
@@ -170,7 +203,6 @@ script = ExtResource("4_8r5ai")
 script = ExtResource("6_iqd13")
 to = NodePath("../../NonAggro")
 event = &"player_exited"
-delay_seconds = 5.0
 
 [node name="NonAggro" type="Node" parent="StateChart/Root/AggroState"]
 script = ExtResource("4_8r5ai")
@@ -179,11 +211,12 @@ script = ExtResource("4_8r5ai")
 script = ExtResource("6_iqd13")
 to = NodePath("../../Aggro")
 event = &"is_aggro"
+guard = SubResource("Resource_rllhe")
 
-[node name="toIdleState" type="Node" parent="StateChart/Root/AggroState/NonAggro"]
+[node name="toLostPlayer" type="Node" parent="StateChart/Root/AggroState/NonAggro"]
 script = ExtResource("6_iqd13")
-to = NodePath("../../../AlertState/IdleState")
-event = &"back_to_rest"
+to = NodePath("../../../AlertState/LostPlayerState")
+event = &"lost_player"
 
 [node name="StateChartDebugger" parent="." instance=ExtResource("7_x2ig5")]
 anchors_preset = 0
@@ -202,9 +235,19 @@ position = Vector2(0, -50)
 
 [node name="aggrotimer" type="Timer" parent="."]
 wait_time = 3.0
+one_shot = true
 
 [node name="idletimer" type="Timer" parent="."]
 wait_time = 4.0
+one_shot = true
+
+[node name="lostplayertimer" type="Timer" parent="."]
+wait_time = 4.0
+one_shot = true
+
+[node name="spritefliptimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
@@ -217,8 +260,12 @@ wait_time = 4.0
 [connection signal="state_entered" from="StateChart/Root/AlertState/ObservingState" to="." method="_on_observing_state_state_entered"]
 [connection signal="state_physics_processing" from="StateChart/Root/AlertState/ObservingState" to="." method="_on_observing_state_physics_processing"]
 [connection signal="state_entered" from="StateChart/Root/AlertState/IdleState" to="." method="_on_idle_state_state_entered"]
+[connection signal="state_entered" from="StateChart/Root/AlertState/LostPlayerState" to="." method="_on_lost_player_state_state_entered"]
+[connection signal="state_physics_processing" from="StateChart/Root/AlertState/LostPlayerState" to="." method="_on_lost_player_state_state_physics_processing"]
 [connection signal="state_entered" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_entered"]
+[connection signal="state_exited" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_exited"]
 [connection signal="state_physics_processing" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_physics_processing"]
-[connection signal="state_entered" from="StateChart/Root/AggroState/NonAggro" to="." method="_on_non_aggro_state_entered"]
 [connection signal="timeout" from="aggrotimer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="idletimer" to="." method="_on_idletimer_timeout"]
+[connection signal="timeout" from="lostplayertimer" to="." method="_on_lostplayertimer_timeout"]
+[connection signal="timeout" from="spritefliptimer" to="." method="_on_spritefliptimer_timeout"]

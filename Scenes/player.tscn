@@ -1343,6 +1343,9 @@ offset_bottom = 13.0
 
 [node name="PlayerCam" parent="." instance=ExtResource("19_o57sc")]
 
+[node name="spell_book" parent="PlayerCam" index="1"]
+position = Vector2(-202, 108)
+
 [node name="DodgeParticle" parent="." instance=ExtResource("15_udywh")]
 position = Vector2(0, -12)
 

@@ -23,6 +23,8 @@ script = ExtResource("3_jkimt")
 distance_from_origin = 25
 
 [node name="Area2D" type="Area2D" parent="spawn_point"]
+collision_layer = 2147483648
+collision_mask = 2147483648
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="spawn_point/Area2D"]
 shape = SubResource("CapsuleShape2D_gtgv3")

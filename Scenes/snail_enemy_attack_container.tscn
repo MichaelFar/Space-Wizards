@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cuy31hrgurfga"]
+
+[ext_resource type="PackedScene" uid="uid://caucqhu0lvueb" path="res://Scenes/enemy_attack_container.tscn" id="1_qdrbu"]
+[ext_resource type="PackedScene" uid="uid://cngmbqn5ix1af" path="res://Scenes/snail_basic_attack.tscn" id="2_brk5i"]
+
+[node name="EnemyAttackContainer" instance=ExtResource("1_qdrbu")]
+
+[node name="ResourcePreloader" parent="." index="0"]
+resources = [PackedStringArray("snail_basic_attack"), [ExtResource("2_brk5i")]]

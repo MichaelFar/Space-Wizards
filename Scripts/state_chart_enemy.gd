@@ -34,6 +34,7 @@ func _on_area_2d_area_entered(area):
 	if(area.get_parent() == player):
 		current_chosen_point = globals.player.global_position
 		StateChart.send_event("player_entered")
+		spritefliptimer.stop()
 		aggrotimer.start()
 		
 		
@@ -140,11 +141,9 @@ func _on_aggro_state_physics_processing(delta):
 	var target_distance = 10
 	current_chosen_point = globals.player.global_position
 	move_to_target()
-	if (global_position.distance_to(current_chosen_point) <= target_distance):
-		StateChart.send_event("back_to_rest")
-	else:
+	
 		
-		move_and_slide()
+	move_and_slide()
 
 
 func _on_lostplayertimer_timeout():
@@ -154,6 +153,7 @@ func _on_lostplayertimer_timeout():
 
 func _on_lost_player_state_state_entered():
 	animationPlayer.play("idle")
+	emoteContainer.play_emote("question")
 	spritefliptimer.start()
 	lostplayertimer.start()
 	
@@ -165,8 +165,20 @@ func _on_spritefliptimer_timeout():
 
 func _on_aggro_state_exited():
 	StateChart.send_event("lost_player")
-	emoteContainer.play_emote("question")
+	#emoteContainer.play_emote("question")
 
 func _on_lost_player_state_state_physics_processing(delta):
 	if(spritefliptimer.is_stopped() && animationPlayer.current_animation != "walk"):
 		spritefliptimer.start()
+
+
+func _on_attack_radius_area_entered(area):
+	StateChart.send_event("in_attack_range")
+
+
+func _on_attack_radius_area_exited(area):
+	StateChart.send_event("is_aggro")
+
+
+func _on_interim_state_state_entered():
+	StateChart.send_event("is_aggro")

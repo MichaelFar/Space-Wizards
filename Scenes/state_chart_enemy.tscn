@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bqko0p70buahx"]
+[gd_scene load_steps=26 format=3 uid="uid://bqko0p70buahx"]
 
 [ext_resource type="Script" path="res://Scripts/state_chart_enemy.gd" id="1_co6sp"]
 [ext_resource type="Texture2D" uid="uid://bqabf4g66sxg8" path="res://Sprites/pirate_snail/pirate_all_snail.png" id="1_qxy3s"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://addons/godot_state_charts/not_guard.gd" id="9_wps06"]
 [ext_resource type="PackedScene" uid="uid://1n1ogpj3d1ai" path="res://Scenes/emote_container.tscn" id="10_ss7h0"]
 [ext_resource type="PackedScene" uid="uid://cdongig3hy7di" path="res://Scenes/ray_cast_container.tscn" id="10_xjnud"]
+[ext_resource type="PackedScene" uid="uid://cngmbqn5ix1af" path="res://Scenes/snail_basic_attack.tscn" id="13_ba4f1"]
 
 [sub_resource type="Animation" id="Animation_r3b8o"]
 length = 0.001
@@ -70,6 +71,9 @@ _data = {
 "walk": SubResource("Animation_c7g3e")
 }
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ih7j4"]
+radius = 55.0818
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_uyeq4"]
 radius = 86.77
 
@@ -122,6 +126,11 @@ texture = ExtResource("1_qxy3s")
 offset = Vector2(0, -24)
 hframes = 7
 vframes = 5
+
+[node name="AttackRadius" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRadius"]
+shape = SubResource("CircleShape2D_ih7j4")
 
 [node name="SightRadius" type="Area2D" parent="."]
 
@@ -187,9 +196,33 @@ to = NodePath("../../IdleState")
 event = &"back_to_rest"
 guard = SubResource("Resource_jqo2v")
 
+[node name="toInterim" type="Node" parent="StateChart/Root/AlertState/LostPlayerState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../InterimState")
+event = &"player_entered"
+
 [node name="toAggro" type="Node" parent="StateChart/Root/AlertState/LostPlayerState"]
 script = ExtResource("6_iqd13")
 to = NodePath("../../../AggroState/Aggro")
+event = &"player_entered"
+
+[node name="InterimState" type="Node" parent="StateChart/Root/AlertState"]
+script = ExtResource("4_8r5ai")
+
+[node name="toIdleState" type="Node" parent="StateChart/Root/AlertState/InterimState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../IdleState")
+event = &"player_exited"
+guard = SubResource("Resource_bf6nh")
+
+[node name="toAggro" type="Node" parent="StateChart/Root/AlertState/InterimState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../../AggroState/Aggro")
+event = &"is_aggro"
+
+[node name="toObserving" type="Node" parent="StateChart/Root/AlertState/InterimState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../ObservingState")
 event = &"player_entered"
 
 [node name="AggroState" type="Node" parent="StateChart/Root"]
@@ -204,6 +237,11 @@ script = ExtResource("6_iqd13")
 to = NodePath("../../NonAggro")
 event = &"player_exited"
 
+[node name="ToAttackState" type="Node" parent="StateChart/Root/AggroState/Aggro"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../AttackState")
+event = &"in_attack_range"
+
 [node name="NonAggro" type="Node" parent="StateChart/Root/AggroState"]
 script = ExtResource("4_8r5ai")
 
@@ -217,6 +255,15 @@ guard = SubResource("Resource_rllhe")
 script = ExtResource("6_iqd13")
 to = NodePath("../../../AlertState/LostPlayerState")
 event = &"lost_player"
+
+[node name="AttackState" type="Node" parent="StateChart/Root/AggroState"]
+script = ExtResource("4_8r5ai")
+
+[node name="toAggro" type="Node" parent="StateChart/Root/AggroState/AttackState"]
+script = ExtResource("6_iqd13")
+to = NodePath("../../Aggro")
+event = &"is_aggro"
+guard = SubResource("Resource_rllhe")
 
 [node name="StateChartDebugger" parent="." instance=ExtResource("7_x2ig5")]
 anchors_preset = 0
@@ -253,6 +300,11 @@ one_shot = true
 
 [node name="RayCastContainer" parent="." instance=ExtResource("10_xjnud")]
 
+[node name="SnailBasicAttack" parent="." instance=ExtResource("13_ba4f1")]
+position = Vector2(19, 0)
+
+[connection signal="area_entered" from="AttackRadius" to="." method="_on_attack_radius_area_entered"]
+[connection signal="area_exited" from="AttackRadius" to="." method="_on_attack_radius_area_exited"]
 [connection signal="area_entered" from="SightRadius" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="SightRadius" to="." method="_on_area_2d_area_exited"]
 [connection signal="state_entered" from="StateChart/Root/AlertState/WanderState" to="." method="_on_wander_state_state_entered"]
@@ -262,6 +314,7 @@ one_shot = true
 [connection signal="state_entered" from="StateChart/Root/AlertState/IdleState" to="." method="_on_idle_state_state_entered"]
 [connection signal="state_entered" from="StateChart/Root/AlertState/LostPlayerState" to="." method="_on_lost_player_state_state_entered"]
 [connection signal="state_physics_processing" from="StateChart/Root/AlertState/LostPlayerState" to="." method="_on_lost_player_state_state_physics_processing"]
+[connection signal="state_entered" from="StateChart/Root/AlertState/InterimState" to="." method="_on_interim_state_state_entered"]
 [connection signal="state_entered" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_entered"]
 [connection signal="state_exited" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_exited"]
 [connection signal="state_physics_processing" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_physics_processing"]
@@ -269,3 +322,5 @@ one_shot = true
 [connection signal="timeout" from="idletimer" to="." method="_on_idletimer_timeout"]
 [connection signal="timeout" from="lostplayertimer" to="." method="_on_lostplayertimer_timeout"]
 [connection signal="timeout" from="spritefliptimer" to="." method="_on_spritefliptimer_timeout"]
+
+[editable path="SnailBasicAttack"]

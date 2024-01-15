@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bqko0p70buahx"]
+[gd_scene load_steps=27 format=3 uid="uid://bqko0p70buahx"]
 
 [ext_resource type="Script" path="res://Scripts/state_chart_enemy.gd" id="1_co6sp"]
 [ext_resource type="Texture2D" uid="uid://bqabf4g66sxg8" path="res://Sprites/pirate_snail/pirate_all_snail.png" id="1_qxy3s"]
@@ -12,7 +12,7 @@
 [ext_resource type="Script" path="res://addons/godot_state_charts/not_guard.gd" id="9_wps06"]
 [ext_resource type="PackedScene" uid="uid://1n1ogpj3d1ai" path="res://Scenes/emote_container.tscn" id="10_ss7h0"]
 [ext_resource type="PackedScene" uid="uid://cdongig3hy7di" path="res://Scenes/ray_cast_container.tscn" id="10_xjnud"]
-[ext_resource type="PackedScene" uid="uid://cngmbqn5ix1af" path="res://Scenes/snail_basic_attack.tscn" id="13_ba4f1"]
+[ext_resource type="PackedScene" uid="uid://cuy31hrgurfga" path="res://Scenes/snail_enemy_attack_container.tscn" id="14_3t7d3"]
 
 [sub_resource type="Animation" id="Animation_r3b8o"]
 length = 0.001
@@ -64,9 +64,26 @@ tracks/0/keys = {
 "values": [21, 22, 23, 24, 25, 26]
 }
 
+[sub_resource type="Animation" id="Animation_w01d5"]
+resource_name = "attack_1"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PirateAllSnail:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [14, 15, 16, 17, 18, 14, 0]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_eu1qa"]
 _data = {
 "RESET": SubResource("Animation_r3b8o"),
+"attack_1": SubResource("Animation_w01d5"),
 "idle": SubResource("Animation_4yhc3"),
 "walk": SubResource("Animation_c7g3e")
 }
@@ -101,7 +118,7 @@ state = NodePath("../../../AlertState/LostPlayerState")
 script = ExtResource("9_wps06")
 guard = SubResource("Resource_bxx37")
 
-[node name="StateChartEnemy" type="CharacterBody2D" node_paths=PackedStringArray("body_sprite", "StateChart", "emoteContainer", "animationPlayer", "aggrotimer", "idletimer", "lostplayertimer", "spritefliptimer", "navAgent", "rayCastContainer", "sightArea")]
+[node name="StateChartEnemy" type="CharacterBody2D" node_paths=PackedStringArray("body_sprite", "StateChart", "emoteContainer", "animationPlayer", "aggrotimer", "idletimer", "lostplayertimer", "spritefliptimer", "navAgent", "rayCastContainer", "AttackContainer", "sightArea")]
 script = ExtResource("1_co6sp")
 body_sprite = NodePath("PirateAllSnail")
 StateChart = NodePath("StateChart")
@@ -113,6 +130,7 @@ lostplayertimer = NodePath("lostplayertimer")
 spritefliptimer = NodePath("spritefliptimer")
 navAgent = NodePath("NavigationAgent2D")
 rayCastContainer = NodePath("RayCastContainer")
+AttackContainer = NodePath("SnailEnemyAttackContainer")
 sightArea = NodePath("SightRadius")
 max_speed = 100.0
 
@@ -300,8 +318,7 @@ one_shot = true
 
 [node name="RayCastContainer" parent="." instance=ExtResource("10_xjnud")]
 
-[node name="SnailBasicAttack" parent="." instance=ExtResource("13_ba4f1")]
-position = Vector2(19, 0)
+[node name="SnailEnemyAttackContainer" parent="." instance=ExtResource("14_3t7d3")]
 
 [connection signal="area_entered" from="AttackRadius" to="." method="_on_attack_radius_area_entered"]
 [connection signal="area_exited" from="AttackRadius" to="." method="_on_attack_radius_area_exited"]
@@ -318,9 +335,10 @@ position = Vector2(19, 0)
 [connection signal="state_entered" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_entered"]
 [connection signal="state_exited" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_exited"]
 [connection signal="state_physics_processing" from="StateChart/Root/AggroState/Aggro" to="." method="_on_aggro_state_physics_processing"]
+[connection signal="state_entered" from="StateChart/Root/AggroState/AttackState" to="." method="_on_attack_state_state_entered"]
 [connection signal="timeout" from="aggrotimer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="idletimer" to="." method="_on_idletimer_timeout"]
 [connection signal="timeout" from="lostplayertimer" to="." method="_on_lostplayertimer_timeout"]
 [connection signal="timeout" from="spritefliptimer" to="." method="_on_spritefliptimer_timeout"]
 
-[editable path="SnailBasicAttack"]
+[editable path="SnailEnemyAttackContainer"]

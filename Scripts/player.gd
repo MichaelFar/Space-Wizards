@@ -492,7 +492,9 @@ func _on_player_hurtbox_area_entered(area):
 			attackContainer.call_deferred("abort_animation")#Hope this fixed the smear bug (later michael edit: likely did fix)
 				
 			update_healthbar(enemy_damage)
+		
 		elif(area.name == 'enemy_attack_hitbox' && parry_active):
+			
 			s_parried.emit(area.get_enemy_id())#Signal sent to appropriate enemy that they were parried
 			parry_timer_on = false
 			parried_enemy = true
@@ -527,7 +529,6 @@ func change_sprite(spriteName):
 		else:
 			i.show()
 	
-
 func get_enemy_attack_stats(enemy_id):
 	
 	var enemy_sheet = enemy_id.stat_sheet
@@ -545,7 +546,6 @@ func player_must_die():
 	
 func successful_hit():
 	attackContainer.play_hit()
-	#successfulHit = true
 	print("play_hit() has run")
 	
 func play_hit():

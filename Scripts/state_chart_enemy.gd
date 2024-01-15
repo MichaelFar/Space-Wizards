@@ -11,6 +11,7 @@ extends CharacterBody2D
 @export var spritefliptimer : Timer
 @export var navAgent : NavigationAgent2D
 @export var rayCastContainer : CharacterBody2D
+@export var AttackContainer : Node2D
 
 @export var sightArea : Area2D
 @export var max_speed = 200.0
@@ -136,15 +137,13 @@ func _on_observing_state_state_entered():
 	lostplayertimer.stop()
 	
 
-
 func _on_aggro_state_physics_processing(delta):
 	var target_distance = 10
 	current_chosen_point = globals.player.global_position
+	
 	move_to_target()
 	
-		
 	move_and_slide()
-
 
 func _on_lostplayertimer_timeout():
 	StateChart.send_event("back_to_rest")
@@ -165,7 +164,6 @@ func _on_spritefliptimer_timeout():
 
 func _on_aggro_state_exited():
 	StateChart.send_event("lost_player")
-	#emoteContainer.play_emote("question")
 
 func _on_lost_player_state_state_physics_processing(delta):
 	if(spritefliptimer.is_stopped() && animationPlayer.current_animation != "walk"):
@@ -182,3 +180,8 @@ func _on_attack_radius_area_exited(area):
 
 func _on_interim_state_state_entered():
 	StateChart.send_event("is_aggro")
+
+
+func _on_attack_state_state_entered():
+	animationPlayer.play("attack_1") # This can be changed to dynamically choose the appropriate attack
+	AttackContainer.orient_attack(globals.player.global_position)

@@ -1,18 +1,23 @@
 extends CharacterBody2D
 
-
+#visual changers
 @export var body_sprite : Sprite2D
 @export var StateChart : StateChart
 @export var emoteContainer : Node2D
 @export var animationPlayer : AnimationPlayer
+#timer references
 @export var aggrotimer : Timer
 @export var idletimer : Timer
 @export var lostplayertimer : Timer
 @export var spritefliptimer : Timer
+@export var attacktimer : Timer
+#navigation
 @export var navAgent : NavigationAgent2D
 @export var rayCastContainer : CharacterBody2D
+#attack nodes
 @export var AttackContainer : Node2D
-
+@export var attackArea : Area2D
+#basic stats
 @export var sightArea : Area2D
 @export var max_speed = 200.0
 @export var acceleration = 90.0
@@ -22,6 +27,7 @@ var current_chosen_point = Vector2.ZERO
 var current_travel_points = []
 var sight_radius = 0.0
 var times_entered_wander = 0
+var in_range = false
 func _ready():
 	sight_radius = get_sight_radius()
 	player = globals.player
@@ -131,14 +137,18 @@ func move_to_target():
 
 func _on_observing_state_state_entered():
 	animationPlayer.play("idle")
+	
 	emoteContainer.play_emote("question")
 	
 	spritefliptimer.stop()
+	
 	lostplayertimer.stop()
 	
 
 func _on_aggro_state_physics_processing(delta):
+	
 	var target_distance = 10
+	
 	current_chosen_point = globals.player.global_position
 	
 	move_to_target()
@@ -171,11 +181,9 @@ func _on_lost_player_state_state_physics_processing(delta):
 
 
 func _on_attack_radius_area_entered(area):
+	print("Area entering attack radius " + area.name)
 	StateChart.send_event("in_attack_range")
-
-
-func _on_attack_radius_area_exited(area):
-	StateChart.send_event("is_aggro")
+	#attackArea.get_children()[0].disabled = true
 
 
 func _on_interim_state_state_entered():
@@ -185,3 +193,20 @@ func _on_interim_state_state_entered():
 func _on_attack_state_state_entered():
 	animationPlayer.play("attack_1") # This can be changed to dynamically choose the appropriate attack
 	AttackContainer.orient_attack(globals.player.global_position)
+	in_range = true#HERE!!!!
+
+
+func set_attack_delay(delay):
+	print("Delay sent is " + str(delay))
+	attacktimer.wait_time = delay
+	attacktimer.start()
+	
+
+func _on_attacktimer_timeout():#Occurs when the enemy is done with their attack
+	if (in_range):
+		StateChart.send_event("in_attack_range")
+
+
+
+func _on_attack_radius_area_exited(area):
+	in_range = false
